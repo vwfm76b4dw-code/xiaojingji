@@ -1,0 +1,179 @@
+.page {
+  padding: 32rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 头部：色条来自全局 .stripe（与 deck 页 "card stripe head" 同一写法），
+   这里只管与下方列表的间距 */
+.head { margin-bottom: 24rpx; }
+
+.head-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  line-height: 1.4;
+}
+
+.head-sub {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  margin-top: 12rpx;
+}
+
+/* -------------------- 第一级：册次列表 -------------------- */
+
+.book-list {
+  border: 2rpx solid var(--line);
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: var(--card);
+}
+
+.book {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 24rpx;
+  border-bottom: 2rpx solid var(--line);
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.book:last-child { border-bottom: none; }
+
+.book:active { transform: scale(0.99); }
+
+.book-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.book-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.book-count {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/* 纯 CSS 折角箭头，不用字符/emoji 当图标 */
+.book-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 3rpx solid var(--ink-3);
+  border-right: 3rpx solid var(--ink-3);
+  transform: rotate(45deg);
+  margin-left: 20rpx;
+  flex-shrink: 0;
+}
+
+/* -------------------- 第二级：单元列表 -------------------- */
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24rpx;
+  margin: 4rpx 0 16rpx;
+}
+
+.tool {
+  font-size: 26rpx;
+  color: var(--green);
+  border: 2rpx solid var(--green);
+  border-radius: 8rpx;
+  padding: 8rpx 28rpx;
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.tool:active { transform: scale(0.94); }
+
+/* 当前状态下点了也不会有变化，压暗提示"这条已经是终态了" */
+.tool.dim {
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+/* 回第一级换册：放最左，与右侧的选词动作拉开距离 */
+.tool.back { margin-right: auto; }
+
+.unit-list {
+  border: 2rpx solid var(--line);
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: var(--card);
+  margin-bottom: 32rpx;
+}
+
+.unit {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 24rpx;
+  border-bottom: 2rpx solid var(--line);
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.unit:last-child { border-bottom: none; }
+
+.unit:active { transform: scale(0.99); }
+
+.unit-box {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  background: var(--paper);
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 选中标记用实心方块，不用字符/emoji 当图标 */
+.unit-dot {
+  display: none;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  background: var(--paper);
+  margin: 8rpx auto 0;
+}
+
+.unit.on { background: rgba(0, 130, 92, 0.06); }
+.unit.on .unit-box { background: var(--green); border-color: var(--green); }
+.unit.on .unit-dot { display: block; }
+
+.unit-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.unit-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.unit.on .unit-name { color: var(--green-d); }
+
+.unit-count {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  text-align: center;
+  margin-top: 16rpx;
+}

@@ -1,0 +1,88 @@
+<view class="page">
+  <!-- 提问区 -->
+  <view class="card stripe ask-box">
+    <view class="section-label">问单词</view>
+    <textarea class="q-input"
+      placeholder="例如：geography 和哪个词容易混？"
+      placeholder-class="ph"
+      value="{{question}}"
+      bindinput="onInput"
+      maxlength="200"
+      auto-height
+      show-confirm-bar="{{false}}"></textarea>
+
+    <view class="ask-foot">
+      <text class="t-hint">只用课本单词回答，答不上来会直说</text>
+      <button class="btn primary small" bindtap="ask" disabled="{{asking}}">
+        {{asking ? '查词典中…' : '问一下'}}
+      </button>
+    </view>
+  </view>
+
+  <view wx:if="{{asking}}" class="card judging">
+    <view class="sweep"></view>
+    <view class="t-hint" style="text-align: center; margin-top: 14rpx;">
+      正在课本词库里找…
+    </view>
+  </view>
+
+  <!-- 回答 -->
+  <block wx:if="{{answer}}">
+    <view class="card stripe {{mode === 'generated' ? 'green' : 'gray'}} ans-card rise">
+      <view class="ans-head">
+        <text class="t-hint">
+          {{mode === 'no_match' ? '课本里没有找到' :
+            (viaText || '课本里相关的词')}}
+        </text>
+      </view>
+      <view class="ans-text">{{answer}}</view>
+
+      <view class="ans-actions">
+        <view class="chip" bindtap="copyAnswer">复制</view>
+        <view class="chip" bindtap="clearAll">清空</view>
+      </view>
+    </view>
+
+    <!-- 来源：可点听发音（让"回答问题"和"学发音"连起来） -->
+    <block wx:if="{{sources.length > 0}}">
+      <view class="section-label" style="margin-top: 28rpx;">
+        依据的词（点一下听发音）
+      </view>
+      <view wx:for="{{sources}}" wx:key="word"
+            class="card src-row"
+            data-word="{{item.word}}"
+            bindtap="playSource">
+        <view class="src-main">
+          <text class="src-word">{{item.word}}</text>
+          <text class="src-meaning">{{item.meaning}}</text>
+        </view>
+        <view class="src-right">
+          <text class="tag">
+            {{item.via === 'phonetic' ? '易混' :
+              (item.via === 'category' ? '同类' :
+               (item.via === 'family' ? '同族' : '相关'))}}
+          </text>
+          <text class="src-play">{{playingWord === item.word ? '播放中' : '听'}}</text>
+        </view>
+      </view>
+      <view class="t-hint" style="text-align: center; margin-top: 16rpx;">
+        易混 = 发音或拼写相近 · 同族 = 同一个词的变形 · 同类 = 主题相同的词
+      </view>
+    </block>
+  </block>
+
+  <!-- 空态：给可直接点的示例 -->
+  <view wx:if="{{!answer && !asking}}" class="empty">
+    <view class="empty-title">问关于课本单词的问题</view>
+    <view class="empty-sub">
+      答案在本机算出来，不用联网也能问。词表里没有的会直说没有，不会编。
+    </view>
+    <view class="samples">
+      <view class="sample-row" wx:for="{{samples}}" wx:key="q"
+            data-i="{{index}}" bindtap="useSample">
+        <text class="sample-tag">{{item.tag}}</text>
+        <text class="sample-q">{{item.q}}</text>
+      </view>
+    </view>
+  </view>
+</view>

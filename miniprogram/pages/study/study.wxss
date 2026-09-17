@@ -1,0 +1,182 @@
+.topbar { margin-bottom: 28rpx; }
+
+/* ------------------------- 筛选栏 ------------------------- */
+
+.filter-bar { margin-bottom: 24rpx; }
+
+.filter-current {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  padding: 20rpx 24rpx;
+  background: var(--card);
+  border: 2rpx solid var(--line-2);
+  border-radius: 8rpx;
+}
+.fc-scope { font-size: 30rpx; font-weight: 600; color: var(--ink); }
+.fc-sub { font-size: 24rpx; color: var(--ink-3); flex: 1; }
+.fc-caret { font-size: 24rpx; color: var(--green); }
+
+.filter-panel {
+  margin-top: 16rpx;
+  padding: 24rpx;
+  background: var(--card);
+  border: 2rpx solid var(--line-2);
+  border-radius: 8rpx;
+}
+.fp-label {
+  font-size: 24rpx;
+  color: var(--ink-3);
+  margin-bottom: 12rpx;
+}
+.fp-label + .fp-chips { margin-bottom: 24rpx; }
+.fp-chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
+
+.next-actions { margin-top: 28rpx; }
+.next-actions .note { margin-bottom: 16rpx; }
+
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+/* 翻卡容器：固定高度，避免正反面高度不同导致跳动 */
+.flip-wrap {
+  perspective: 1200rpx;
+  height: 760rpx;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 36rpx;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  /* 3D 翻转要求两个面都显式给出 transform，否则部分渲染器会两面叠显 */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 正面：0 度；背面：180 度。两面都在 .flip-inner 里绝对定位 */
+.front { transform: rotateY(0deg); }
+
+.face-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 28rpx;
+}
+
+/* 正面：问题居中放大，视觉上"就是要你先想" */
+.front .prompt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.face-foot { text-align: center; }
+
+/* 背面：答案 + 钩子 */
+.flip-back { transform: rotateY(180deg); }
+
+.answer {
+  font-size: 42rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.detail {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-top: 20rpx;
+}
+
+/* 记忆钩子：整块黄底，视觉上把它和"答案"区分开——
+   我们给的增量价值在"怎么记"，不在"记什么" */
+.hook {
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  background: rgba(246, 196, 69, 0.18);
+  border-left: 8rpx solid var(--yellow);
+  border-radius: 4rpx;
+}
+.hook-label {
+  font-size: 22rpx;
+  color: var(--yellow-ink);
+  letter-spacing: 0.08em;
+  margin-bottom: 8rpx;
+}
+.hook-text {
+  font-size: 28rpx;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.src { margin-top: auto; padding-top: 20rpx; }
+
+/* 评分区 */
+.grade { margin-top: 40rpx; }
+.grade-hint { text-align: center; margin-bottom: 20rpx; }
+.grade-btn { font-size: 30rpx; }
+.grade-btn.vague { border-color: var(--yellow); color: var(--yellow-ink); }
+
+/* 完成态 */
+.done-card { text-align: center; padding: 56rpx 36rpx; }
+.done-title { font-size: 34rpx; color: var(--ink-2); }
+.done-num {
+  font-size: 120rpx;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.1;
+  margin: 12rpx 0;
+}
+.done-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 44rpx;
+  padding-top: 32rpx;
+  border-top: 2rpx solid var(--line);
+}
+.ds { display: flex; flex-direction: column; gap: 6rpx; align-items: center; }
+.ds-num { font-size: 40rpx; font-weight: 600; }
+.done-note { margin-top: 36rpx; line-height: 1.7; }
+
+/* 记忆钩子的展开入口
+   学生翻卡时不想读 70+ 字，所以默认只给一句话，想深究再点开。
+   catchtap 而不是 bindtap —— 点它不该触发翻卡。 */
+.hook-more {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--green-d);
+  text-decoration: underline;
+  text-underline-offset: 6rpx;
+}
+.hook-detail {
+  margin-top: 14rpx;
+  padding-top: 14rpx;
+  border-top: 2rpx dashed var(--line);
+  font-size: 25rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}

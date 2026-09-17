@@ -1,0 +1,160 @@
+<view class="page">
+  <!-- 搜索：卡片多了之后必需（500 张时靠翻列表找不到） -->
+  <view class="search">
+    <input class="search-input" placeholder="搜单词：词 / 释义 / 钩子 / 来源"
+           placeholder-class="ph" value="{{keyword}}"
+           bindinput="onSearchInput" bindconfirm="doSearch" confirm-type="search" />
+    <view class="chip" bindtap="doSearch">搜</view>
+    <view wx:if="{{searching}}" class="chip" bindtap="clearSearch">清空</view>
+  </view>
+
+  <!-- 搜索结果：直接给全量命中，不做分页（本地搜索够快） -->
+  <block wx:if="{{searching}}">
+    <view class="section-label">搜索「{{keyword}}」命中 {{searchResults.length}} 个</view>
+    <view wx:for="{{searchResults}}" wx:key="id"
+          class="card stripe {{item.cls}} item"
+          data-id="{{item.id}}" bindtap="openCard">
+      <view class="item-top">
+        <text class="item-prompt">{{item.prompt}}</text>
+        <text class="tag {{item.cls}}">{{item.status}}</text>
+      </view>
+      <view class="item-answer">{{item.answer}}</view>
+      <view class="item-hook t-hint">{{item.hook}}</view>
+      <view class="item-src t-hint">{{item.subject}} · {{item.source}}</view>
+    </view>
+    <view wx:if="{{searchResults.length === 0}}" class="empty">
+      <view class="empty-sub">没找到。试试更短的关键词，或换个说法。</view>
+    </view>
+  </block>
+
+  <!-- 错题本入口：只在有内容时出现 -->
+  <view wx:if="{{!searching && weakCount > 0}}" class="card stripe red weak-entry" bindtap="goWeakPractice">
+    <view class="item-top">
+      <text class="item-prompt">错题本</text>
+      <text class="tag red">{{weakCount}} 个</text>
+    </view>
+    <view class="t-hint" style="margin-top: 10rpx;">
+      答错过或标过「模糊」的卡 → 专项重练
+    </view>
+  </view>
+
+  <!-- 总览：一眼看到"我到哪了" -->
+  <view class="card stripe head">
+    <view class="head-top">
+      <view>
+        <view class="t-title">我的单词本</view>
+        <view class="t-hint" style="margin-top: 6rpx;">{{today}}</view>
+      </view>
+      <view class="points">
+        <view class="points-num t-num">{{points}}</view>
+        <view class="t-hint">积分</view>
+      </view>
+    </view>
+
+    <view class="bar" style="margin-top: 28rpx;">
+      <view class="bar-fill" style="transform: scaleX({{overall.percent / 100}});"></view>
+    </view>
+    <view class="stat-grid">
+      <view class="stat">
+        <view class="stat-num hl t-num">{{overall.mastered}}</view>
+        <view class="t-hint">已掌握</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num t-num">{{overall.learning}}</view>
+        <view class="t-hint">复习中</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num t-num">{{overall.fresh}}</view>
+        <view class="t-hint">还没学</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num t-num">{{overall.total}}</view>
+        <view class="t-hint">词库总数</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日任务 -->
+  <view class="card stripe {{dueCount > 0 ? 'yellow' : 'gray'}} due">
+    <view class="due-row">
+      <view>
+        <view class="due-num t-num">{{dueCount}}</view>
+        <view class="t-sub">{{dueCount > 0 ? '个待复习' : '今天已经复习完'}}</view>
+      </view>
+      <button class="btn primary{{dueCount > 0 ? '' : ''}}" style="min-width: 220rpx;" bindtap="goStudy" disabled="{{dueCount === 0}}">
+        {{dueCount > 0 ? '开始复习' : '都复习完了'}}
+      </button>
+    </view>
+    <view wx:if="{{dueCount === 0 && nextDue}}" class="t-hint" style="margin-top: 16rpx;">
+      下一批到期：{{nextDue}}
+    </view>
+  </view>
+
+  <!-- 内容管理入口：自己加词 / 导教材 / 调设置 -->
+  <view class="tools">
+    <view class="tool" bindtap="goAdd">
+      <view class="tool-t">＋ 添加词</view>
+      <view class="tool-s">手输 / 粘贴 / AI 识别</view>
+    </view>
+    <view class="tool" bindtap="goCurriculum">
+      <view class="tool-t">教材导入</view>
+      <view class="tool-s">按单元批量</view>
+    </view>
+    <view class="tool" bindtap="goSettings">
+      <view class="tool-t">设置</view>
+      <view class="tool-s">每日量 · 朗读</view>
+    </view>
+  </view>
+
+  <!-- 学科列表 -->
+  <view class="section-label" style="margin-top: 32rpx;">按学科</view>
+
+  <view wx:for="{{subjects}}" wx:key="subject" class="subj" data-subject="{{item.subject}}" bindtap="toggleSubject">
+    <view class="card stripe {{item.dueToday > 0 ? 'yellow' : ''}} subj-card">
+      <view class="subj-top">
+        <text class="subj-name">{{item.subject}}</text>
+        <text class="t-hint t-num">{{item.total}} 词</text>
+      </view>
+
+      <!-- 三段式进度：已掌握/复习中/未学，用色块长度表达 -->
+      <view class="seg-bar">
+        <view class="seg mastered" style="flex: {{item.mastered}};"></view>
+        <view class="seg learning" style="flex: {{item.learning}};"></view>
+        <view class="seg fresh" style="flex: {{item.fresh}};"></view>
+      </view>
+
+      <view class="subj-foot">
+        <text class="t-hint">已掌握 {{item.mastered}}</text>
+        <text wx:if="{{item.dueToday > 0}}" class="tag yellow">今天 {{item.dueToday}} 个</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 展开的卡片列表：点整条进详情页，看钩子与来源 -->
+  <block wx:if="{{expanded}}">
+    <view class="section-label" style="margin-top: 32rpx;">{{expanded}} · 全部单词</view>
+    <view wx:for="{{cardList}}" wx:key="id"
+          class="card stripe {{item.cls}} item"
+          data-id="{{item.id}}" bindtap="openCard">
+      <view class="item-top">
+        <text class="item-prompt">{{item.prompt}}</text>
+        <text class="tag {{item.cls}}">{{item.status}}</text>
+      </view>
+      <view class="item-answer">{{item.answer}}</view>
+      <view class="item-hook t-hint">{{item.hook}}</view>
+      <view class="item-src t-hint">{{item.source}} · 点开看钩子</view>
+    </view>
+  </block>
+
+  <view wx:if="{{subjects.length === 0}}" class="empty">
+    <view class="empty-title">词库是空的</view>
+    <view class="empty-sub">用上面的「教材导入」一次带进整册单词，或「添加词」手动录入。</view>
+  </view>
+
+  <view class="foot">
+    <view class="btn danger small" bindtap="resetProgress">清空学习进度</view>
+    <view class="t-hint" style="margin-top: 20rpx; text-align: center;">
+      基于 SM-2 间隔重复算法 · 数据只存本机
+    </view>
+  </view>
+</view>

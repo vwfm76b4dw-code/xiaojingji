@@ -1,0 +1,213 @@
+.page {
+  padding: 32rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 分段切换：绿色选中态 */
+.seg {
+  display: flex;
+  border: 2rpx solid var(--line);
+  border-radius: 16rpx;
+  background: var(--card);
+  margin-bottom: 32rpx;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  padding: 20rpx 0;
+  color: var(--ink-2);
+  border-radius: 14rpx;
+}
+
+.seg-item.on {
+  background: var(--green);
+  color: #FAF6EC;
+  font-weight: 600;
+}
+
+.form { border-left: 10rpx solid var(--green); }
+
+.field { margin-bottom: 32rpx; }
+
+.label {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  margin-bottom: 12rpx;
+}
+
+/* 字段标签与 AI 小按钮同行 */
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.label-row .label { margin-bottom: 0; }
+
+.mini-btn {
+  font-size: 24rpx;
+  color: var(--green);
+  border: 2rpx solid var(--green);
+  border-radius: 8rpx;
+  padding: 6rpx 18rpx;
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.mini-btn:active { transform: scale(0.94); }
+
+.mini-btn.busy {
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+.input {
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  padding: 20rpx 24rpx;
+  font-size: 30rpx;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 280rpx;
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  padding: 20rpx 24rpx;
+  font-size: 30rpx;
+  box-sizing: border-box;
+  margin: 8rpx 0 32rpx;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  text-align: center;
+  margin-top: 24rpx;
+}
+
+/*----------------------- AI 智能录入 -----------------------*/
+
+/* 解析中：横条从左向右扫出，只动 transform */
+.ai-loading { margin-top: 24rpx; }
+
+.ai-bar {
+  height: 4rpx;
+  background: var(--green);
+  transform-origin: left center;
+  animation: ai-scan 1100ms cubic-bezier(0.32, 0.94, 0.60, 1) infinite;
+}
+
+@keyframes ai-scan {
+  0%   { transform: scaleX(0); }
+  55%  { transform: scaleX(1); }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* 提示条：默认中性，warn 用警示红只在"需要你换个做法"时才出现 */
+.ai-note {
+  margin-top: 28rpx;
+  padding: 24rpx;
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+}
+
+.ai-note.warn { border-left: 8rpx solid var(--red); }
+
+.ai-note-text {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.ai-note .mini-btn {
+  display: inline-block;
+  margin-top: 20rpx;
+}
+
+.ai-result-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 32rpx 0 16rpx;
+  font-size: 28rpx;
+  color: var(--green-d);
+  font-weight: 600;
+}
+
+.ai-dup {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+.ai-list {
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.ai-item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 24rpx;
+  border-bottom: 2rpx solid var(--line);
+  background: var(--card);
+}
+
+.ai-item:last-child { border-bottom: none; }
+
+.ai-item-main { flex: 1; min-width: 0; }
+
+.ai-w {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin-right: 16rpx;
+}
+
+.ai-m {
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.ai-del {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: var(--red);
+  border: 2rpx solid var(--red);
+  border-radius: 8rpx;
+  padding: 6rpx 16rpx;
+  margin-left: 16rpx;
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.ai-del:active { transform: scale(0.94); }
+
+/*----------------------- 教材词库入口 -----------------------*/
+
+.book-entry {
+  margin-top: 32rpx;
+  border-left: 10rpx solid var(--yellow);
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+
+.book-entry:active { transform: scale(0.98); }
+
+.be-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--green-d);
+}
+
+.be-sub {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  margin-top: 8rpx;
+}

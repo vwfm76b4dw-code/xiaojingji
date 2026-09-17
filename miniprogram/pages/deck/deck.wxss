@@ -1,0 +1,138 @@
+.head { margin-bottom: 24rpx; }
+.head-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.points { text-align: right; }
+.points-num { font-size: 48rpx; font-weight: 700; color: var(--green); line-height: 1.1; }
+
+.head-stats {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 16rpx;
+  flex-wrap: wrap;
+}
+.hl { color: var(--green); font-weight: 600; }
+
+.due { margin-bottom: 24rpx; }
+.due-row { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; }
+.due-num { font-size: 72rpx; font-weight: 700; color: var(--ink); line-height: 1.05; }
+
+.note { margin-bottom: 16rpx; }
+
+/* 学科卡片 */
+.subj { margin-bottom: 20rpx; }
+.subj-card { padding: 28rpx; }
+.subj-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+.subj-name { font-size: 34rpx; font-weight: 600; color: var(--ink); }
+
+/* 三段进度：色块宽度按数量比例（flex 权重） */
+.seg-bar {
+  display: flex;
+  height: 14rpx;
+  border-radius: 2rpx;
+  overflow: hidden;
+  background: var(--card-2);
+}
+.seg { height: 100%; }
+.seg.mastered { background: var(--green); }
+.seg.learning { background: var(--yellow); }
+.seg.fresh { background: var(--line-2); }
+
+.subj-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+
+/* 展开的卡片项 */
+.item { margin-bottom: 16rpx; padding: 24rpx 28rpx; }
+.item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.item-prompt { font-size: 32rpx; font-weight: 600; color: var(--ink); flex: 1; }
+.item-answer {
+  font-size: 28rpx;
+  color: var(--ink-2);
+  margin-top: 10rpx;
+  padding-left: 16rpx;
+  border-left: 4rpx solid var(--card-2);
+}
+.item-src { margin-top: 12rpx; }
+
+.foot { padding: 48rpx 0 32rpx; }
+
+.item-hook {
+  margin-top: 12rpx;
+  padding-left: 16rpx;
+  border-left: 4rpx solid var(--yellow);
+  line-height: 1.65;
+}
+
+/* 搜索栏 */
+.search {
+  display: flex;
+  gap: 14rpx;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+.search-input {
+  flex: 1;
+  background: var(--card);
+  border: 2rpx solid var(--line-2);
+  border-radius: 8rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+}
+.ph { color: var(--ink-3); }
+
+/* 错题本入口 */
+.weak-entry { margin-bottom: 24rpx; }
+
+/* 内容管理入口：三个等宽方块。这里用等宽是刻意的——
+   "添加/导入/设置"是同层级的并列动作，不存在主次，做成大小不一反而误导。 */
+.tools {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+.tool {
+  flex: 1;
+  background: var(--card);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 24rpx 16rpx;
+  text-align: center;
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.tool:active { transform: scale(0.96); }
+.tool-t { font-size: 28rpx; color: var(--green-d); font-weight: 600; }
+.tool-s { font-size: 22rpx; color: var(--ink-2); margin-top: 6rpx; }
+
+/* 四组统计数据：2×2 网格
+   原来挤在一行（"已掌握 0 复习中 1 未学 294 共 295"），
+   在窄屏上会换行且数字与标签粘连，读起来像一串数字。 */
+.stat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid var(--line);
+}
+.stat {
+  width: 25%;
+  text-align: center;
+}
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.stat-num.hl { color: var(--green); }

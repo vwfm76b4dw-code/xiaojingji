@@ -1,0 +1,119 @@
+<view class="page">
+  <view class="seg">
+    <view class="seg-item {{mode === 'single' ? 'on' : ''}}" data-mode="single" bindtap="switchMode">单个添加</view>
+    <view class="seg-item {{mode === 'batch' ? 'on' : ''}}" data-mode="batch" bindtap="switchMode">批量粘贴</view>
+    <view class="seg-item {{mode === 'ai' ? 'on' : ''}}" data-mode="ai" bindtap="switchMode">AI 智能录入</view>
+  </view>
+
+  <view wx:if="{{mode === 'single'}}" class="card form">
+    <view class="field">
+      <view class="label">单词 *</view>
+      <input class="input" placeholder="例如：review" value="{{word}}" data-k="word" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <view class="label">释义 *</view>
+      <input class="input" placeholder="例如：n./v. 复习" value="{{meaning}}" data-k="meaning" bindinput="onInput" />
+    </view>
+
+    <view class="field">
+      <view class="label-row">
+        <text class="label">例句（选填）</text>
+        <view class="mini-btn {{exBusy ? 'busy' : ''}}" bindtap="genExample">
+          {{exBusy ? '生成中…' : 'AI 生成'}}
+        </view>
+      </view>
+      <input class="input" placeholder="一句贴近自己生活的句子" value="{{example}}" data-k="example" bindinput="onInput" />
+    </view>
+
+    <view class="field">
+      <view class="label-row">
+        <text class="label">词根记忆法（选填）</text>
+        <view class="mini-btn {{mnBusy ? 'busy' : ''}}" bindtap="genMnemonic">
+          {{mnBusy ? '生成中…' : 'AI 生成'}}
+        </view>
+      </view>
+      <input class="input" placeholder="例如：re（再）+ view（看）→ 再看一遍" value="{{mnemonic}}" data-k="mnemonic" bindinput="onInput" />
+    </view>
+
+    <button class="btn primary big" bindtap="saveSingle">保存</button>
+    <view class="hint">保存后立即进入今日复习队列，之后的间隔由算法安排</view>
+  </view>
+
+  <view wx:elif="{{mode === 'batch'}}" class="card form">
+    <view class="label">粘贴多组单词，用逗号、顿号或换行分隔</view>
+    <textarea
+      class="textarea"
+      placeholder="abandon 遗弃，abundant 丰富的&#10;accelerate 加速"
+      value="{{batch}}"
+      data-k="batch"
+      bindinput="onInput"
+      maxlength="2000"
+    ></textarea>
+    <button class="btn primary big" bindtap="saveBatch">解析并添加</button>
+    <view class="hint">每条格式：单词（空格）释义。重复或无法识别的条目会自动跳过</view>
+  </view>
+
+  <view wx:else class="card form">
+    <view class="label">用平时说话的方式写，AI 帮你拆成词条</view>
+    <textarea
+      class="textarea"
+      placeholder="例如：今天背了 abandon 遗弃，还有 abundant 丰富的&#10;accelerate 是加速的意思"
+      value="{{aiText}}"
+      data-k="aiText"
+      bindinput="onInput"
+      maxlength="2000"
+      disabled="{{aiBusy}}"
+    ></textarea>
+
+    <button class="btn primary big" bindtap="runAiParse" disabled="{{aiBusy}}">
+      {{aiBusy ? 'AI 解析中…' : 'AI 解析'}}
+    </button>
+
+    <!-- 解析中：进度条用 scaleX 动画，只动 transform -->
+    <view wx:if="{{aiBusy}}" class="ai-loading">
+      <view class="ai-bar"></view>
+      <view class="hint">正在把这段话拆成单词和释义…</view>
+    </view>
+
+    <!-- 失败：说清发生了什么 + 给出可行退路，不出现错误码 -->
+    <view wx:if="{{aiMsg && !aiOk}}" class="ai-note warn">
+      <view class="ai-note-text">{{aiMsg}}</view>
+      <view class="mini-btn" bindtap="switchToBatch">改用批量粘贴</view>
+    </view>
+
+    <view wx:if="{{!aiReady}}" class="ai-note">
+      <view class="ai-note-text">本机未开通云开发，AI 录入暂不可用。用「批量粘贴」同样能一次录入多个词。</view>
+    </view>
+
+    <!-- 成功：先给用户看清楚，确认后才写入词库 -->
+    <block wx:if="{{aiOk && aiItems.length > 0}}">
+      <view class="ai-result-head">
+        <text>识别到 {{aiItems.length}} 个词</text>
+        <text wx:if="{{aiDupCount > 0}}" class="ai-dup">已跳过 {{aiDupCount}} 个重复词</text>
+      </view>
+
+      <view class="ai-list">
+        <view class="ai-item" wx:for="{{aiItems}}" wx:key="word">
+          <view class="ai-item-main">
+            <text class="ai-w">{{item.word}}</text>
+            <text class="ai-m">{{item.meaning}}</text>
+          </view>
+          <view class="ai-del" data-i="{{index}}" bindtap="dropAiItem">移除</view>
+        </view>
+      </view>
+
+      <view class="hint">确认无误后再加入词库；不想要的可以点「移除」</view>
+      <button class="btn primary big" bindtap="confirmAiItems">确认添加 {{aiItems.length}} 个词</button>
+    </block>
+
+    <view wx:if="{{aiOk && aiItems.length === 0}}" class="ai-note">
+      <view class="ai-note-text">{{aiMsg || '没有识别到新的单词'}}</view>
+    </view>
+  </view>
+
+  <!-- 教材词库入口：与三种录入方式并列的第四条来源，独立成卡 -->
+  <view class="card book-entry" bindtap="goCurriculum">
+    <view class="be-title">从教材词库导入</view>
+    <view class="be-sub">外研版 2024 新版七年级上册 · 295 个词 · 按单元选</view>
+  </view>
+</view>

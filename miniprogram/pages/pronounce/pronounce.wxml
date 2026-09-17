@@ -1,0 +1,146 @@
+<view class="page">
+  <!-- 服务不可用：如实说明（对学生说人话，技术细节在设置页） -->
+  <view wx:if="{{service === 'fail'}}" class="note warn">
+    <text>{{serviceMsg}}</text>
+  </view>
+
+  <view wx:if="{{!ready}}" class="empty">
+    <view class="empty-sub">载入中…</view>
+  </view>
+
+  <!-- 完成态 -->
+  <block wx:elif="{{finished}}">
+    <view class="card stripe green done-card pop">
+      <view class="done-title">这一轮读完了</view>
+      <view class="done-stats">
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--green);">{{stats.pass}}</text>
+          <text class="t-hint">读得不错</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--yellow-ink);">{{stats.borderline}}</text>
+          <text class="t-hint">再练练</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--red);">{{stats.fail}}</text>
+          <text class="t-hint">读错了</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num">{{stats.unknown}}</text>
+          <text class="t-hint">先听发音</text>
+        </view>
+      </view>
+      <view class="t-hint" style="margin-top: 28rpx; line-height: 1.7;">
+        每个词的朗读结果都记下来了，读不好下次会再遇到。
+      </view>
+    </view>
+
+    <view class="btn-row" style="margin-top: 32rpx;">
+      <button class="btn ghost" bindtap="goStudy">去复习</button>
+      <button class="btn primary" bindtap="restart">再读一轮</button>
+    </view>
+  </block>
+
+  <!-- 朗读中 -->
+  <block wx:elif="{{card}}">
+    <!-- 进度 -->
+    <view class="topbar">
+      <view class="bar">
+        <view class="bar-fill" style="transform: scaleX({{(idx + 1) / total}});"></view>
+      </view>
+      <view class="topbar-row">
+        <text class="t-hint t-num">{{idx + 1}}/{{total}}</text>
+        <text wx:if="{{service === 'fail'}}" class="t-hint">{{serviceMsg}}</text>
+      </view>
+    </view>
+
+    <!-- 单词卡 -->
+    <view class="card stripe {{result ? (result.band === 'pass' ? 'green' : (result.band === 'fail' ? 'red' : 'yellow')) : ''}} word-card">
+      <view class="word">{{card.prompt}}</view>
+
+      <!-- 揭示后才显示释义与钩子（避免看到答案才读） -->
+      <block wx:if="{{revealed}}">
+        <view class="answer">{{card.answer}}</view>
+        <view wx:if="{{card.detail}}" class="detail">{{card.detail}}</view>
+        <view wx:if="{{cfg.showHook}}" class="hook">
+          <view class="hook-label">记忆钩子</view>
+          <view class="hook-text">{{card.hook}}</view>
+        </view>
+      </block>
+      <view wx:else class="t-hint" style="text-align: center; margin-top: 24rpx;">
+        先读出来，读完就能看到释义和记忆钩子
+      </view>
+    </view>
+
+    <!-- 评测结果 -->
+    <view wx:if="{{result}}" class="card result stripe {{result.band}} rise">
+      <view class="res-head">
+        <text class="res-verdict">{{result.verdict}}</text>
+        <text wx:if="{{result.band !== 'unknown'}}" class="tag">{{result.scorePct}} 分</text>
+      </view>
+      <view wx:if="{{result.heard}}" class="t-hint">听到的是「{{result.heard}}」</view>
+      <view wx:if="{{result.suggestion}}" class="res-tip">{{result.suggestion}}</view>
+    </view>
+
+    <view wx:if="{{judging}}" class="card result judging">
+      <view class="sweep"></view>
+      <view class="t-hint" style="text-align: center; margin-top: 14rpx;">正在听你读的…</view>
+    </view>
+
+    <!-- 操作区（底部固定，避免结果卡把它挤出屏幕） -->
+    <view class="bottom-bar">
+    <view class="actions">
+      <!-- 喇叭：随时可听标准发音 -->
+      <view class="round-btn {{playing ? 'playing' : ''}}" bindtap="playAudio"
+            aria-role="button" aria-label="听标准发音">
+        <!-- 纯 CSS 图标：emoji 在不同系统字形不一，且违反项目"禁 emoji 当图标"规范 -->
+        <view class="ico-wrap">
+          <view wx:if="{{playing}}" class="ico-stop"></view>
+          <view wx:else class="ico-sound"><view class="ico-wave"></view></view>
+        </view>
+        <text class="round-label">{{playing ? '停止' : '听发音'}}</text>
+      </view>
+
+      <!-- 主按钮：按住读 -->
+      <view class="mic-btn {{recording ? 'rec' : ''}} {{judging ? 'disabled' : ''}}"
+            bindtouchstart="startRecord"
+            bindtouchend="stopRecord"
+            bindtouchcancel="stopRecord"
+            catchtouchmove="noop"
+            aria-role="button"
+            aria-label="{{recording ? '松开结束录音' : '按住读出这个单词'}}">
+        <block wx:if="{{recording}}">
+          <text class="mic-text">松开结束</text>
+          <text class="mic-sub t-num">{{recSec}}s</text>
+        </block>
+        <block wx:else>
+          <text class="mic-text">按住读</text>
+          <text class="mic-sub">读这个单词</text>
+        </block>
+      </view>
+
+      <!-- 不会读 -->
+      <view class="round-btn" bindtap="markUnknown"
+            aria-role="button" aria-label="不会读，先听发音">
+        <text class="round-icon-q">?</text>
+        <text class="round-label">不会读</text>
+      </view>
+    </view>
+
+    <!-- 下一步 -->
+    <view wx:if="{{result}}" class="btn-row" style="margin-top: 20rpx;">
+      <button class="btn ghost" bindtap="replay">再听一遍</button>
+      <button class="btn primary" bindtap="next">下一个</button>
+    </view>
+    </view>
+  </block>
+
+  <!-- 没有卡片 -->
+  <view wx:else class="empty">
+    <view class="empty-title">暂时没有要读的单词</view>
+    <view class="empty-sub">今天的部分已完成，或词库还没载入。</view>
+    <view class="btn-row" style="margin-top: 40rpx;">
+      <button class="btn primary" bindtap="goStudy">去复习</button>
+    </view>
+  </view>
+</view>

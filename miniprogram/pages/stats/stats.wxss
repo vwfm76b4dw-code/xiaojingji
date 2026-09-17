@@ -1,0 +1,154 @@
+.big-row {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 8rpx;
+}
+.big { text-align: center; }
+.big-num {
+  font-size: 64rpx;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.1;
+}
+.pct { font-size: 32rpx; font-weight: 400; margin-left: 4rpx; }
+
+.kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+.kv:last-child { border-bottom: none; }
+
+.chart-line { width: 100%; height: 180px; display: block; }
+.chart-hbar { width: 100%; display: block; }
+
+/* 指标块 */
+.metric { margin-bottom: 32rpx; }
+.metric:last-child { margin-bottom: 0; }
+.metric-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.metric-val { font-size: 36rpx; font-weight: 600; color: var(--ink); }
+.metric .t-hint { margin-top: 10rpx; line-height: 1.7; }
+
+.note { margin-top: 8rpx; }
+
+.foot { text-align: center; padding: 48rpx 0 32rpx; }
+
+/* 错题本区块 */
+.weak-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+.weak-num {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: var(--red);
+  line-height: 1.1;
+}
+
+/* 复习量分布柱状图。
+   必须显式给高度：canvas 默认高度是 150px 但宽度为 0，
+   chart.js 的 setup() 会按容器尺寸设画布 —— 没有 CSS 尺寸时
+   initCanvas 拿到 size 为 0，绘制直接静默跳过，用户看到一片空白。 */
+.chart-bars { width: 100%; height: 160px; display: block; }
+
+/* 星期分布柱状图。height 必须与 stats.js 里 initCanvas('c-weekday', 150)
+   传的值一致 —— 两者不一致会让画布被拉伸，字形和柱子都变形。 */
+.chart-weekday { width: 100%; height: 150px; display: block; }
+
+/* 沉淀指数环形图。宽高都必须写，且相等：chart.js 的 drawRing 按
+   min(width,height)/2 算半径，宽高不等画出来是椭圆；高度还要与
+   initCanvas('c-sediment', 120) 一致。flex: none 防止被横向压扁。 */
+.chart-ring { width: 120px; height: 120px; flex: none; display: block; }
+
+/* ============ 学习连续性 ============ */
+.streak-row {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+.streak-main { flex: none; text-align: center; }
+/* 本页最重要的正反馈，字号刻意压过其它数字（总览大数字是 64rpx） */
+.streak-num {
+  font-size: 88rpx;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.05;
+}
+.streak-side { flex: 1; min-width: 0; }
+.streak-side .kv { padding: 10rpx 0; }
+
+/* 近 30 天打卡条：每格一天。flex:1 让它自适应宽度，不写死每格尺寸
+   （30 格写死会因机型宽度不同而换行或溢出） */
+.pips {
+  display: flex;
+  gap: 4rpx;
+  margin-top: 24rpx;
+}
+.pip {
+  flex: 1;
+  height: 24rpx;
+  border-radius: 4rpx;
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  box-sizing: border-box;
+  /* 状态切换 240ms：格子由灰转绿是"那天学了"的确认反馈 */
+  transition: background-color var(--dur-state) var(--ease-out),
+              border-color var(--dur-state) var(--ease-out);
+}
+.pip.on {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+/* ============ 记忆保持率 ============ */
+.retain-top {
+  display: flex;
+  align-items: baseline;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.retain-num {
+  flex: none;
+  font-size: 72rpx;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.1;
+}
+.retain-side { flex: 1; line-height: 1.6; }
+
+/* ============ 记忆沉淀指数 ============ */
+.sed-row {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+.sed-side { flex: 1; min-width: 0; }
+.sed-item { margin-top: 18rpx; }
+.sed-item:first-child { margin-top: 16rpx; }
+.sed-item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.sed-key {
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+.sed-note { margin-top: 8rpx; line-height: 1.5; }
+
+/* ============ 朗读表现的标签行 ============ */
+.pron-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}

@@ -1,0 +1,686 @@
+{
+  "book": "北京版小学英语一年级上册",
+  "grade": "g1",
+  "count": 169,
+  "words": [
+    {
+      "word": "tomorrow",
+      "meaning": "在明天；在明日"
+    },
+    {
+      "word": "over",
+      "meaning": "（表示方向）越过"
+    },
+    {
+      "word": "class",
+      "meaning": "班"
+    },
+    {
+      "word": "work",
+      "meaning": "使工作"
+    },
+    {
+      "word": "pen",
+      "meaning": "笔；笔尖"
+    },
+    {
+      "word": "get",
+      "meaning": "得到"
+    },
+    {
+      "word": "bed",
+      "meaning": "床"
+    },
+    {
+      "word": "pet",
+      "meaning": "宠物"
+    },
+    {
+      "word": "same",
+      "meaning": "同一的"
+    },
+    {
+      "word": "aunt",
+      "meaning": "阿姨"
+    },
+    {
+      "word": "hot",
+      "meaning": "热的"
+    },
+    {
+      "word": "bob",
+      "meaning": "n. 短发波波头 v. 上下摆动 Bob（人名鲍勃）"
+    },
+    {
+      "word": "box",
+      "meaning": "盒"
+    },
+    {
+      "word": "dog",
+      "meaning": "狗"
+    },
+    {
+      "word": "uncle",
+      "meaning": "叔叔"
+    },
+    {
+      "word": "beard",
+      "meaning": "胡须"
+    },
+    {
+      "word": "ear",
+      "meaning": "耳朵"
+    },
+    {
+      "word": "deer",
+      "meaning": "鹿"
+    },
+    {
+      "word": "dear",
+      "meaning": "亲爱的"
+    },
+    {
+      "word": "Christmas",
+      "meaning": "圣诞节"
+    },
+    {
+      "word": "merry",
+      "meaning": "adj. 欢乐的，愉快的"
+    },
+    {
+      "word": "rain",
+      "meaning": "雨"
+    },
+    {
+      "word": "bell",
+      "meaning": "n. 钟，铃"
+    },
+    {
+      "word": "hear",
+      "meaning": "听到；听见"
+    },
+    {
+      "word": "for",
+      "meaning": "为；为了"
+    },
+    {
+      "word": "job",
+      "meaning": "（一件）工作"
+    },
+    {
+      "word": "done",
+      "meaning": "已完成的"
+    },
+    {
+      "word": "well",
+      "meaning": "好"
+    },
+    {
+      "word": "skirt",
+      "meaning": "裙子"
+    },
+    {
+      "word": "bring",
+      "meaning": "带来；引来"
+    },
+    {
+      "word": "bird",
+      "meaning": "鸟；禽"
+    },
+    {
+      "word": "house",
+      "meaning": "房屋"
+    },
+    {
+      "word": "mouse",
+      "meaning": "老鼠"
+    },
+    {
+      "word": "out",
+      "meaning": "出局"
+    },
+    {
+      "word": "no",
+      "meaning": "不"
+    },
+    {
+      "word": "ping-pong",
+      "meaning": "乒乓球"
+    },
+    {
+      "word": "play",
+      "meaning": "比赛"
+    },
+    {
+      "word": "wonder",
+      "meaning": "奇妙的"
+    },
+    {
+      "word": "twinkle",
+      "meaning": "闪烁"
+    },
+    {
+      "word": "card",
+      "meaning": "卡片"
+    },
+    {
+      "word": "star",
+      "meaning": "星"
+    },
+    {
+      "word": "swim",
+      "meaning": "游泳"
+    },
+    {
+      "word": "car",
+      "meaning": "汽车"
+    },
+    {
+      "word": "driver",
+      "meaning": "驾驶员；司机"
+    },
+    {
+      "word": "can",
+      "meaning": "能"
+    },
+    {
+      "word": "fly",
+      "meaning": "飞"
+    },
+    {
+      "word": "jump",
+      "meaning": "跳"
+    },
+    {
+      "word": "dance",
+      "meaning": "跳舞"
+    },
+    {
+      "word": "sing",
+      "meaning": "唱；歌唱；吟诵"
+    },
+    {
+      "word": "lesson",
+      "meaning": "教训；训诫"
+    },
+    {
+      "word": "lost",
+      "meaning": "失去的"
+    },
+    {
+      "word": "shall",
+      "meaning": "将要"
+    },
+    {
+      "word": "me",
+      "meaning": "（人称代词I的宾格）我"
+    },
+    {
+      "word": "try",
+      "meaning": "试图；努力"
+    },
+    {
+      "word": "will",
+      "meaning": "v. aux. 将要 n. 意志"
+    },
+    {
+      "word": "who",
+      "meaning": "谁"
+    },
+    {
+      "word": "draw",
+      "meaning": "绘画"
+    },
+    {
+      "word": "yummy",
+      "meaning": "很好吃的"
+    },
+    {
+      "word": "lily",
+      "meaning": "n. 百合花 Lily（人名莉莉）"
+    },
+    {
+      "word": "dish",
+      "meaning": "盘"
+    },
+    {
+      "word": "fish",
+      "meaning": "鱼；鱼肉；鱼类"
+    },
+    {
+      "word": "little",
+      "meaning": "小的"
+    },
+    {
+      "word": "silver",
+      "meaning": "adj. 银色的 n. 银"
+    },
+    {
+      "word": "moon",
+      "meaning": "月亮；月球"
+    },
+    {
+      "word": "spoon",
+      "meaning": "匙；调羹"
+    },
+    {
+      "word": "meet",
+      "meaning": "相遇"
+    },
+    {
+      "word": "tight",
+      "meaning": "紧的；牢固的"
+    },
+    {
+      "word": "sleep",
+      "meaning": "睡；睡觉"
+    },
+    {
+      "word": "eye",
+      "meaning": "眼睛"
+    },
+    {
+      "word": "this",
+      "meaning": "这；这个"
+    },
+    {
+      "word": "friend",
+      "meaning": "朋友；友人"
+    },
+    {
+      "word": "next",
+      "meaning": "紧接在后的"
+    },
+    {
+      "word": "seat",
+      "meaning": "席位；座位"
+    },
+    {
+      "word": "back",
+      "meaning": "背；背部"
+    },
+    {
+      "word": "here",
+      "meaning": "在这里"
+    },
+    {
+      "word": "come",
+      "meaning": "来"
+    },
+    {
+      "word": "we",
+      "meaning": "我们；咱们"
+    },
+    {
+      "word": "all",
+      "meaning": "全部的"
+    },
+    {
+      "word": "uniform",
+      "meaning": "制服"
+    },
+    {
+      "word": "UFO",
+      "meaning": "不明飞行物；飞碟"
+    },
+    {
+      "word": "bye-bye",
+      "meaning": "再见"
+    },
+    {
+      "word": "in",
+      "meaning": "采用（某种方式）"
+    },
+    {
+      "word": "is",
+      "meaning": "是（be的三单形式"
+    },
+    {
+      "word": "on",
+      "meaning": "（表示方向）向"
+    },
+    {
+      "word": "hut",
+      "meaning": "小屋"
+    },
+    {
+      "word": "nut",
+      "meaning": "螺母；螺帽"
+    },
+    {
+      "word": "cup",
+      "meaning": "杯子"
+    },
+    {
+      "word": "grandma",
+      "meaning": "奶奶；外婆"
+    },
+    {
+      "word": "today",
+      "meaning": "（在）今天"
+    },
+    {
+      "word": "cookbook",
+      "meaning": "食谱；菜谱"
+    },
+    {
+      "word": "cook",
+      "meaning": "烹调"
+    },
+    {
+      "word": "thanks",
+      "meaning": "感谢；谢谢"
+    },
+    {
+      "word": "goodbye",
+      "meaning": "再见"
+    },
+    {
+      "word": "thank",
+      "meaning": "谢谢；感谢"
+    },
+    {
+      "word": "again",
+      "meaning": "再一次"
+    },
+    {
+      "word": "read",
+      "meaning": "v. 读，阅读"
+    },
+    {
+      "word": "close",
+      "meaning": "紧密的"
+    },
+    {
+      "word": "book",
+      "meaning": "书"
+    },
+    {
+      "word": "open",
+      "meaning": "敞开的；开着的"
+    },
+    {
+      "word": "guess",
+      "meaning": "推测"
+    },
+    {
+      "word": "black",
+      "meaning": "黑（色）的"
+    },
+    {
+      "word": "fat",
+      "meaning": "肥的"
+    },
+    {
+      "word": "bag",
+      "meaning": "袋；囊；枕套"
+    },
+    {
+      "word": "cat",
+      "meaning": "猫"
+    },
+    {
+      "word": "dad",
+      "meaning": "爸爸"
+    },
+    {
+      "word": "mum",
+      "meaning": "妈妈"
+    },
+    {
+      "word": "knee",
+      "meaning": "膝"
+    },
+    {
+      "word": "key",
+      "meaning": "n. 钥匙；答案；关键"
+    },
+    {
+      "word": "bee",
+      "meaning": "n. 蜜蜂"
+    },
+    {
+      "word": "night",
+      "meaning": "夜"
+    },
+    {
+      "word": "grandpa",
+      "meaning": "爷爷；外公；老太爷"
+    },
+    {
+      "word": "evening",
+      "meaning": "傍晚"
+    },
+    {
+      "word": "like",
+      "meaning": "喜欢"
+    },
+    {
+      "word": "have",
+      "meaning": "用以构成完成式及完成式的不定式；表示已经…"
+    },
+    {
+      "word": "bike",
+      "meaning": "自行车"
+    },
+    {
+      "word": "kite",
+      "meaning": "风筝"
+    },
+    {
+      "word": "Mr",
+      "meaning": "Mister 先生"
+    },
+    {
+      "word": "afternoon",
+      "meaning": "下午"
+    },
+    {
+      "word": "morning",
+      "meaning": "早晨"
+    },
+    {
+      "word": "too",
+      "meaning": "也"
+    },
+    {
+      "word": "that",
+      "meaning": "那个；那"
+    },
+    {
+      "word": "hope",
+      "meaning": "n./v. 希望"
+    },
+    {
+      "word": "fine",
+      "meaning": "好的；上等的"
+    },
+    {
+      "word": "you",
+      "meaning": "你"
+    },
+    {
+      "word": "are",
+      "meaning": "（用于第二人称单复数现在时；第一；三人称复数现在时）是"
+    },
+    {
+      "word": "how",
+      "meaning": "怎样"
+    },
+    {
+      "word": "hand",
+      "meaning": "n. 手 v. 递给"
+    },
+    {
+      "word": "put",
+      "meaning": "放"
+    },
+    {
+      "word": "down",
+      "meaning": "（坐；倒；躺）下"
+    },
+    {
+      "word": "sit",
+      "meaning": "（使）坐"
+    },
+    {
+      "word": "please",
+      "meaning": "请"
+    },
+    {
+      "word": "up",
+      "meaning": "在上面；在高处"
+    },
+    {
+      "word": "stand",
+      "meaning": "台；看台"
+    },
+    {
+      "word": "watch",
+      "meaning": "注视；注意"
+    },
+    {
+      "word": "colour",
+      "meaning": "颜色"
+    },
+    {
+      "word": "four",
+      "meaning": "四"
+    },
+    {
+      "word": "three",
+      "meaning": "三"
+    },
+    {
+      "word": "two",
+      "meaning": "两个"
+    },
+    {
+      "word": "one",
+      "meaning": "（数字）一"
+    },
+    {
+      "word": "number",
+      "meaning": "数字"
+    },
+    {
+      "word": "foot",
+      "meaning": "脚"
+    },
+    {
+      "word": "wood",
+      "meaning": "n. 木头；树林"
+    },
+    {
+      "word": "good",
+      "meaning": "好的"
+    },
+    {
+      "word": "lake",
+      "meaning": "n. 湖，湖泊"
+    },
+    {
+      "word": "cake",
+      "meaning": "蛋糕"
+    },
+    {
+      "word": "gate",
+      "meaning": "门"
+    },
+    {
+      "word": "act",
+      "meaning": "行动"
+    },
+    {
+      "word": "name",
+      "meaning": "名字"
+    },
+    {
+      "word": "what",
+      "meaning": "（用以询问某人或某事物的词）什么；多少"
+    },
+    {
+      "word": "am",
+      "meaning": "v. 是（be 动词第一人称单数形式）",
+      "_cleaned": "被匹配成 AM（调幅，amplitude modulation）"
+    },
+    {
+      "word": "I",
+      "meaning": "我"
+    },
+    {
+      "word": "hi",
+      "meaning": "（用作问候语）嘿；喂"
+    },
+    {
+      "word": "your",
+      "meaning": "你的；你们的"
+    },
+    {
+      "word": "my",
+      "meaning": "我的(I的所有格形式)"
+    },
+    {
+      "word": "take",
+      "meaning": "拿；取"
+    },
+    {
+      "word": "us",
+      "meaning": "我们"
+    },
+    {
+      "word": "go",
+      "meaning": "走"
+    },
+    {
+      "word": "let",
+      "meaning": "允许；任由"
+    },
+    {
+      "word": "coat",
+      "meaning": "上衣；外套"
+    },
+    {
+      "word": "boat",
+      "meaning": "小船；小艇"
+    },
+    {
+      "word": "a",
+      "meaning": "一（个）"
+    },
+    {
+      "word": "point",
+      "meaning": "点"
+    },
+    {
+      "word": "girl",
+      "meaning": "女孩"
+    },
+    {
+      "word": "boy",
+      "meaning": "男孩；少年"
+    },
+    {
+      "word": "miss",
+      "meaning": "（用于姓名或姓之前；对未婚女子的称呼）小姐"
+    },
+    {
+      "word": "hello",
+      "meaning": "哈喽；喂"
+    },
+    {
+      "word": "say",
+      "meaning": "说； 讲"
+    },
+    {
+      "word": "and",
+      "meaning": "和；与"
+    },
+    {
+      "word": "listen",
+      "meaning": "倾听"
+    }
+  ],
+  "cleaned_at": "2026-09-17",
+  "cleaned_note": "已清洗 koolearn 缩写词错义（见 tools/clean-curriculum.js）"
+}

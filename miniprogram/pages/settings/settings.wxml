@@ -1,0 +1,143 @@
+<view class="page">
+  <!-- 学习量 -->
+  <view class="card">
+    <view class="section-label">学习量</view>
+
+    <view class="row">
+      <view class="row-main">
+        <text class="row-title">每日新词数</text>
+        <text class="t-hint">每天第一次学的单词数量</text>
+      </view>
+      <view class="stepper">
+        <view class="step-btn" data-k="dailyNewWords" data-d="-5" data-min="5" data-max="50" bindtap="step">−</view>
+        <text class="step-val t-num">{{cfg.dailyNewWords}}</text>
+        <view class="step-btn" data-k="dailyNewWords" data-d="5" data-min="5" data-max="50" bindtap="step">＋</view>
+      </view>
+    </view>
+
+    <view class="row">
+      <view class="row-main">
+        <text class="row-title">每日复习上限</text>
+        <text class="t-hint">词库变大后防止一次涌出太多</text>
+      </view>
+      <view class="stepper">
+        <view class="step-btn" data-k="dailyReviewMax" data-d="-10" data-min="10" data-max="200" bindtap="step">−</view>
+        <text class="step-val t-num">{{cfg.dailyReviewMax}}</text>
+        <view class="step-btn" data-k="dailyReviewMax" data-d="10" data-min="10" data-max="200" bindtap="step">＋</view>
+      </view>
+    </view>
+
+    <view class="row">
+      <view class="row-main">
+        <text class="row-title">单轮词数</text>
+        <text class="t-hint">一次复习做多少个词，做完给反馈</text>
+      </view>
+      <view class="stepper">
+        <view class="step-btn" data-k="sessionSize" data-d="-5" data-min="5" data-max="50" bindtap="step">−</view>
+        <text class="step-val t-num">{{cfg.sessionSize}}</text>
+        <view class="step-btn" data-k="sessionSize" data-d="5" data-min="5" data-max="50" bindtap="step">＋</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 朗读练习 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <view class="section-label">朗读练习（AI 听音评测）</view>
+
+    <view class="row" bindtap="toggle" data-k="autoPlayAudio">
+      <view class="row-main">
+        <text class="row-title">没读好时自动播放发音</text>
+        <text class="t-hint">读完立刻听标准读音，趁热纠正</text>
+      </view>
+      <view class="switch {{cfg.autoPlayAudio ? 'on' : ''}}"><view class="knob"></view></view>
+    </view>
+
+    <view class="row" bindtap="toggle" data-k="recordUnknown">
+      <view class="row-main">
+        <text class="row-title">把"不会读"的词收进错题本</text>
+        <text class="t-hint">之后能在「错题重练」里专门过一遍</text>
+      </view>
+      <view class="switch {{cfg.recordUnknown ? 'on' : ''}}"><view class="knob"></view></view>
+    </view>
+
+    <!-- 判定尺度 -->
+    <view class="row" style="flex-direction: column; align-items: stretch;">
+      <view class="row-main" style="margin-bottom: 16rpx;">
+        <text class="row-title">判定尺度</text>
+        <text class="t-hint">宽松更容易通过；严格会揪出发音细节</text>
+      </view>
+      <view class="chips">
+        <view class="chip {{cfg.passScore <= 0.80 ? 'on' : ''}}" data-level="loose" bindtap="pickThreshold">宽松</view>
+        <view class="chip {{cfg.passScore > 0.80 && cfg.passScore < 0.88 ? 'on' : ''}}" data-level="normal" bindtap="pickThreshold">标准</view>
+        <view class="chip {{cfg.passScore >= 0.88 ? 'on' : ''}}" data-level="strict" bindtap="pickThreshold">严格</view>
+      </view>
+      <text class="t-hint" style="margin-top: 12rpx;">
+        当前阈值 {{cfg.passScore}}（低于此分提示"再读一次"）
+      </text>
+    </view>
+  </view>
+
+  <!-- 反馈 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <view class="section-label">反馈与显示</view>
+
+    <view class="row" bindtap="toggle" data-k="showHook">
+      <view class="row-main">
+        <text class="row-title">显示记忆钩子</text>
+        <text class="t-hint">翻卡时展示词根/联想记忆法</text>
+      </view>
+      <view class="switch {{cfg.showHook ? 'on' : ''}}"><view class="knob"></view></view>
+    </view>
+  </view>
+
+  <!-- 朗读服务 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <view class="section-label">朗读服务</view>
+
+    <view class="svc {{asrOk ? 'ok' : 'bad'}}">
+      <text>{{asrMsg}}</text>
+    </view>
+
+    <block wx:if="{{!editingBase}}">
+      <view class="kv-row">
+        <text class="t-sub">服务地址</text>
+        <text class="t-mono svc-url">{{asrBase}}</text>
+      </view>
+      <view class="btn-row" style="margin-top: 20rpx;">
+        <button class="btn ghost small" bindtap="editBase">修改地址</button>
+        <button class="btn ghost small" bindtap="testService">测试连接</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <input class="input" value="{{draftBase}}" bindinput="onBaseInput" placeholder="http://192.168.1.5:8766" />
+      <view class="t-hint" style="margin-top: 12rpx;">
+        真机调试要填电脑局域网 IP（127.0.0.1 在手机上指向手机自己）
+      </view>
+      <view class="btn-row" style="margin-top: 20rpx;">
+        <button class="btn ghost small" bindtap="cancelBase">取消</button>
+        <button class="btn primary small" bindtap="saveBase">保存并测试</button>
+      </view>
+    </block>
+
+    <view class="btn-row" style="margin-top: 24rpx;">
+      <button class="btn primary small" bindtap="goPronounce">去朗读练习</button>
+    </view>
+  </view>
+
+  <!-- 数据 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <view class="section-label">数据</view>
+    <view class="btn-row">
+      <button class="btn ghost small" bindtap="clearPronRecords">清空朗读记录</button>
+      <button class="btn danger-line small" bindtap="resetAll">恢复默认设置</button>
+    </view>
+    <view class="t-hint" style="margin-top: 14rpx;">
+      学习进度不在这些操作范围内，不会被清掉
+    </view>
+  </view>
+
+  <view class="foot t-hint">
+    单词复习调度器 · 数据只存本机
+  </view>
+</view>

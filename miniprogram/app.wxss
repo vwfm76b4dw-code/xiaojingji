@@ -1,0 +1,275 @@
+/* ============================================================
+ * 全局样式 —— 纸感设计体系
+ *   纸底 60 / 主题绿 30 / 校徽黄·主题红 点缀 10
+ *   禁用：渐变、发光阴影、玻璃拟态、深色模板、emoji 当图标
+ *
+ * 体系分层：
+ *   ① token（颜色/圆角/动效时长）
+ *   ② 基础组件（卡片/按钮/标签/进度条）
+ *   ③ 专用组件（卡堆叠/色条/翻卡/结果卡）
+ *   ④ 动效（仅 transform/opacity，附 reduced-motion 降级）
+ * ============================================================ */
+
+page {
+  /* ---- 颜色 token ---- */
+  --paper: #FAF6EC;
+  --card: #FFFDF7;
+  --card-2: #F5EFE0;
+  --green: #00825C;
+  --green-d: #005B41;
+  --yellow: #F6C445;
+  --yellow-ink: #5B4400;
+  --red: #D95F3B;
+  --ink: #2E4A62;
+  --ink-2: #6B7A88;
+  --ink-3: #9AA5AF;
+  --line: rgba(46, 74, 98, 0.16);
+  --line-2: rgba(46, 74, 98, 0.28);
+
+  /* ---- 圆角族：内嵌 8 / 常规 12 / 大模态 20（rpx 为 2 倍）---- */
+  --r-sm: 12rpx;
+  --r-md: 16rpx;
+  --r-lg: 20rpx;
+
+  /* ---- 动效：按 UI 重量分配，禁止全站统一 0.3s ---- */
+  --dur-tap: 120ms;      /* 点击反馈 */
+  --dur-state: 240ms;    /* 状态切换 */
+  --dur-enter: 340ms;    /* 元素入场 */
+  --ease-out: cubic-bezier(0.32, 0.94, 0.60, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Microsoft YaHei", sans-serif;
+  font-size: 32rpx;
+  line-height: 1.6;
+}
+
+/* ============================ ② 基础组件 ============================ */
+
+/**
+ * 页面容器：每个页面的最外层。
+ *
+ * 底部 padding 的 128rpx 是给 tabBar 留的位置 —— tabBar 是**固定浮层**，
+ * 不占文档流，页面内容按普通文档流排会被它压住最后一屏
+ * （表现为底部按钮/说明"被裁掉一半"，且只在 tabBar 页出现，容易被当成页面没做完）。
+ *
+ * 为什么是 128rpx：tabBar 高 100rpx，再加 28rpx 呼吸空间。
+ * 另叠加 env(safe-area-inset-bottom) 兜住 iPhone 的 home indicator。
+ *
+ * ⚠️ 不要在这里写两条 .page 规则（一条简写 padding、一条单项 padding-bottom）：
+ * 简写会重置四个方向，谁在后面谁生效，调的时候极难看出为什么改不动。
+ */
+.page {
+  padding: 32rpx;
+  /* 单写 padding-bottom 覆盖上面简写的底部值 —— 这是刻意的用法 */
+  padding-bottom: calc(128rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.card {
+  background: var(--card);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 32rpx;
+}
+
+/* 左侧色条：全站统一的结构线，比整块底色克制 */
+.stripe { border-left: 10rpx solid var(--green); }
+.stripe.yellow { border-left-color: var(--yellow); }
+.stripe.red { border-left-color: var(--red); }
+.stripe.gray { border-left-color: var(--line-2); }
+
+.btn {
+  border-radius: var(--r-md);
+  font-size: 34rpx;
+  line-height: 1;
+  padding: 24rpx 0;
+  margin: 0;
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.btn::after { border: none; }
+.btn:active { transform: scale(0.96); }
+.btn.big { width: 100%; padding: 30rpx 0; font-size: 36rpx; }
+.btn.small { font-size: 28rpx; padding: 18rpx 0; }
+.btn.primary { background: var(--green); color: #FAF6EC; }
+.btn.primary:active { background: var(--green-d); }
+.btn.ghost { background: transparent; border: 2rpx solid var(--green); color: var(--green); box-sizing: border-box; }
+.btn.danger { background: var(--red); color: #FAF6EC; }
+.btn.danger-line { background: transparent; border: 2rpx solid var(--red); color: var(--red); box-sizing: border-box; }
+.btn[disabled] { background: #CFC9B8; color: #FAF6EC; }
+
+.btn-row { display: flex; gap: 24rpx; margin-top: 40rpx; }
+.btn-row .btn { flex: 1; }
+
+/* 标签：三色语义 */
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  line-height: 1.5;
+  padding: 2rpx 14rpx;
+  border-radius: var(--r-sm);
+  background: var(--card-2);
+  color: var(--ink-2);
+}
+.tag.green { background: rgba(0, 130, 92, 0.12); color: var(--green-d); }
+.tag.yellow { background: rgba(246, 196, 69, 0.28); color: var(--yellow-ink); }
+.tag.red { background: rgba(217, 95, 59, 0.14); color: var(--red); }
+
+/* 筛选 chip */
+.chip {
+  display: inline-block;
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  border-radius: var(--r-sm);
+  border: 2rpx solid var(--line-2);
+  color: var(--ink-2);
+  background: transparent;
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.chip:active { transform: scale(0.96); }
+.chip.on { border-color: var(--green); color: var(--green-d); background: rgba(0, 130, 92, 0.08); }
+
+/* 进度条：只动 scaleX，避免每帧触发 layout */
+.bar {
+  height: 14rpx;
+  border-radius: 7rpx;
+  background: var(--card-2);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--green);
+  transform-origin: left center;
+  transition: transform var(--dur-state) var(--ease-enter);
+}
+.bar-fill.yellow { background: var(--yellow); }
+.bar-fill.gray { background: var(--ink-3); }
+
+.empty { text-align: center; padding: 80rpx 32rpx; color: var(--ink-2); font-size: 28rpx; }
+.empty .big-t { display: block; font-size: 34rpx; color: var(--ink); margin-bottom: 16rpx; }
+
+/* ============================ ③ 排版 ============================ */
+
+.t-title { font-size: 40rpx; font-weight: 600; color: var(--green-d); }
+.t-sub { font-size: 26rpx; color: var(--ink-2); }
+.t-hint { font-size: 24rpx; color: var(--ink-3); }
+.t-num { font-variant-numeric: tabular-nums; }
+.t-mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+.dot { color: var(--ink-2); margin: 0 12rpx; }
+.foot-note { text-align: center; font-size: 24rpx; color: var(--ink-2); padding: 48rpx 0 32rpx; }
+
+
+/* 区块小标题：字距略开 + 弱色，用于分组而不抢主标题层级 */
+.section-label {
+  font-size: 24rpx;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  margin-bottom: 16rpx;
+}
+
+/* 空态两级文案：标题说"没什么"，副文案说"怎么办" */
+.empty-title { font-size: 32rpx; color: var(--ink-2); margin-bottom: 12rpx; }
+.empty-sub { font-size: 26rpx; color: var(--ink-3); line-height: 1.7; }
+
+.note {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  background: var(--card-2);
+  border-radius: var(--r-md);
+  padding: 20rpx 24rpx;
+}
+.note.warn { background: rgba(246, 196, 69, 0.22); color: var(--yellow-ink); }
+.note.info { background: rgba(0, 130, 92, 0.08); color: var(--green-d); }
+
+/* ============================ ④ 专用组件 ============================ */
+
+/* 卡堆叠：暗示"后面还有牌"，靠伪元素做出层叠错觉 */
+.card-stack { position: relative; }
+.card-stack::before,
+.card-stack::after {
+  content: '';
+  position: absolute;
+  left: 12rpx; right: 12rpx;
+  height: 20rpx;
+  background: var(--card);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  z-index: -1;
+}
+.card-stack::before { bottom: -10rpx; transform: scale(0.96); }
+.card-stack::after { bottom: -20rpx; transform: scale(0.92); opacity: 0.7; }
+
+/* 3D 翻卡 */
+/* 外层加透视：没有 perspective 时 rotateY 看起来只是横向压扁，不是翻转 */
+.flip-wrap { perspective: 1200rpx; }
+.flip-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 420ms var(--ease-enter);
+}
+.flip-inner.flipped { transform: rotateY(180deg); }
+.flip-inner > .face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-inner > .face.back {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  transform: rotateY(180deg);
+}
+/* 兼容旧写法的背面定位（若某页仍用 .flip-back 单独挂） */
+.flip-back {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  transform: rotateY(180deg);
+}
+
+/* ============================ ⑤ 动效 ============================ */
+/* 同时运动的元素 ≤3 个；只动 transform/opacity */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12rpx); }
+  40% { transform: translateX(12rpx); }
+  60% { transform: translateX(-8rpx); }
+  80% { transform: translateX(8rpx); }
+}
+.shake { animation: shake 360ms var(--ease-out); }
+
+@keyframes pop {
+  0% { transform: scale(0.86); opacity: 0; }
+  60% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.pop { animation: pop var(--dur-enter) var(--ease-enter); }
+
+@keyframes rise {
+  from { transform: translateY(24rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.rise { animation: rise var(--dur-enter) var(--ease-enter); }
+
+@keyframes slide-in-right {
+  from { transform: translateX(60rpx); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-in-right { animation: slide-in-right var(--dur-state) var(--ease-out); }
+
+@keyframes slide-out-left {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-60rpx); opacity: 0; }
+}
+.slide-out-left { animation: slide-out-left var(--dur-state) var(--ease-out) forwards; }
+
+/* 页面内部切换用的进出场（复习页翻到下一张卡时用）。
+   时长刻意不对称：出场 180ms 比入场 240ms 快 —— 离开的元素不该拖慢节奏。 */
+.slide-out { animation: slide-out-left 180ms var(--ease-out) both; }
+.slide-in { animation: slide-in-right 240ms var(--ease-enter) both; }
+
+/* 前庭障碍用户占 3-5%：眩晕是真实伤害，全局开关是底线 */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .chip, .bar-fill, .flip-inner { transition: none; }
+  .shake, .pop, .rise, .slide-in-right, .slide-out-left { animation: none; }
+}

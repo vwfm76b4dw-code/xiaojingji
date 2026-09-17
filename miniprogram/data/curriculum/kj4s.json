@@ -1,0 +1,274 @@
+{
+  "book": "北京课改版英语四年级上册",
+  "grade": "g4",
+  "count": 66,
+  "words": [
+    {
+      "word": "live",
+      "meaning": "生存"
+    },
+    {
+      "word": "air",
+      "meaning": "天空"
+    },
+    {
+      "word": "say",
+      "meaning": "说； 讲"
+    },
+    {
+      "word": "lake",
+      "meaning": "n. 湖，湖泊"
+    },
+    {
+      "word": "farmer",
+      "meaning": "农场主；农民"
+    },
+    {
+      "word": "close",
+      "meaning": "紧密的"
+    },
+    {
+      "word": "interesting",
+      "meaning": "令人感兴趣的；有趣的"
+    },
+    {
+      "word": "walk",
+      "meaning": "走"
+    },
+    {
+      "word": "ice",
+      "meaning": "冰"
+    },
+    {
+      "word": "clever",
+      "meaning": "聪明的；灵巧的"
+    },
+    {
+      "word": "become",
+      "meaning": "变为；成为"
+    },
+    {
+      "word": "hot",
+      "meaning": "热的"
+    },
+    {
+      "word": "money",
+      "meaning": "钱"
+    },
+    {
+      "word": "change",
+      "meaning": "改变；变更"
+    },
+    {
+      "word": "hamburger",
+      "meaning": "汉堡包"
+    },
+    {
+      "word": "chicken",
+      "meaning": "鸡"
+    },
+    {
+      "word": "pie",
+      "meaning": "馅饼；派"
+    },
+    {
+      "word": "sorry",
+      "meaning": "对不起的"
+    },
+    {
+      "word": "soup",
+      "meaning": "汤；羹"
+    },
+    {
+      "word": "duck",
+      "meaning": "鸭子；野鸭"
+    },
+    {
+      "word": "cook",
+      "meaning": "烹调"
+    },
+    {
+      "word": "sour",
+      "meaning": "有酸味的"
+    },
+    {
+      "word": "healthy",
+      "meaning": "健康的"
+    },
+    {
+      "word": "eat",
+      "meaning": "吃；喝"
+    },
+    {
+      "word": "trousers",
+      "meaning": "裤子"
+    },
+    {
+      "word": "sell",
+      "meaning": "卖；售"
+    },
+    {
+      "word": "shop",
+      "meaning": "商店"
+    },
+    {
+      "word": "buy",
+      "meaning": "购买；购得"
+    },
+    {
+      "word": "how much",
+      "meaning": "多少；什么价钱；到什么程度"
+    },
+    {
+      "word": "shoe",
+      "meaning": "鞋"
+    },
+    {
+      "word": "pair",
+      "meaning": "一副"
+    },
+    {
+      "word": "think",
+      "meaning": "想"
+    },
+    {
+      "word": "brown",
+      "meaning": "adj. 棕色的 Brown（人名布朗）"
+    },
+    {
+      "word": "pen",
+      "meaning": "笔；笔尖"
+    },
+    {
+      "word": "get",
+      "meaning": "得到"
+    },
+    {
+      "word": "fine",
+      "meaning": "好的；上等的"
+    },
+    {
+      "word": "take",
+      "meaning": "拿；取"
+    },
+    {
+      "word": "borrow",
+      "meaning": "借入"
+    },
+    {
+      "word": "glass",
+      "meaning": "玻璃"
+    },
+    {
+      "word": "window",
+      "meaning": "窗；窗户"
+    },
+    {
+      "word": "kind",
+      "meaning": "〈古〉方式；方法"
+    },
+    {
+      "word": "door",
+      "meaning": "门；户"
+    },
+    {
+      "word": "easy",
+      "meaning": "容易的"
+    },
+    {
+      "word": "computer",
+      "meaning": "（电子）计算机；电脑"
+    },
+    {
+      "word": "word",
+      "meaning": "单词"
+    },
+    {
+      "word": "drink",
+      "meaning": "喝（酒）"
+    },
+    {
+      "word": "cold",
+      "meaning": "寒冷的"
+    },
+    {
+      "word": "bad",
+      "meaning": "坏的；不好的"
+    },
+    {
+      "word": "school",
+      "meaning": "学校"
+    },
+    {
+      "word": "bring",
+      "meaning": "带来；引来"
+    },
+    {
+      "word": "really",
+      "meaning": "真；真正"
+    },
+    {
+      "word": "there",
+      "meaning": "在那里"
+    },
+    {
+      "word": "Mrs",
+      "meaning": "n. 夫人，太太"
+    },
+    {
+      "word": "Ms",
+      "meaning": "n. 女士（用于婚姻状况不明的女性姓氏前）",
+      "_cleaned": "koolearn 把 Ms 匹配成了 Montserrat（蒙塞拉特岛）"
+    },
+    {
+      "word": "housework",
+      "meaning": "家务劳动"
+    },
+    {
+      "word": "robot",
+      "meaning": "机器人"
+    },
+    {
+      "word": "speak",
+      "meaning": "讲；谈"
+    },
+    {
+      "word": "upset",
+      "meaning": "打翻；弄翻"
+    },
+    {
+      "word": "get well",
+      "meaning": "康复"
+    },
+    {
+      "word": "look for",
+      "meaning": "寻找（某人或某物）"
+    },
+    {
+      "word": "surprised",
+      "meaning": "惊奇的"
+    },
+    {
+      "word": "sad",
+      "meaning": "悲哀的"
+    },
+    {
+      "word": "book",
+      "meaning": "书"
+    },
+    {
+      "word": "why",
+      "meaning": "（用于问句）为什么"
+    },
+    {
+      "word": "glad",
+      "meaning": "高兴的；乐意的"
+    },
+    {
+      "word": "again",
+      "meaning": "再一次"
+    }
+  ],
+  "cleaned_at": "2026-09-17",
+  "cleaned_note": "已清洗 koolearn 缩写词错义（见 tools/clean-curriculum.js）"
+}

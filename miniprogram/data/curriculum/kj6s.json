@@ -1,0 +1,282 @@
+{
+  "book": "北京课改版英语六年级上册",
+  "grade": "g6",
+  "count": 68,
+  "words": [
+    {
+      "word": "worker",
+      "meaning": "工人；员工"
+    },
+    {
+      "word": "ox",
+      "meaning": "牛；公牛"
+    },
+    {
+      "word": "show",
+      "meaning": "给…看"
+    },
+    {
+      "word": "collect",
+      "meaning": "收集"
+    },
+    {
+      "word": "stamp",
+      "meaning": "邮票"
+    },
+    {
+      "word": "start",
+      "meaning": "开始"
+    },
+    {
+      "word": "choose",
+      "meaning": "挑选"
+    },
+    {
+      "word": "order",
+      "meaning": "命令"
+    },
+    {
+      "word": "decide",
+      "meaning": "决定"
+    },
+    {
+      "word": "rabbit",
+      "meaning": "兔子；野兔"
+    },
+    {
+      "word": "rat",
+      "meaning": "大老鼠"
+    },
+    {
+      "word": "animal",
+      "meaning": "动物；兽；牲畜"
+    },
+    {
+      "word": "twelve",
+      "meaning": "十二"
+    },
+    {
+      "word": "tiger",
+      "meaning": "老虎"
+    },
+    {
+      "word": "hobby",
+      "meaning": "业余爱好"
+    },
+    {
+      "word": "clothes",
+      "meaning": "衣服；衣物"
+    },
+    {
+      "word": "colour",
+      "meaning": "颜色"
+    },
+    {
+      "word": "like",
+      "meaning": "喜欢"
+    },
+    {
+      "word": "sing",
+      "meaning": "唱；歌唱；吟诵"
+    },
+    {
+      "word": "dress",
+      "meaning": "衣服"
+    },
+    {
+      "word": "stage",
+      "meaning": "阶段"
+    },
+    {
+      "word": "singer",
+      "meaning": "歌手"
+    },
+    {
+      "word": "goodbye",
+      "meaning": "再见"
+    },
+    {
+      "word": "Mr",
+      "meaning": "Mister 先生"
+    },
+    {
+      "word": "tie",
+      "meaning": "关系"
+    },
+    {
+      "word": "world",
+      "meaning": "世界"
+    },
+    {
+      "word": "visitor",
+      "meaning": "访问者"
+    },
+    {
+      "word": "number",
+      "meaning": "数字"
+    },
+    {
+      "word": "take part in",
+      "meaning": "参加…；参与…活动"
+    },
+    {
+      "word": "hold",
+      "meaning": "拿住；握住"
+    },
+    {
+      "word": "ago",
+      "meaning": "以前"
+    },
+    {
+      "word": "stop",
+      "meaning": "停止"
+    },
+    {
+      "word": "modern",
+      "meaning": "现代的"
+    },
+    {
+      "word": "those",
+      "meaning": "that的复数"
+    },
+    {
+      "word": "history",
+      "meaning": "历史；历史学"
+    },
+    {
+      "word": "PE",
+      "meaning": "abbr. 体育（physical education）",
+      "_cleaned": "koolearn 把 PE 匹配成了 Peru（秘鲁）"
+    },
+    {
+      "word": "smart",
+      "meaning": "聪明的"
+    },
+    {
+      "word": "horse",
+      "meaning": "马"
+    },
+    {
+      "word": "ride",
+      "meaning": "乘；骑；驾"
+    },
+    {
+      "word": "many",
+      "meaning": "许多；多的"
+    },
+    {
+      "word": "around",
+      "meaning": "大约"
+    },
+    {
+      "word": "west",
+      "meaning": "n./adj. 西方（的）"
+    },
+    {
+      "word": "hill",
+      "meaning": "小山；山冈"
+    },
+    {
+      "word": "angry",
+      "meaning": "生气的"
+    },
+    {
+      "word": "hotel",
+      "meaning": "旅馆；宾馆；酒店；饭店"
+    },
+    {
+      "word": "Monday",
+      "meaning": "星期一"
+    },
+    {
+      "word": "see",
+      "meaning": "看见"
+    },
+    {
+      "word": "supper",
+      "meaning": "晚饭；晚餐"
+    },
+    {
+      "word": "chocolate",
+      "meaning": "巧克力"
+    },
+    {
+      "word": "lunch",
+      "meaning": "午餐"
+    },
+    {
+      "word": "cry",
+      "meaning": "哭"
+    },
+    {
+      "word": "myself",
+      "meaning": "我自己；亲自"
+    },
+    {
+      "word": "match",
+      "meaning": "比赛"
+    },
+    {
+      "word": "football",
+      "meaning": "足球〔美国通常指橄榄球〕"
+    },
+    {
+      "word": "but",
+      "meaning": "但是"
+    },
+    {
+      "word": "neck",
+      "meaning": "颈；脖子"
+    },
+    {
+      "word": "young",
+      "meaning": "adj. 年轻的，幼小的"
+    },
+    {
+      "word": "problem",
+      "meaning": "问题"
+    },
+    {
+      "word": "please",
+      "meaning": "请"
+    },
+    {
+      "word": "glass",
+      "meaning": "玻璃"
+    },
+    {
+      "word": "let",
+      "meaning": "允许；任由"
+    },
+    {
+      "word": "mountain",
+      "meaning": "山；山岳"
+    },
+    {
+      "word": "Thursday",
+      "meaning": "星期四；礼拜四；周四"
+    },
+    {
+      "word": "some",
+      "meaning": "一些"
+    },
+    {
+      "word": "strong",
+      "meaning": "adj. 强壮的，坚强的"
+    },
+    {
+      "word": "swim",
+      "meaning": "游泳"
+    },
+    {
+      "word": "farm",
+      "meaning": "农场；农庄"
+    },
+    {
+      "word": "play",
+      "meaning": "比赛"
+    }
+  ],
+  "cleaned_at": "2026-09-17",
+  "cleaned_note": "已清洗 koolearn 缩写词错义（见 tools/clean-curriculum.js）"
+}

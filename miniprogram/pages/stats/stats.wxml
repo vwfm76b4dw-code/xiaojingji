@@ -1,0 +1,304 @@
+<view class="page">
+  <view wx:if="{{!ready}}" class="empty">
+    <view class="empty-sub">统计中…</view>
+  </view>
+
+  <block wx:if="{{ready}}">
+    <!-- 总览数字 -->
+    <view class="card stripe green">
+      <view class="section-label">总体进度</view>
+      <view class="big-row">
+        <view class="big">
+          <view class="big-num t-num">{{overall.percent}}<text class="pct">%</text></view>
+          <view class="t-hint">已掌握</view>
+        </view>
+        <view class="big">
+          <view class="big-num t-num">{{points}}</view>
+          <view class="t-hint">累计积分</view>
+        </view>
+      </view>
+
+      <view class="bar" style="margin-top: 28rpx;">
+        <view class="bar-fill" style="transform: scaleX({{overall.percent / 100}});"></view>
+      </view>
+
+      <view class="kv">
+        <text class="t-sub">已掌握（间隔 ≥ 21 天）</text>
+        <text class="t-num">{{overall.mastered}} / {{overall.total}}</text>
+      </view>
+      <view class="kv">
+        <text class="t-sub">复习中</text>
+        <text class="t-num">{{overall.learning}}</text>
+      </view>
+      <view class="kv">
+        <text class="t-sub">还没学</text>
+        <text class="t-num">{{overall.fresh}}</text>
+      </view>
+    </view>
+
+    <!-- 学习连续性：本页最重要的正反馈。连续天数给足视觉重量，
+         下面的小格是近 30 天逐日打卡，让"连续 N 天"这个数字有据可查。 -->
+    <view class="card stripe green rise" style="margin-top: 24rpx;">
+      <view class="section-label">学习连续性</view>
+      <block wx:if="{{hasReviewEvents}}">
+        <view class="streak-row">
+          <view class="streak-main">
+            <view class="streak-num t-num">{{analysis.streak.current}}</view>
+            <view class="t-hint">天连续</view>
+          </view>
+          <view class="streak-side">
+            <view class="kv">
+              <text class="t-sub">历史最长</text>
+              <text class="t-num">{{analysis.streak.longest}} 天</text>
+            </view>
+            <view class="kv">
+              <text class="t-sub">近 30 天活跃率</text>
+              <text class="t-num">{{activeRatePct}}%</text>
+            </view>
+            <view class="kv">
+              <text class="t-sub">有记录的天数</text>
+              <text class="t-num">{{analysis.streak.totalDays}} 天</text>
+            </view>
+          </view>
+        </view>
+        <view class="pips">
+          <view wx:for="{{analysis.daily}}" wx:key="date"
+                class="pip {{item.count > 0 ? 'on' : ''}}"></view>
+        </view>
+        <view class="t-hint" style="margin-top: 14rpx; line-height: 1.7;">
+          每格是近 30 天里的一天，填绿表示那天复习过。{{streakHint}}
+        </view>
+      </block>
+      <view wx:else class="note">复习第一个单词后，这里会开始记录你的连续天数与每日打卡。</view>
+    </view>
+
+    <!-- 记忆保持率：本应用最核心的一个数字 -->
+    <view class="card stripe green" style="margin-top: 24rpx;">
+      <view class="section-label">记忆保持率</view>
+      <block wx:if="{{hasStudied}}">
+        <view class="retain-top">
+          <view class="retain-num t-num">{{analysis.retention.rate}}<text class="pct">%</text></view>
+          <view class="retain-side t-hint">
+            已牢记 {{analysis.retention.mature}} 词 / 学过 {{analysis.retention.studied}} 词
+          </view>
+        </view>
+        <view class="bar">
+          <view class="bar-fill" style="transform: scaleX({{analysis.retention.rate / 100}});"></view>
+        </view>
+        <view class="t-hint" style="margin-top: 14rpx; line-height: 1.7;">
+          已进入长间隔（≥21 天）的词，占所有复习过的词的比例。
+          还在复习中的 {{analysis.retention.learning}} 词不算"没记住"，它们只是还没走到这一步。
+        </view>
+      </block>
+      <view wx:else class="note">
+        还没有复习过的词。学一段时间后，这里会显示有多少词真正进入了长期记忆。
+      </view>
+    </view>
+
+    <!-- 记忆沉淀指数：四项加权成一个 0-100 的数，环形图 + 逐项解释 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">记忆沉淀指数</view>
+      <view class="sed-row">
+        <canvas type="2d" id="c-sediment" class="chart-ring"></canvas>
+        <view class="sed-side">
+          <view class="t-sub">{{analysis.sediment.summary}}</view>
+          <view class="sed-item" wx:for="{{sedimentBreakdown}}" wx:key="key">
+            <view class="sed-item-top">
+              <text class="sed-key">{{item.key}}</text>
+              <text class="t-num">{{item.points}} 分</text>
+            </view>
+            <view class="bar" style="margin-top: 8rpx;">
+              <view class="bar-fill" style="transform: scaleX({{item.ratio / 100}});"></view>
+            </view>
+            <view class="sed-note t-hint">{{item.note}}（权重 {{item.weightPct}}%）</view>
+          </view>
+        </view>
+      </view>
+      <view class="t-hint" style="margin-top: 16rpx; line-height: 1.7;">
+        四项加权求和：坚持 30% · 规模 25% · 深度 25% · 稳固 20%。
+        习惯与坚持合计占一半 —— 背单词失败的主因不是方法，是中断。
+      </view>
+    </view>
+
+    <!-- 间隔曲线 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">间隔增长曲线</view>
+      <view class="t-sub" style="margin-bottom: 16rpx;">{{curveSummary}}</view>
+      <canvas type="2d" id="c-curve" class="chart-line"></canvas>
+      <view class="t-hint" style="margin-top: 12rpx; line-height: 1.7;">
+        纵轴是平均间隔天数。曲线上升 = 每复习一次，能记住的时间更长，
+        复习次数因此变少——这就是"科学排期"比"天天翻书"省时间的地方。
+      </view>
+    </view>
+
+    <!-- 三项自测指标 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">记忆自测指标</view>
+      <block wx:if="{{self.hasData}}">
+        <view class="metric">
+          <view class="metric-top">
+            <text class="t-sub">首答正确率</text>
+            <text class="metric-val t-num">{{self.firstTryRate}}%</text>
+          </view>
+          <view class="bar"><view class="bar-fill" style="transform: scaleX({{self.firstTryRate / 100}});"></view></view>
+          <view class="t-hint">第一次复习就答对的卡，占已学卡的比例</view>
+        </view>
+
+        <view class="metric">
+          <view class="metric-top">
+            <text class="t-sub">平均熟练度 EF</text>
+            <text class="metric-val t-num">{{self.avgEF}}</text>
+          </view>
+          <view class="t-hint">初始 2.5；高于 2.5 说明这些内容对你整体在变简单</view>
+        </view>
+
+        <view class="metric">
+          <view class="metric-top">
+            <text class="t-sub">长期保留占比</text>
+            <text class="metric-val t-num">{{self.retainedRatio}}%</text>
+          </view>
+          <view class="bar"><view class="bar-fill" style="transform: scaleX({{self.retainedRatio / 100}});"></view></view>
+          <view class="t-hint">已进入长间隔（≥21 天）的卡，占已学卡的比例</view>
+        </view>
+      </block>
+      <view wx:else class="note">复习一段时间后，这里会出现你的记忆自测指标。</view>
+    </view>
+
+    <!-- 错题本：知道自己哪科薄弱 -->
+    <view class="card stripe {{weakCount > 0 ? 'red' : 'gray'}}" style="margin-top: 24rpx;">
+      <view class="section-label">错题本</view>
+      <block wx:if="{{weakCount > 0}}">
+        <view class="weak-head">
+          <view>
+            <text class="weak-num t-num">{{weakCount}}</text>
+            <text class="t-sub"> 个需要多练</text>
+          </view>
+          <button class="btn primary small" bindtap="goWeak">专项重练</button>
+        </view>
+        <view class="t-hint" style="margin: 16rpx 0 20rpx;">
+          判定口径：复习时标过「不认识」或「模糊」的卡。曾经的错处最值得回头看。
+        </view>
+        <view class="kv" wx:for="{{weakList}}" wx:key="subject">
+          <text class="t-sub">{{item.subject}}</text>
+          <text class="t-num">{{item.count}} 个</text>
+        </view>
+      </block>
+      <view wx:else class="note">
+        还没有答错过的卡。复习时选「不认识」或「模糊」的卡会自动进这里。
+      </view>
+    </view>
+
+    <!-- 复习效率：花多少力气换一个记住的词 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">复习效率</view>
+      <block wx:if="{{hasEfficiency}}">
+        <view class="metric-top">
+          <text class="t-sub">每个牢记的词花了</text>
+          <text class="metric-val t-num">{{analysis.efficiency.reviewsPerMature}} 次复习</text>
+        </view>
+        <view class="t-hint">
+          共 {{analysis.efficiency.reviews}} 次复习，换来 {{analysis.efficiency.mature}} 个进入长期记忆的词。
+          数字越小越好：说明复习排得准，没有反复无效重刷。
+        </view>
+        <view wx:if="{{growthText}}" class="note info" style="margin-top: 20rpx;">{{growthText}}</view>
+      </block>
+      <view wx:else class="note">
+        还没有已牢记的词（间隔 ≥21 天）。等第一批词进入长期记忆后，
+        这里会算出"每个词花了多少次复习"。
+      </view>
+    </view>
+
+    <!-- 遗忘统计：忘记率 + 最需要回看的词 -->
+    <view class="card stripe {{hasReviewEvents ? 'yellow' : 'gray'}}" style="margin-top: 24rpx;">
+      <view class="section-label">遗忘统计</view>
+      <block wx:if="{{hasReviewEvents}}">
+        <view class="metric-top">
+          <text class="t-sub">忘记率</text>
+          <text class="metric-val t-num">{{analysis.forgetting.rate}}%</text>
+        </view>
+        <view class="bar">
+          <view class="bar-fill yellow" style="transform: scaleX({{analysis.forgetting.rate / 100}});"></view>
+        </view>
+        <view class="t-hint" style="margin-top: 14rpx;">
+          复习过的 {{analysis.forgetting.total}} 次里，有 {{analysis.forgetting.forgot}} 次标了
+          「不认识」或「模糊」。统计的是次数而不是词数：同一个词反复忘，本身就是最该留意的情况。
+        </view>
+
+        <block wx:if="{{forgotWords.length > 0}}">
+          <view class="section-label" style="margin-top: 24rpx;">最需要回头看的词</view>
+          <view class="kv" wx:for="{{forgotWords}}" wx:key="wordId">
+            <text class="t-sub">{{item.word}}</text>
+            <text class="t-num">忘过 {{item.count}} 次</text>
+          </view>
+        </block>
+        <view wx:else class="note info" style="margin-top: 20rpx;">
+          还没有答错过的记录，保持下去。
+        </view>
+      </block>
+      <view wx:else class="note">
+        复习一段时间后，这里会统计你的忘记率，并挑出最容易忘的词。
+      </view>
+    </view>
+
+    <!-- 复习轮次分布 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">复习轮次分布</view>
+      <canvas type="2d" id="c-rotdist" class="chart-bars"></canvas>
+      <view class="t-hint" style="margin-top: 12rpx; line-height: 1.7;">
+        横轴是复习过的轮数。多数卡从「1 轮」逐步走向「4 轮+」，
+        说明它们正被推入更长的复习间隔。
+      </view>
+    </view>
+
+    <!-- 星期分布：哪天学得多、哪天忘得快 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">星期分布</view>
+      <block wx:if="{{hasReviewEvents}}">
+        <canvas type="2d" id="c-weekday" class="chart-weekday"></canvas>
+        <view class="t-hint" style="margin-top: 12rpx; line-height: 1.7;">{{weekdayHint}}</view>
+      </block>
+      <view wx:else class="note">复习一段时间后，这里会按星期几汇总你的复习次数。</view>
+    </view>
+
+    <!-- 学科分布 -->
+    <view class="card stripe" style="margin-top: 24rpx;">
+      <view class="section-label">词库分布</view>
+      <canvas type="2d" id="c-subjects" class="chart-hbar" style="height: {{subjects.length * 34 + 20}}px;"></canvas>
+    </view>
+
+    <!-- 朗读表现：数据来自朗读页写入的 pron_records -->
+    <view class="card stripe {{hasPron ? 'green' : 'gray'}}" style="margin-top: 24rpx;">
+      <view class="section-label">朗读表现</view>
+      <block wx:if="{{hasPron}}">
+        <view class="metric-top">
+          <text class="t-sub">读准率</text>
+          <text class="metric-val t-num">{{analysis.pronunciation.passRate}}%</text>
+        </view>
+        <view class="bar">
+          <view class="bar-fill" style="transform: scaleX({{analysis.pronunciation.passRate / 100}});"></view>
+        </view>
+        <view class="pron-row">
+          <view class="tag green">读准 {{analysis.pronunciation.pass}}</view>
+          <view class="tag yellow">基本对 {{analysis.pronunciation.borderline}}</view>
+          <view class="tag red">读错 {{analysis.pronunciation.fail}}</view>
+          <view class="tag">不会读 {{analysis.pronunciation.unknown}}</view>
+        </view>
+        <view class="t-hint">
+          共评测 {{analysis.pronunciation.attempts}} 次，覆盖 {{analysis.pronunciation.words}} 个词。
+        </view>
+      </block>
+      <view wx:else class="note">
+        还没有朗读记录。去「朗读」页按住按钮读一个词，这里会统计读准率与各档次数。
+      </view>
+    </view>
+
+    <view class="btn-row" style="margin-top: 32rpx;">
+      <button class="btn ghost" bindtap="goDeck">看词库</button>
+      <button class="btn primary" bindtap="goStudy">去复习</button>
+    </view>
+
+    <view class="foot t-hint">
+      数据只存本机 · 基于 SM-2 间隔重复算法
+    </view>
+  </block>
+</view>

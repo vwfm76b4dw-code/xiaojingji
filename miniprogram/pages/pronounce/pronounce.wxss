@@ -1,0 +1,253 @@
+/* 底部操作条固定：结果卡出现时不会把主按钮挤到屏幕外
+   （踩过的坑：评测后整页高度从 ~584rpx 涨到 ~1347rpx，
+     超过小屏可视区 ~1060rpx，主按钮掉到屏幕外，每张卡都要先滚一下） */
+.page { padding-bottom: 380rpx; }
+
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  padding: 20rpx 32rpx 28rpx;
+  background: var(--paper);
+  border-top: 2rpx solid var(--line);
+}
+
+.topbar { margin-bottom: 24rpx; }
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+/* ------------------------- 单词卡 ------------------------- */
+.word-card { padding: 48rpx 36rpx; text-align: center; margin-bottom: 24rpx; }
+
+.word {
+  font-size: 72rpx;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.answer {
+  font-size: 34rpx;
+  color: var(--green-d);
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid var(--line);
+}
+
+.detail {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-top: 14rpx;
+}
+
+.hook {
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  background: rgba(246, 196, 69, 0.18);
+  border-left: 8rpx solid var(--yellow);
+  border-radius: 4rpx;
+  text-align: left;
+}
+.hook-label { font-size: 22rpx; color: var(--yellow-ink); letter-spacing: 0.08em; margin-bottom: 8rpx; }
+.hook-text { font-size: 28rpx; color: var(--ink); line-height: 1.7; }
+
+/* ------------------------- 结果 ------------------------- */
+.result { margin-bottom: 24rpx; }
+/* 这一页 .t-hint 承载了"听到的是什么"等关键诊断信息，
+   全局的 --ink-3 对比度只有 2.4:1，这里局部提到可读 */
+.t-hint { color: #5C6B78; }
+/* 三档用项目统一的 .stripe（10rpx 色条）语义类，不再自写 border-left */
+.stripe.green  { border-left-color: var(--green); }
+.stripe.yellow { border-left-color: var(--yellow); }
+.stripe.red    { border-left-color: var(--red); }
+.stripe.gray   { border-left-color: var(--line-2); }
+
+.res-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+}
+.res-verdict { font-size: 34rpx; font-weight: 600; color: var(--ink); }
+.result.pass .res-verdict { color: var(--green); }
+.result.borderline .res-verdict { color: var(--yellow-ink); }
+.result.fail .res-verdict { color: var(--red); }
+.result.unknown .res-verdict { color: var(--ink-2); }
+
+.res-tip {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 2rpx solid var(--line);
+}
+
+/* ------------------------- 操作区 ------------------------- */
+/* 三键布局：听发音 / 按住读（主） / 不会读。
+   主按钮做大且居中——高频动作要显眼（产品原则） */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.round-btn {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  border: 2rpx solid var(--line-2);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  flex-shrink: 0;
+  transition: transform 130ms cubic-bezier(0.32, 0.94, 0.60, 1);
+}
+.round-btn:active { transform: scale(0.94); }
+.round-btn.playing { border-color: var(--green); background: rgba(0, 130, 92, 0.08); }
+.round-icon-q {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: var(--ink-2);
+  line-height: 1;
+}
+.round-label { font-size: 24rpx; color: #5C6B78; }
+
+/* ---- 纯 CSS 图标（替代 emoji：emoji 字形随系统变化，且违反项目规范）---- */
+.ico-wrap { width: 46rpx; height: 42rpx; position: relative; }
+.ico-sound { position: relative; width: 46rpx; height: 40rpx; color: var(--ink-2); }
+.ico-sound::before {          /* 喇叭箱体 */
+  content: ''; position: absolute; left: 0; top: 14rpx;
+  width: 14rpx; height: 14rpx; background: currentColor;
+}
+.ico-sound::after {           /* 喇叭锥 */
+  content: ''; position: absolute; left: 12rpx; top: 6rpx;
+  width: 0; height: 0;
+  border-top: 15rpx solid transparent;
+  border-bottom: 15rpx solid transparent;
+  border-left: 20rpx solid currentColor;
+}
+.ico-wave {                   /* 声波弧线 */
+  position: absolute; right: 0; top: 9rpx;
+  width: 12rpx; height: 22rpx;
+  border: 3rpx solid currentColor;
+  border-left: none;
+  border-top-right-radius: 24rpx;
+  border-bottom-right-radius: 24rpx;
+}
+.ico-stop {                   /* 停止方块 */
+  width: 32rpx; height: 32rpx;
+  border-radius: 4rpx;
+  background: var(--green);
+  margin: 5rpx auto 0;
+}
+.round-btn.playing .ico-sound { color: var(--green); }
+.round-btn.playing .ico-wave {
+  animation: wave-pulse 900ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes wave-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.86); }
+  50%      { opacity: 1;    transform: scale(1); }
+}
+
+.mic-btn {
+  flex: 1;
+  height: 150rpx;
+  border-radius: 12rpx;
+  background: var(--green);
+  color: #FAF6EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1),
+              background-color 120ms linear;
+}
+.mic-btn:active { transform: scale(0.97); }
+.mic-btn.rec {
+  /* 录音中用校徽黄而非红：红色在本项目专表"危险/读错"，
+     用它表示"正在录音"会让学生误以为已经读错了 */
+  background: var(--yellow);
+  color: var(--yellow-ink);
+}
+.mic-btn.disabled { background: var(--card-2); color: var(--ink-3); }
+.mic-text { font-size: 36rpx; font-weight: 600; }
+/* 不用 opacity —— 绿底/红底上叠透明度会让对比度掉到 3:1 以下，
+   而这正是录音时唯一告诉学生"现在该松开"的字 */
+.mic-sub { font-size: 24rpx; color: #FFFFFF; }
+
+/* ------------------------- 完成态 ------------------------- */
+.done-card { text-align: center; padding: 56rpx 36rpx; }
+.done-title { font-size: 36rpx; color: var(--ink-2); margin-bottom: 24rpx; }
+.done-stats {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 24rpx;
+  border-top: 2rpx solid var(--line);
+}
+.ds { display: flex; flex-direction: column; gap: 6rpx; align-items: center; }
+.ds-num { font-size: 44rpx; font-weight: 700; }
+
+.note { margin-bottom: 20rpx; }
+
+/* ============================ 补齐缺失的动画 ============================
+   踩过的坑：WXML 里用了 class="rise" 和 class="sweep"，
+   但这两个类**全项目都没定义** —— 结果卡的入场反馈完全不存在，
+   而"正在听你读的…"那张卡里的 <view class="sweep"> 是个零宽零高的空 div。
+   学生松手后要等 ASR 1-3 秒，界面却毫无"进行中"的信号。
+   ========================================================================= */
+
+/* 结果卡入场：从上轻推入 */
+@keyframes result-in {
+  from { opacity: 0; transform: translateY(-12rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.result.rise { animation: result-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* 等待扫描条：一条绿光从左扫过（只动 transform） */
+.result.judging { position: relative; overflow: hidden; }
+.sweep {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 180rpx;
+  background: rgba(0, 130, 92, 0.14);
+  animation: sweep-move 1100ms linear infinite;
+}
+@keyframes sweep-move {
+  from { transform: translateX(-180rpx); }
+  to   { transform: translateX(760rpx); }
+}
+
+/* 录音中的持续反馈：脉冲环（只动 transform/opacity） */
+.mic-btn { position: relative; }
+@keyframes rec-pulse {
+  0%   { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.10); }
+}
+.mic-btn.rec::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 4rpx solid var(--yellow);
+  border-radius: 12rpx;
+  animation: rec-pulse 1200ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+/* 尊重前庭障碍用户 */
+@media (prefers-reduced-motion: reduce) {
+  .result.rise, .sweep, .mic-btn.rec::after { animation: none; }
+}

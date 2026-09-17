@@ -1,0 +1,10 @@
+{
+  "name": "asrProxy",
+  "version": "1.0.0",
+  "description": "语音识别代理 —— 把录音转成文字，供朗读评测使用",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

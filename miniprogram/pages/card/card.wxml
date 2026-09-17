@@ -1,0 +1,83 @@
+<view class="page">
+  <view wx:if="{{!ready}}" class="empty">
+    <view class="empty-sub">载入中…</view>
+  </view>
+
+  <view wx:elif="{{!card}}" class="empty">
+    <view class="empty-title">找不到这个单词</view>
+    <view class="empty-sub">它可能已从内容包中移除。</view>
+    <view class="btn-row" style="margin-top: 40rpx;">
+      <button class="btn primary" bindtap="goDeck">回词库</button>
+    </view>
+  </view>
+
+  <block wx:else>
+    <!-- 卡面：问题 → 答案 → 钩子，与复习页保持同一阅读顺序 -->
+    <view class="card stripe {{statusClass}} main">
+      <view class="head">
+        <text class="tag green">{{card.subject}}</text>
+        <text class="tag">难度 {{card.difficulty}}</text>
+        <text class="tag {{statusClass === 'gray' ? '' : statusClass}}">{{statusText}}</text>
+      </view>
+
+      <view class="prompt">{{card.prompt}}</view>
+      <view class="answer">{{card.answer}}</view>
+
+      <view wx:if="{{card.detail}}" class="detail">{{card.detail}}</view>
+
+      <view class="hook">
+        <view class="hook-label">记忆钩子</view>
+        <view class="hook-text">{{card.hook}}</view>
+      </view>
+
+      <view class="src">
+        <text class="t-hint">来源：{{card.source}}</text>
+      </view>
+    </view>
+
+    <!-- 算法状态：把"这张卡现在什么情况"讲清楚 -->
+    <view wx:if="{{state}}" class="card algo">
+      <view class="section-label">算法状态</view>
+      <view class="kv"><text class="t-sub">难度系数 EF</text><text class="t-num">{{state.ef}}</text></view>
+      <view class="kv"><text class="t-sub">连续答对</text><text class="t-num">{{state.reps}} 次</text></view>
+      <view class="kv"><text class="t-sub">当前间隔</text><text class="t-num">{{state.interval}} 天</text></view>
+      <view class="kv"><text class="t-sub">下次复习</text><text class="t-num">{{state.nextReview}}</text></view>
+    </view>
+    <view wx:else class="note info">
+      这个单词还没复习过。首次复习后，这里会显示它的难度系数、间隔与下次复习时间。
+    </view>
+
+    <!-- 复习历史 -->
+    <view wx:if="{{history.length > 0}}" class="card">
+      <view class="section-label">复习记录（最近在前）</view>
+      <view class="hist" wx:for="{{history}}" wx:key="date">
+        <text class="t-mono t-hint hist-date">{{item.date}}</text>
+        <text class="tag {{item.cls}}">{{item.grade}}</text>
+        <text class="t-hint">→ 间隔 {{item.interval}} 天</text>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="btn-row" style="margin-top: 32rpx;">
+      <button class="btn ghost" bindtap="copyHook">复制这个单词</button>
+      <button class="btn primary" bindtap="practiceOne">去复习</button>
+    </view>
+
+    <!-- 删除：低频危险操作，单独放在最下面，不用主按钮样式 -->
+    <view class="danger-zone">
+      <view class="btn danger-line small" bindtap="removeCard">删除这个词</view>
+      <view class="t-hint" style="margin-top: 12rpx; text-align: center;">
+        删除会一并丢弃它的复习进度
+      </view>
+    </view>
+
+    <!-- 同批次的其它卡 -->
+    <block wx:if="{{siblings.length > 0}}">
+      <view class="section-label" style="margin-top: 40rpx;">同一批次还有</view>
+      <view class="sibs">
+        <view class="chip" wx:for="{{siblings}}" wx:key="id"
+              data-id="{{item.id}}" bindtap="openCard">{{item.prompt}}</view>
+      </view>
+    </block>
+  </block>
+</view>

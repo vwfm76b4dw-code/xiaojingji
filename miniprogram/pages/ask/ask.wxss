@@ -1,0 +1,124 @@
+.ask-box { margin-bottom: 4rpx; }
+
+.q-input {
+  width: 100%;
+  min-height: 130rpx;
+  font-size: 32rpx;
+  line-height: 1.6;
+  color: var(--ink);
+  box-sizing: border-box;
+  background: transparent;
+  padding: 12rpx 0;
+}
+.ph { color: var(--ink-3); }
+
+.ask-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin-top: 16rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid var(--line);
+}
+.ask-foot .btn { flex-shrink: 0; }
+.warn-text { color: var(--red); }
+
+/* 等待条（复用朗读页的 .sweep 定义思路） */
+.judging { position: relative; overflow: hidden; margin-top: 24rpx; }
+.sweep {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 180rpx;
+  background: rgba(0, 130, 92, 0.14);
+  animation: sweep-move 1100ms linear infinite;
+}
+@keyframes sweep-move {
+  from { transform: translateX(-180rpx); }
+  to   { transform: translateX(760rpx); }
+}
+@keyframes ans-in {
+  from { opacity: 0; transform: translateY(-10rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ans-card.rise { animation: ans-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+.ans-card { margin-top: 24rpx; }
+.ans-head { margin-bottom: 12rpx; }
+.ans-text {
+  font-size: 30rpx;
+  line-height: 1.85;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ans-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+  padding-top: 18rpx;
+  border-top: 2rpx solid var(--line);
+}
+
+/* 来源行：点一下听发音，把"查词"与"学发音"连起来 */
+.src-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 22rpx 28rpx;
+  margin-bottom: 14rpx;
+}
+.src-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4rpx; }
+.src-word { font-size: 34rpx; font-weight: 600; color: var(--ink); }
+.src-meaning { font-size: 26rpx; color: var(--ink-2); }
+.src-right { display: flex; align-items: center; gap: 14rpx; flex-shrink: 0; }
+.src-play {
+  font-size: 24rpx;
+  color: var(--green);
+  border: 2rpx solid var(--green);
+  border-radius: 6rpx;
+  padding: 6rpx 16rpx;
+}
+
+.samples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  justify-content: center;
+  margin-top: 40rpx;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sweep, .ans-card.rise { animation: none; }
+}
+
+/* 示例问题：带类型标签
+   原来是一排纯文字 chip，学生看不出"原来还能这样问"。
+   加上标签（分辨两个词 / 记忆法 / 找一类词…）等于把能力清单摆在眼前。 */
+.sample-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 12rpx;
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--card);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.sample-row:active { transform: scale(0.98); }
+.sample-tag {
+  flex: none;
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: var(--r-sm);
+  background: rgba(0, 130, 92, 0.10);
+  color: var(--green-d);
+}
+.sample-q {
+  flex: 1;
+  font-size: 27rpx;
+  color: var(--ink);
+}

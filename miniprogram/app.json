@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/deck/deck",
+    "pages/study/study",
+    "pages/pronounce/pronounce",
+    "pages/ask/ask",
+    "pages/stats/stats",
+    "pages/card/card",
+    "pages/settings/settings",
+    "pages/add/add",
+    "pages/curriculum/curriculum"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FAF6EC",
+    "navigationBarTitleText": "小鲸记单词",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FAF6EC",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#6B7A88",
+    "selectedColor": "#00825C",
+    "backgroundColor": "#FAF6EC",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/deck/deck",
+        "text": "词库"
+      },
+      {
+        "pagePath": "pages/study/study",
+        "text": "复习"
+      },
+      {
+        "pagePath": "pages/pronounce/pronounce",
+        "text": "朗读"
+      },
+      {
+        "pagePath": "pages/ask/ask",
+        "text": "问词"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

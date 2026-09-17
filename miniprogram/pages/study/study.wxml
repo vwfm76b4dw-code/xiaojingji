@@ -1,0 +1,164 @@
+<view class="page">
+  <!-- 筛选栏：说明"这一轮在练哪些卡"+ 可切换 -->
+  <view class="filter-bar">
+    <view class="filter-current" bindtap="toggleFilter">
+      <text class="fc-scope">{{scope === 'due' ? '今日待复习' : (scope === 'weak' ? '错题重练' : '全部单词')}}</text>
+      <text class="fc-sub">{{subject === 'all' ? '全部学科' : subject}} · {{dueCountNow}} 个</text>
+      <text class="fc-caret">{{filterOpen ? '收起' : '筛选'}}</text>
+    </view>
+
+    <!-- 展开的筛选面板 -->
+    <view wx:if="{{filterOpen}}" class="filter-panel">
+      <view class="fp-label">范围</view>
+      <view class="fp-chips">
+        <view class="chip {{scope === 'due' ? 'on' : ''}}" data-scope="due" bindtap="pickScope">
+          今日待复习
+        </view>
+        <view class="chip {{scope === 'weak' ? 'on' : ''}}" data-scope="weak" bindtap="pickScope">
+          错题重练 ({{weakCount}})
+        </view>
+        <view class="chip {{scope === 'all' ? 'on' : ''}}" data-scope="all" bindtap="pickScope">
+          全部
+        </view>
+      </view>
+
+      <view class="fp-label">学科</view>
+      <view class="fp-chips">
+        <view class="chip {{subject === 'all' ? 'on' : ''}}" data-subject="all" bindtap="pickSubject">
+          全部
+        </view>
+        <view wx:for="{{subjects}}" wx:key="subject"
+              class="chip {{subject === item.subject ? 'on' : ''}}"
+              data-subject="{{item.subject}}" bindtap="pickSubject">
+          {{item.subject}} ({{item.count}})
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 进度条（不在完成态时显示） -->
+  <view wx:if="{{!done}}" class="topbar">
+    <view class="bar">
+      <view class="bar-fill" style="transform: scaleX({{progress / 100}});"></view>
+    </view>
+    <view class="topbar-row">
+      <text class="t-hint t-num">{{reviewed}}/{{total}}</text>
+      <text wx:if="{{streak >= 2}}" class="tag yellow pop">连对 ×{{streak}}</text>
+    </view>
+  </view>
+
+  <!-- 复习中 -->
+  <block wx:if="{{!done && current}}">
+    <view class="flip-wrap">
+      <view class="flip-inner {{flipped ? 'flipped' : ''}} {{leaving ? 'slide-out' : ''}} {{entering ? 'slide-in' : ''}} {{shaking ? 'shake' : ''}}">
+        <!-- 正面：只给问题，强制主动回忆 -->
+        <view class="face front card stripe" bindtap="flipCard">
+          <view class="face-head">
+            <text class="tag green">{{current.subject}}</text>
+            <text class="tag">难度 {{current.difficulty}}</text>
+          </view>
+          <view class="prompt">{{current.prompt}}</view>
+          <view class="face-foot t-hint">点一下看答案</view>
+        </view>
+
+        <!-- 背面：答案 + 记忆钩子（本项目的核心价值） -->
+        <view class="face back flip-back card stripe green">
+          <view class="face-head">
+            <text class="t-hint">答案</text>
+          </view>
+          <view class="answer">{{current.answer}}</view>
+
+          <view wx:if="{{current.detail}}" class="detail">{{current.detail}}</view>
+
+          <!-- 记忆钩子：用黄色强调，这是"怎么记"而不是"记什么" -->
+          <!-- 记忆钩子：默认给一句话版（完整版中位 72 字，翻卡时会被跳过） -->
+          <view wx:if="{{showHook && (current.shortHook || current.hook)}}" class="hook">
+            <view class="hook-label">记忆钩子</view>
+            <view class="hook-text">{{current.shortHook || current.hook}}</view>
+            <!-- 有短版才提供展开：短版就是全部内容时展开没意义 -->
+            <view wx:if="{{current.shortHook}}" class="hook-more"
+                  catchtap="toggleHookDetail">
+              {{hookOpen ? '收起' : '为什么这么记？'}}
+            </view>
+            <view wx:if="{{hookOpen}}" class="hook-detail">{{current.hook}}</view>
+          </view>
+
+          <view class="src t-hint">来源：{{current.source}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评分按钮：未翻面时锁定（半透明 + 无效） -->
+    <view class="grade">
+      <view class="grade-hint t-hint">
+        {{flipped ? '刚才回想得怎么样？' : '先自己回想，再翻面'}}
+      </view>
+      <view class="btn-row">
+        <button class="btn danger grade-btn" data-q="1" bindtap="onGrade" disabled="{{!flipped}}">不认识</button>
+        <button class="btn ghost grade-btn vague" data-q="3" bindtap="onGrade" disabled="{{!flipped}}">模糊</button>
+        <button class="btn primary grade-btn" data-q="5" bindtap="onGrade" disabled="{{!flipped}}">认识</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 完成态 -->
+  <block wx:if="{{done}}">
+    <view class="card stripe green done-card pop">
+      <view class="done-title">
+        {{total > 0 ? '这一轮完成了' : (scope === 'weak' ? '错题本已清空' : '今日已完成')}}
+      </view>
+      <view class="done-num t-num">{{reviewed || 0}}</view>
+      <view class="t-sub">
+        {{total > 0 ? '个单词复习完毕' : '这个范围暂时没有要复习的词'}}
+      </view>
+
+      <view wx:if="{{total > 0}}" class="done-stats">
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--green);">{{roundKnow}}</text>
+          <text class="t-hint">认识</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--yellow-ink);">{{roundVague}}</text>
+          <text class="t-hint">模糊</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--red);">{{roundForgot}}</text>
+          <text class="t-hint">不认识</text>
+        </view>
+        <view class="ds">
+          <text class="ds-num t-num" style="color: var(--green);">{{bestStreak}}</text>
+          <text class="t-hint">最高连对</text>
+        </view>
+      </view>
+
+      <view class="done-note t-hint">
+        每条记录都已保存，下次复习时间由算法安排——复习会发生在你快忘没忘的时候。
+      </view>
+    </view>
+
+    <!-- 完成后的下一步：给可执行的动作，而不是只显示"完成" -->
+    <view class="next-actions">
+      <!-- 被「学习量」上限挡住的词：如实说清楚，否则学生会以为词库只有这么多 -->
+      <view wx:if="{{hiddenNew > 0 || hiddenReview > 0}}" class="note">
+        今天还有 {{hiddenNew + hiddenReview}} 个词在排队（{{hiddenReview}} 个复习 + {{hiddenNew}} 个新词）。
+        明天会自动接上 —— 这是「设置 → 学习量」里定的节奏。
+      </view>
+
+      <view wx:if="{{hiddenNew === 0 && hiddenReview === 0 && totalDue > 0}}" class="note info" bindtap="pickScope" data-scope="due">
+        还有 {{totalDue}} 个词待复习 → 去练
+      </view>
+      <view wx:if="{{weakCount > 0}}" class="note warn" bindtap="practiceWeak">
+        错题本里攒了 {{weakCount}} 个 → 专项重练
+      </view>
+    </view>
+
+    <view class="btn-row" style="margin-top: 32rpx;">
+      <button class="btn ghost" bindtap="goDeck">回词库</button>
+      <button class="btn primary" bindtap="goStats">看统计</button>
+    </view>
+  </block>
+
+  <view wx:if="{{!ready}}" class="empty">
+    <view class="empty-sub">载入中…</view>
+  </view>
+</view>

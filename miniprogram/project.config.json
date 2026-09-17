@@ -1,0 +1,51 @@
+{
+  "compileType": "miniprogram",
+  "appid": "wxTESTAPPID00000000",
+  "projectname": "word-scheduler",
+  "description": "单词复习调度器 —— 基于 SM-2 间隔重复算法的微信小程序",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "compileHotReLoad": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "cloudfunctions",
+        "type": "folder"
+      },
+      {
+        "value": "data/curriculum/README.md",
+        "type": "file"
+      },
+      {
+        "value": "data/curriculum/missing.json",
+        "type": "file"
+      }
+    ],
+    "include": []
+  },
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
+}

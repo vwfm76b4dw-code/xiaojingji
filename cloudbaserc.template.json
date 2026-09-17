@@ -1,0 +1,28 @@
+{
+  "envId": "__ENV_ID__",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "asrProxy",
+      "timeout": 30,
+      "memorySize": 256,
+      "description": "语音识别代理（腾讯云一句话识别 / 智谱 GLM-ASR）",
+      "envVariables": {
+        "ASR_PROVIDER": "tencent",
+        "TENCENT_SECRET_ID": "__TENCENT_SECRET_ID__",
+        "TENCENT_SECRET_KEY": "__TENCENT_SECRET_KEY__",
+        "TENCENT_REGION": "ap-guangzhou"
+      }
+    },
+    {
+      "name": "aiProxy",
+      "timeout": 30,
+      "memorySize": 256,
+      "description": "AI 能力代理（智能录入 / 例句 / 词根 / 词义问答）",
+      "envVariables": {
+        "GLM_API_KEY": "__GLM_API_KEY__",
+        "GLM_MODEL": "glm-4-flash"
+      }
+    }
+  ]
+}
