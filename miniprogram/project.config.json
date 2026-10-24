@@ -52,94 +52,6 @@
         "type": "folder"
       },
       {
-        "value": "data/curriculum/README.md",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/bsd7s.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/bsd7x.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/bsd8s.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/bsd8x.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/bsd9.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/missing.json",
-        "type": "file"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy3s.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy3x.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy4s.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy4x.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy5s.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy5x.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy6s.json"
-      },
-      {
-        "type": "file",
-        "value": "data/curriculum/wy6x.json"
-      },
-      {
-        "value": "data/curriculum/wy7s.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy7s_2024.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy7x.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy8s.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy8x.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy9s.json",
-        "type": "file"
-      },
-      {
-        "value": "data/curriculum/wy9x.json",
-        "type": "file"
-      },
-      {
         "value": "data/audio",
         "type": "folder"
       },
@@ -154,6 +66,10 @@
       {
         "type": "file",
         "value": "assets/splash-whale.svg"
+      },
+      {
+        "value": "data/curriculum",
+        "type": "folder"
       }
     ],
     "include": []

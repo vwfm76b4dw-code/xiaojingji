@@ -424,6 +424,21 @@ function eq(a, b, m) {
   console.log('\n-- 资源按需加载（真引擎执行）--');
 
   await check('教材注册表全量在真引擎里按需加载（防 require(.json) 类事故复发）', async () => {
+    /**
+     * 前置：先把分包加载起来。
+     *
+     * 微信平台限制：**主包作用域 require 不到分包模块**，除非该分包已被加载过。
+     * 本用例在 `mini.evaluate` 里 require 的是 pack-curriculum 下的注册表，
+     * 而它排在「教材导入页」用例**之前** —— 冷会话里分包还没加载，
+     * 于是必然报 `module 'pack-curriculum/utils/curriculum-books.js' is not defined`。
+     *
+     * 2026-10-24 实测确认这是**用例的时序缺陷**，不是产品缺陷：
+     * 同一次会话里先 reLaunch 到教材页（分包加载），同一条 require 立刻返回 32 册。
+     * 之所以长期没人发现：这两道真机门禁在无 GUI 环境下恒 SKIP，
+     * 「跑不到」被当成了「没问题」。
+     */
+    await mini.reLaunch('/pack-curriculum/pages/curriculum/curriculum');
+    await new Promise(r => setTimeout(r, 1500));
     const r = await mini.evaluate(function () {
       var out = { total: 0, ok: 0, fail: [] };
       try {

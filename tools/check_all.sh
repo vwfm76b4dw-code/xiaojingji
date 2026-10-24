@@ -179,6 +179,10 @@ run "复习交互与触感"        verify-reviewUX.js
 echo
 echo "-- 端到端 --"
 run "跨页集成"             verify-integration.js
+# 数据契约与容量边界：拼写答案不被括注污染 / 存储配额 / 教材同词义项合并 / 额度日界。
+# 这四类问题在 mock 环境里永远不会暴露（wx.setStorageSync 无容量上限、本机时区是 UTC+8），
+# 所以必须有专门一道守着，否则修好之后还会悄悄退化回去。
+run "数据契约与容量边界"     verify-data-contract.js
 echo
 echo "-- 真机/GUI 层（需开发者工具，缺环境自动跳过）--"
 printf "%-34s" "开发者工具自动化"

@@ -183,6 +183,39 @@ function buildLetterPool(word, opt) {
   const target = [];
   for (let i = 0; i < chars.length; i++) {
     const ch = chars[i];
+
+    /**
+     * 括号整段（含括号本身与内部字母）一律作固定槽位。
+     *
+     * 2026-10-24 修（BUG：拼写答案被括注污染）：
+     * 词条名里的括注有两种来源，都不是「要拼的字母」——
+     *   ① 消歧用的词性注记：`race（v.）` / `race（n.）`（预置词库，
+     *      见 tools/build-textbook-seed.js 关于"括注是承重的"的说明）；
+     *   ② 教材原文的可替换成分：`be (am,is,are)` / `grandpa (grandfather)`。
+     *
+     * 旧实现只把「非字母字符」当固定槽位，括号里的字母因此进了 target：
+     * `race（v.）` 的正确答案变成 `racev`，`grandpa (grandfather)` 变成
+     * 18 个字母的 `grandpagrandfather` —— 学生拼对了判错，拼错了才对。
+     */
+    if (ch === '(' || ch === '（') {
+      const close = ch === '(' ? ')' : '）';
+      let j = i;
+      while (j < chars.length && chars[j] !== close) j++;
+      if (j >= chars.length) j = chars.length - 1;   // 未闭合：吃到末尾，不抛错
+      for (let k = i; k <= j; k++) cells.push({ ch: chars[k], fixed: true, answer: chars[k] });
+      i = j;
+      continue;
+    }
+
+    /**
+     * 斜杠及其后内容同样固定：`half past one/two`、`take care of sb/sth`。
+     * 语义是「或」与「占位」，不是连续字符 —— 学生只需拼前半段的实词。
+     */
+    if (ch === '/') {
+      for (let k = i; k < chars.length; k++) cells.push({ ch: chars[k], fixed: true, answer: chars[k] });
+      break;
+    }
+
     if (/[a-zA-Z]/.test(ch)) {
       const low = ch.toLowerCase();
       target.push(low);

@@ -161,11 +161,27 @@ function maskOpenid(openid) {
   return s.slice(0, 4) + '***' + s.slice(-4);
 }
 
-/** 本地日期键 YYYY-MM-DD。禁 toISOString()（见 CLAUDE.md 日期铁律），按本地时间拼 */
+/**
+ * 北京时间日期键 YYYY-MM-DD。禁 toISOString()（见 CLAUDE.md 日期铁律）。
+ *
+ * ## 为什么必须显式 +8 小时（2026-10-24 修 BUG-6）
+ * 这里原来直接取 `getFullYear/getMonth/getDate`，注释写的是"按本地时间拼"——
+ * 但**微信云函数的运行时是 UTC**（`process.env.TZ` 未设置，config.json 里也没设）。
+ * 于是"本地时间"实际是 UTC：日界在北京时间 **08:00** 翻页，而不是 00:00。
+ *
+ * 后果：早读时段（07:00–08:00）的学生还在用"前一天"的额度；全局 3000/日 的
+ * 统计窗口同样整体偏移 8 小时。对"每日额度"这个语义来说，这是错的。
+ *
+ * 修法选**显式偏移**而不是设 TZ 环境变量：环境变量要在云开发控制台逐函数配置，
+ * 漏配一个就静默退回 UTC；写进代码则是部署即生效、且可被门禁断言守住。
+ * 用 getUTC* 取偏移后的字段，不受运行环境时区影响（本机测试与云端一致）。
+ */
+const TZ_OFFSET_MS = 8 * 60 * 60 * 1000;
+
 function dayKeyOf(ts) {
-  const d = new Date(ts == null ? Date.now() : ts);
+  const d = new Date((ts == null ? Date.now() : ts) + TZ_OFFSET_MS);
   const p = function (n) { return (n < 10 ? '0' : '') + n; };
-  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  return d.getUTCFullYear() + '-' + p(d.getUTCMonth() + 1) + '-' + p(d.getUTCDate());
 }
 
 /**

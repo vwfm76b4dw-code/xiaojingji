@@ -12,6 +12,76 @@ const SHORT_HOOKS = require('../data/short-hooks.js');
 
 const WORDS_KEY = 'words';
 
+/**
+ * 单 key 容量上限与写盘失败原因。
+ *
+ * ## 为什么必须有这道闸（2026-10-24 修 BUG-1）
+ * 全部词条存在**同一个** key 里，而微信 `wx.setStorageSync` **单 key 上限 1024 KB**，
+ * 超出即抛异常。实测平均 340 字节/词条，32 册教材全导入是 7148 词 ≈ 2345 KB，
+ * **超限 2.3 倍**；约 2964 词（第 9 册左右）就会触顶。
+ *
+ * 触顶后的真实表现：复习页每答一张卡都弹「保存失败」，而重试在容量层面
+ * 不可能成功 —— 学生被卡死在一个无法自愈的循环里，且提示没告诉他真正的原因。
+ *
+ * 所以两道防线：
+ *   ① **写前预估**：超过 WARN_BYTES 就先给出准确的失败原因（quota），
+ *      让页面能说「词库已满，请删掉不用的教材」而不是「请再试一次」；
+ *   ② **写后兜底**：真抛异常时也归类成 quota（估算有偏差时仍能说对话）。
+ *
+ * 为什么预检阈值取 980 KB 而不是更保守的 900 KB：预检只负责给出**更准的文案**，
+ * 真正的硬边界由 setStorageSync 决定。压太低等于白白少存 100 KB 词条。
+ */
+const KEY_LIMIT_BYTES = 1024 * 1024;
+const WARN_BYTES = 980 * 1024;
+
+/** 上一次写盘失败的原因：'quota' | 'unknown' | ''（成功时清空） */
+let _lastSaveFailure = '';
+
+/** UTF-8 字节数（小程序没有 Buffer；中文 3 字节，emoji 4 字节，必须算准） */
+function utf8Bytes(str) {
+  let n = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    if (c < 0x80) n += 1;
+    else if (c < 0x800) n += 2;
+    else if (c >= 0xd800 && c <= 0xdbff) { n += 4; i++; }
+    else n += 3;
+  }
+  return n;
+}
+
+/** 词库序列化后的字节数（页面与门禁用；异常时返回 0） */
+function wordsBytes(list) {
+  try { return utf8Bytes(JSON.stringify(list || [])); } catch (e) { return 0; }
+}
+
+/** 上一次写盘失败的原因；'' 表示上次是成功的 */
+function lastSaveFailure() { return _lastSaveFailure; }
+
+/**
+ * 写盘失败时给学生看的文案。
+ *
+ * 为什么不能一律说「请再试一次」：配额满是一个**重试不可能成功**的失败，
+ * 而「再试一次」把学生推进一个死循环（他试十次也是失败，还不知道该干什么）。
+ * 配额满必须给出可执行的下一步 —— 去教材管理删掉不用的册。
+ */
+function saveFailureText() {
+  return _lastSaveFailure === 'quota'
+    ? '词库已满，请删掉不用的教材'
+    : '保存失败，请重试';
+}
+
+/** 当前词库占用与上限（设置页/诊断用） */
+function storageUsage() {
+  const bytes = wordsBytes(loadWords());
+  return {
+    bytes: bytes,
+    limitBytes: KEY_LIMIT_BYTES,
+    warnBytes: WARN_BYTES,
+    ratio: KEY_LIMIT_BYTES ? bytes / KEY_LIMIT_BYTES : 0
+  };
+}
+
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
@@ -125,10 +195,28 @@ function loadWords() {
 }
 
 function saveWords(list) {
+  _lastSaveFailure = '';
   try {
+    // ① 写前预估：超阈值直接归类成 quota，让调用方能给出可执行的指引
+    const bytes = wordsBytes(list);
+    if (bytes > WARN_BYTES) {
+      _lastSaveFailure = 'quota';
+      console.error('[store] 词库超出单 key 容量：' + Math.round(bytes / 1024) + ' KB / 上限 ' +
+        Math.round(KEY_LIMIT_BYTES / 1024) + ' KB（' + (list ? list.length : 0) + ' 词）');
+      return false;
+    }
     wx.setStorageSync(WORDS_KEY, list);
     return true;
   } catch (e) {
+    /**
+     * ② 写后兜底：把异常归类。
+     *
+     * 不能一律当配额 —— 存储层也可能因为别的理由抛（值不可序列化、环境异常）。
+     * 说成「词库已满」会把学生引去删教材，而真正的原因是别的，那是另一种误导。
+     * 只认微信配额异常的典型措辞，其余归 unknown，仍走「请重试」。
+     */
+    const msg = String((e && (e.errMsg || e.message)) || '');
+    _lastSaveFailure = /exceed|quota|limit|max\s*size|storage\s*full/i.test(msg) ? 'quota' : 'unknown';
     console.error('[store] 保存词库失败', e);
     return false;
   }
@@ -187,7 +275,7 @@ function addWord(input) {
 
   const item = makeItem(word, meaning, String(input.example || '').trim(), String(input.mnemonic || '').trim(), todayStr());
   list.push(item);
-  return saveWords(list) ? { ok: true, item: item } : { ok: false, msg: '保存失败，请重试' };
+  return saveWords(list) ? { ok: true, item: item } : { ok: false, msg: saveFailureText() };
 }
 
 /** 一个"纯英文单词/短语 token"：字母开头，后可跟字母、撇号、连字符 */
@@ -269,22 +357,37 @@ function addBatch(text) {
 /**
  * 批量写入已结构化的词条（供 AI 智能录入 / 教材词库导入使用）。
  * 与 addBatch 的区别：输入已经是 {word, meaning} 对象数组，不需要再解析文本。
- * 返回 { ok, added, skipped, dupSkipped, saveFailed? }
+ * 返回 { ok, added, merged, skipped, dupSkipped, saveFailed? }
  *   skipped    —— 被跳过的条目（缺字段的给原文，重复的给单词）
  *   dupSkipped —— 其中因"已在词库里"被跳过的条数（口径与 addBatch 一致）。
  *                 教材词库导入走的就是这条路：用户看到「跳过 N 个」时，
  *                 得能分清是"已在词库里"还是"这条数据有问题"，两者的下一步完全不同。
+ *   merged     —— 词已在库里但**释义不同**、被合并进原词条的条数（见 opts.mergeMeaning）
  *   saveFailed —— 同 addBatch：解析出了词但写盘失败。教材导入一次写 295 条，
  *                 最可能撞上 10MB 配额，因此这里的错误提示尤其不能指错方向。
+ *
+ * @param {Array} items
+ * @param {Object} [opts]
+ *   @param {boolean} [opts.mergeMeaning=false]
+ *       **教材导入专用**：遇到"同拼写、不同释义"时，把新释义并入已有词条，
+ *       而不是丢弃。默认关闭 —— AI 录入若也开，模型给的释义会静默改写学生
+ *       已经在背的词条，那是不该发生的。
+ *
+ *       为什么需要（2026-10-24 修 BUG-4）：教材册里有同词两义各占一条的情况
+ *       （wy7s_2024 的 race：v. 比赛 / n. 赛车）。旧实现第二条被判重复直接丢，
+ *       学生只看到「跳过 1 个」，永远学不到「赛车」那一义。
+ *       合并后释义变成「v. 比赛；n. 赛车」，与「一个 word 一条词条」的存储契约一致。
  */
-function addItems(items) {
+function addItems(items, opts) {
+  const mergeMeaning = !!(opts && opts.mergeMeaning);
   if (!Array.isArray(items) || items.length === 0) {
-    return { ok: false, added: 0, skipped: [], dupSkipped: 0 };
+    return { ok: false, added: 0, merged: 0, skipped: [], dupSkipped: 0 };
   }
 
   const list = loadWords();
   const today = todayStr();
   let added = 0;
+  let merged = 0;
   let dupSkipped = 0;
   const skipped = [];
 
@@ -293,8 +396,31 @@ function addItems(items) {
     const meaning = String((raw && raw.meaning) || '').trim();
     if (!word || !meaning) { skipped.push(word || '(空)'); return; }
 
-    const dup = list.some(function (w) { return w.word.toLowerCase() === word.toLowerCase(); });
-    if (dup) { skipped.push(word); dupSkipped++; return; }
+    let dupIdx = -1;
+    for (let i = 0; i < list.length; i++) {
+      if (String(list[i].word).toLowerCase() === word.toLowerCase()) { dupIdx = i; break; }
+    }
+    if (dupIdx >= 0) {
+      const old = list[dupIdx];
+      const oldMeaning = String(old.meaning || '');
+      /**
+       * 只有「同一册同一单元」的同词异义才合并。
+       *
+       * 为什么限定单元：教材册内部的同词两义（wy7s_2024 的 race 在 7A Unit 3
+       * 各占一条）是**同一课的两个义项**，合并是还原。而换另一册导入时重合的
+       * 52 个词属于**不同教材的不同义项选择**，合并会把两套教材的释义串在一起，
+       * 越导越长 —— 那不属于"修复丢失"，属于制造新问题，仍按「已在词库里」跳过。
+       */
+      const sameUnit = String(old.unit || '') === String(raw.unit || '');
+      if (mergeMeaning && sameUnit && oldMeaning.indexOf(meaning) === -1) {
+        old.meaning = oldMeaning ? oldMeaning + '；' + meaning : meaning;
+        merged++;
+      } else {
+        skipped.push(word);
+        dupSkipped++;
+      }
+      return;
+    }
 
     list.push(makeItem(word, meaning, String(raw.example || '').trim(), String(raw.mnemonic || '').trim(), today, {
       id: raw.id,
@@ -311,10 +437,10 @@ function addItems(items) {
     added++;
   });
 
-  if (added > 0 && !saveWords(list)) {
-    return { ok: false, added: 0, saveFailed: true, skipped: skipped, dupSkipped: dupSkipped };
+  if ((added > 0 || merged > 0) && !saveWords(list)) {
+    return { ok: false, added: 0, merged: 0, saveFailed: true, skipped: skipped, dupSkipped: dupSkipped };
   }
-  return { ok: added > 0, added: added, skipped: skipped, dupSkipped: dupSkipped };
+  return { ok: added > 0 || merged > 0, added: added, merged: merged, skipped: skipped, dupSkipped: dupSkipped };
 }
 
 function updateWord(updated) {
@@ -846,6 +972,8 @@ function savePrefs(prefs) {
 module.exports = {
   loadWords, saveWords, addWord, addBatch, addItems, updateWord, removeWord,
   clearAll, seedWords, initSeed, backfillUnits,
+  // 存储容量：写盘失败原因 + 占用情况（页面据此给出可执行指引，而不是「请再试一次」）
+  lastSaveFailure, saveFailureText, storageUsage, wordsBytes, KEY_LIMIT_BYTES, WARN_BYTES,
   loadCards, loadStates, setState, setStates, studiedIds, clearStates, newState,
   getWord, countWords,
   weakIds, loadPrefs, savePrefs,

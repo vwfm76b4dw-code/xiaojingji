@@ -460,7 +460,7 @@ Page(theme.withTheme({
           wx.setStorageSync(growth.EXTRA_KEY, self.today);
         } catch (e) { ok = false; }
         if (!ok) {
-          wx.showToast({ title: '保存失败，再试一次', icon: 'none' });
+          wx.showToast({ title: store.saveFailureText(), icon: 'none' });
           return;
         }
         self.setData({ extraBoughtToday: true });
@@ -1085,7 +1085,7 @@ Page(theme.withTheme({
     // 重启后又从零开始 —— 而且全程没有任何提示，是最伤信任的一类 bug。
     // 失败时的处理：不推进，让用户再点一次，并明确告知原因。
     if (!store.setState(card.id, next)) {
-      wx.showToast({ title: '保存失败，请再试一次', icon: 'none', duration: 1800 });
+      wx.showToast({ title: store.saveFailureText(), icon: 'none', duration: 1800 });
       this.setData({ leaving: false });
       return;
     }

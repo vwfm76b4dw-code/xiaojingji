@@ -172,7 +172,7 @@ Page(theme.withTheme({
       // ① 判定必须用 saveFailed：ok:false 时 added 恒为 0（store 的三条 return 路径都是），
       // 所以原先的 `r.added > 0` 是**恒假的死分支** —— 写盘失败会被说成"没有可识别的词条"。
       let title = '没有可识别的词条';
-      if (r.saveFailed) title = '保存失败，请重试';
+      if (r.saveFailed) title = store.saveFailureText();
       else if (r.dupSkipped > 0 && r.dupSkipped === r.skipped.length) title = '这些词都已经在词库里了';
       wx.showToast({ title: title, icon: 'none' });
       return;
@@ -235,7 +235,7 @@ Page(theme.withTheme({
       // 用户会以为是故障去重试，实际上再试多少次结果都一样。
       // 反过来，写盘失败必须用 saveFailed 判定（理由见 saveBatch）。
       let title = '没有可识别的词条';
-      if (r.saveFailed) title = '保存失败，请重试';
+      if (r.saveFailed) title = store.saveFailureText();
       else if (r.dupSkipped > 0 && r.dupSkipped === r.skipped.length) title = '这些词都已经在词库里了';
       wx.showToast({ title: title, icon: 'none' });
       return;

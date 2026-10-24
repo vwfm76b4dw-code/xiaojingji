@@ -1640,7 +1640,9 @@ function lastToast() {
     flushTimers();
     assert.strictEqual(JSON.stringify(storedWords()), snapshot, '写失败时存储必须逐字节未变');
     assert.strictEqual(p.data.idx, 0, '写失败不该推进队列');
-    assert.ok(lastToast().indexOf('保存失败') !== -1, '应提示保存失败，实际：' + lastToast());
+    // 2026-10-24：失败原因区分开了 —— 配额满说「词库已满…」，其余仍说「保存失败…」。
+    // 断言的是「如实提示、不静默」这个不变量，而不是某一版文案。
+    assert.ok(/保存失败|词库已满/.test(lastToast()), '应如实提示保存失败，实际：' + lastToast());
   });
 
   await check('study single_practice 被消费且读后即删（不留幽灵状态）', function () {
@@ -2501,7 +2503,7 @@ function lastToast() {
     p.flipCard();
     failNextSet = true;                      // 让 store.updateWord 的写入失败
     p.onGrade({ currentTarget: { dataset: { q: 5 } } });
-    assert.ok(/保存失败/.test(lastToast()), '应提示保存失败，实际：' + lastToast());
+    assert.ok(/保存失败|词库已满/.test(lastToast()), '应如实提示保存失败，实际：' + lastToast());
     assert.strictEqual(p.data.idx, beforeIdx, '不该推进队列');
     assert.strictEqual(p.data.current.word, beforeWord, '不该换词');
   });
@@ -2858,7 +2860,7 @@ function lastToast() {
     failNextSet = true;   // 让 store.updateWord 的写盘失败
     p.onGrade({ currentTarget: { dataset: { q: 5 } } });
 
-    assert.ok(/保存失败/.test(lastToast()), '应如实提示保存失败，实际：' + lastToast());
+    assert.ok(/保存失败|词库已满/.test(lastToast()), '应如实提示保存失败，实际：' + lastToast());
     assert.strictEqual(calls.toast.filter(function (t) { return /下次复习/.test(t.title || ''); }).length, 0,
       '写盘失败却弹了"下次复习"，界面会骗用户说已安排 —— 这是静默丢数据');
     assert.strictEqual(p.data.leaving, false, '写盘失败不该进入 leaving');
@@ -3137,7 +3139,7 @@ function lastToast() {
     assert.strictEqual(setCalls - writesBefore, 0, '未选单元时不该写存储（进了册也一样）');
   });
 
-  await check('教材页 全量导入：落库 ' + BOOK_EXPECTED + ' 条、Toast 含跳过数、选择被清空', function () {
+  await check('教材页 全量导入：落库 ' + BOOK_EXPECTED + ' 条、同词异义被合并、选择被清空', function () {
     resetWorld();
     const p = mount('pack-curriculum/pages/curriculum/curriculum.js');
     p.onLoad();
@@ -3146,7 +3148,9 @@ function lastToast() {
     p.doImport();
     assert.strictEqual(store.loadWords().length, BOOK_EXPECTED,
       '应落库 ' + BOOK_EXPECTED + ' 条（295 减去批次内同形 ' + BOOK_INTRA_DUP + ' 条）');
-    assert.strictEqual(lastToast(), '已导入 ' + BOOK_EXPECTED + ' 个词，跳过 ' + BOOK_INTRA_DUP + ' 个',
+    // 2026-10-24 改：同册同单元的同词异义（race v./n.）由「跳过」改为「合并」。
+    // 旧口径把第二个义项直接丢掉，学生只看到「跳过 1 个」且永远学不到「赛车」。
+    assert.strictEqual(lastToast(), '已导入 ' + BOOK_EXPECTED + ' 个词，合并 ' + BOOK_INTRA_DUP + ' 个同词义项',
       '实际提示：' + lastToast());
     assert.strictEqual(p.data.pickedCount, 0, '导入成功后应清空选择');
   });

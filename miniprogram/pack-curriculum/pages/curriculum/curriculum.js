@@ -557,19 +557,22 @@ Page({
       return;
     }
 
-    const r = store.addItems(items);
+    // mergeMeaning：教材册存在「同拼写、不同释义」各占一条的情况（wy7s_2024 的 race）。
+    // 不开这个开关，第二条会被判重复直接丢掉，学生只看到「跳过 1 个」。
+    const r = store.addItems(items, { mergeMeaning: true });
     if (!r.ok) {
       // 与 add.js 的 saveBatch / confirmAiItems 同口径：写盘失败 / 全在词库里 / 没有可用条目。
       // 本页最不能把"写盘失败"说成"这些词都已经在词库里了"：一次写几百条最容易撞配额，
       // 而那句提示会让用户以为早就导过了，直接走人 —— 一个词都没进去。
       let title = '没有可导入的词条';
-      if (r.saveFailed) title = '保存失败，请重试';
+      if (r.saveFailed) title = store.saveFailureText();
       else if (r.dupSkipped > 0 && r.dupSkipped === r.skipped.length) title = '这些词都已经在词库里了';
       wx.showToast({ title: title, icon: 'none' });
       return;
     }
 
     let msg = '已导入 ' + r.added + ' 个词';
+    if (r.merged > 0) msg += '，合并 ' + r.merged + ' 个同词义项';
     if (r.skipped.length > 0) msg += '，跳过 ' + r.skipped.length + ' 个';
     cards.invalidate();          // 让卡片缓存看到新词，否则返回列表看不到刚导入的内容
     this.buildManaged();         // 管理列表立刻看到这一册（不必退出重进）

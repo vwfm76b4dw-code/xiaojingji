@@ -294,7 +294,7 @@ Page(theme.withTheme({
        * 让失败可见、可重试（重试会重新走一遍判分与落盘）。
        */
       this.setData({ saveFailed: true });
-      wx.showToast({ title: '保存失败，请点「再试一次」', icon: 'none', duration: 2000 });
+      wx.showToast({ title: store.saveFailureText(), icon: 'none', duration: 2000 });
       return;
     }
     this.setData({ saveFailed: false });
