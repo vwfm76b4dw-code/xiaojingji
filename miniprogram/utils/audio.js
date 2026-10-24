@@ -1,14 +1,25 @@
 /**
- * 发音音频 —— 优先用**随包预置的真人发音**，其次插件合成，最后本地服务。
+ * 发音音频 —— 三级取材：**本地（缓存或包内）→ 云端缓存 → 插件合成/本地服务**。
  *
- * ## 为什么把音频打进包
- * 之前发音要么靠插件（个人主体常无权限）、要么靠电脑上的服务（换手机就废）。
- * 而 294 个单词的发音 mp3 在 16kbps 单声道下**总共只有 1MB** ——
- * 代码压缩后才 257KB，加上音频也在 2MB 主包限制内（实测 1283KB / 62%）。
- * 于是发音可以做到：**零延迟、离线可用、零成本、不依赖任何服务**。
- * 这是"任何手机都能用"这个目标里最后一块拼图。
+ * ## 2026-09-25 音频上云（主包瘦身）
+ * 294 个发音 mp3（901 KB）原本随包，主包 2048 KB 硬限被突破后迁到云存储
+ * （`resources/audio/<slug>.mp3`，经 utils/resources.js 下载并缓存在
+ * USER_DATA_PATH）。从此每个词首次播放需联网下载一次，之后**永久本地、零延迟**；
+ * 下载与缓存的所有细节（并发防重、截断校验、断网降级）都收在 resources.js，
+ * 本模块只负责编排取材顺序。
  *
- * ## 为什么有"复制到本地"这一步
+ * ## 三级的取舍
+ *   ① 本地缓存（resources 缓存目录）—— 迁移后的常态，命中即零开销；
+ *   ② 包内复制 —— 兼容**旧包**（迁移前版本里 294 个 mp3 还在包里）：
+ *      copyFile 成功即走老路，行为与历史版本逐字节一致；
+ *   ③ 云端下载 —— ①②都落空时拉一次云端并落缓存，下一次播放就变成 ①；
+ *   ④ 插件/本地服务 —— 只服务**没有预置音频**的词（用户自己录入的），
+ *      以及 ①②③全失败的静默兜底。
+ * 为什么不把 ① 做成"先查包内再查缓存"：迁移后包里没有文件，每次播放都白付一次
+ * 失败的 copyFile；反过来旧包没有缓存目录，先查缓存也是白付一次 stat。
+ * 两种包各取自己命中的第一级，代价最小。
+ *
+ * ## 为什么保留"复制到本地"这一步（旧包兼容）
  * `InnerAudioContext.src` 能否直接指向代码包内路径，官方文档没有明确承诺，
  * 社区资料互相矛盾（有人说包内路径播放不了，有人说可以）。
  * 所以这里做**双保险**：
@@ -21,8 +32,9 @@
  */
 const settings = require('./settings.js');
 const AUDIO_INDEX = require('../data/audio-index.js');
+const resources = require('./resources.js');
 
-/** 音频所在目录（相对小程序根） */
+/** 音频所在目录（相对小程序根）。迁移后包内不再有这些文件，保留目录常量只为旧包兼容 */
 const AUDIO_DIR = '/data/audio';
 
 let _copied = null;          // 已复制到本地的词（Set 延迟创建）
@@ -72,6 +84,17 @@ let _set = null;
 function _indexSet() {
   if (!_set) _set = new Set(AUDIO_INDEX);
   return _set;
+}
+
+/**
+ * 词 → 云资源清单 key（resources.js 的命名空间）。
+ * 与 packPath 一样吃 audioKey 的产物；命名规则是契约（§2.1），
+ * 与 tools/upload-resources-cloud.py 的上传路径**逐字一致**，两边都改才会同步坏。
+ */
+function cloudKey(word) {
+  const k = audioKey(word);
+  if (!k) return '';
+  return 'audio/' + k + '.mp3';
 }
 
 /** 已复制到本地的路径 */
@@ -179,7 +202,7 @@ function ttsViaPlugin(word) {
  * 取一个词的发声音频。
  *
  * 返回 { ok, src, via } 或 { ok:false, code }
- *   via: 'pack'   随包预置（首选，离线可用）
+ *   via: 'pack'   包内路径（迁移前的包里真实存在；迁移后的包里这个路径是死的）
  *        'local'  已复制到本地
  *        'plugin' 插件合成
  *        'service' 本地服务 URL（开发期）
@@ -187,6 +210,9 @@ function ttsViaPlugin(word) {
  * ⚠️ 调用方拿到 ok:true 后仍需处理**播放失败**：
  *    包内路径在某些平台播不了，这时应该再调 `ensureLocal` 拿本地路径重试。
  *    本模块提供 `resolveForPlay` 把这两步合起来，页面直接用那个更省事。
+ * ⚠️ 迁移后（2026-09-25）包内已没有 mp3，本函数对预置词返回的包内路径只在旧包上可播。
+ *    **新代码一律用 resolveForPlay** —— 它接入云端缓存链，迁移后仍能给出真实可播的文件。
+ *    本函数保留原实现不动：它是导出 API，语义（"给一个尽量能用的 src"）不能变。
  */
 function wordAudio(word) {
   const src = packPath(word);
@@ -202,10 +228,31 @@ function wordAudio(word) {
 }
 
 /**
+ * 走云端取一个词的发音（缓存命中直接回，未命中下载并落缓存）。
+ * 失败时 reject —— 只在内部使用，对外仍由 resolveForPlay 转成静默降级。
+ */
+function viaCloud(word) {
+  const key = cloudKey(word);
+  if (!key) return Promise.reject({ code: 'NOT_UPLOADED', msg: 'empty-key' });
+  return resources.getResource(key).then(function (cached) {
+    if (cached) return { ok: true, src: cached.path, via: 'cloud-cache' };
+    return resources.ensureResource(key).then(function (r) {
+      return { ok: true, src: r.path, via: 'cloud' };
+    });
+  });
+}
+
+/**
  * 为"播放"解析出一个**确定能播**的路径。
  *
- * 顺序：包内 → 本地复制 → 插件合成。前两步覆盖随包词，
- * 第三步覆盖用户自己录入的词（那些词没有预置音频）。
+ * 顺序：本地缓存 → 包内复制 → 云端下载 → 插件合成 → 包内路径兜底。
+ * 前两级覆盖旧包（mp3 还在包里的历史版本）与已缓存词；
+ * 第三级覆盖迁移后首次播放（下载一次，之后走第一级）；
+ * 第四级覆盖用户自己录入的词（没有预置音频）。
+ *
+ * ⚠️ 契约（§2.2）：云端取不到时**静默失败** —— 这里只 console 上下文日志（含 word），
+ * 不弹窗、不抛错。最后的包内路径兜底保留旧行为（旧包上它真实存在），
+ * 调用方本就要处理"src 播不出来"的情况（见 wordAudio 的说明）。
  */
 function resolveForPlay(word) {
   const src = packPath(word);
@@ -215,14 +262,22 @@ function resolveForPlay(word) {
   }
   return ensureLocal(word).then(function (r) {
     if (r.ok) return { ok: true, src: r.path, via: 'local' };
-    // 复制失败（平台不支持）→ 退回包内路径试试，再不行才用插件
-    return { ok: true, src: src, via: 'pack' };
+    // 复制失败：旧包可能是平台不允许，新包是文件已迁出。两种都交给云端链，
+    // 由 resources.js 自己判定"缓存有没有/清单有没有/网通不通"
+    return viaCloud(word).catch(function (err) {
+      console.log('[audio] 云端发音不可用 word=' + word +
+        ' code=' + ((err && err.code) || '?') +
+        ' ' + ((err && err.msg) || ''));
+      return { ok: true, src: src, via: 'pack' };
+    });
   });
 }
 
 /**
  * 能力自检（设置页用来显示"发音可用性"）。
- * 只做**同步可判定**的部分：包内音频覆盖率是编译期确定的，不需要网络。
+ * 只做**同步可判定**的部分：预置发音覆盖率由编译期清单（audio-index）决定，
+ * 不需要网络 —— 词在清单里就代表"包内（旧包）或云端（迁移后）有它的发音"，
+ * 不区分两种来源，因为设置页只关心覆盖率这一个数。
  */
 function audioCapability(words) {
   let has = 0;
@@ -241,7 +296,7 @@ function audioCapability(words) {
 }
 
 module.exports = {
-  audioKey, packPath, localPath, ensureLocal,
+  audioKey, cloudKey, packPath, localPath, ensureLocal,
   wordAudio, resolveForPlay, audioCapability,
   AUDIO_DIR
 };

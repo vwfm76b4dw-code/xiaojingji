@@ -175,34 +175,132 @@ function judge(expected, heard, vocab, opts) {
   //   ② 候选是期望词的**形态变体**：hobbies ⊃ hobby、holidays ⊃ holiday
   //      → 学生读的是同一个词的复数，不是"读成别的词"。
   //      曾因此把 0.933 分的正确答案判成 fail。
-  /**
-   * 变体判定：判断"候选词是不是期望词的形态变化"（复数/时态/比较级）。
+/**
+   * 变体判定：判断「候选词是不是期望词的形态变化」（复数/时态/比较级）。
    *
-   * 判据演进（两次踩坑）：
+   * 判据演进（三次踩坑）：
    *   v1 前缀匹配：hobby→hobbies 词干从 'hobby' 变 'hobbi'，indexOf 失效
    *   v2 编辑距离：hobbies vs hobby 距离是 3（y→i 加 es），仍判不出
-   *   v3（本版）**正则剥离词缀后比词干** —— 这是最本质的判法，
-   *      因为它建模的正是"英语构词法"本身，而不是字符表面的相似。
+   *   v3 **正则剥离词缀后比词干** —— 建模的是「英语构词法」本身，方向是对的
+   *
+   * ## v3 的两个 bug（2026-09-30 修；这是学生直接受害的判定错误）
+   *
+   * **bug 1：两处 `.replace(/([a-z])<0x01>$/, '$1')` 是永不匹配的死代码。**
+   * 那两行的正则里嵌了一个**字面 0x01 控制字节**（本意应是反引用 `\1`
+   * 写坏成了控制字符）。它不是恒等操作，而是**永远匹配不上**，
+   * 于是注释宣称的「末尾重复字母另处理」「双写另处理」**从来没发生过**。
+   *
+   * ⚠️ 顺带排除一个看起来很自然的"修法"：**不能**简单改成真正的反引用
+   * `/([a-z])\1$/`。那样 `kiss → kis`、`miss → mis`、`pass → pas`，
+   * 会把**更多**课本基词变坏 —— 比现在的 bug 更广。重复辅音还原必须
+   * 限定在英语里真正会双写的辅音上（见 DOUBLE_CONSONANTS）。
+   *
+   * **bug 2（学生受害的直接原因）：`/s$/` 对基词也生效，去缀不对称。**
+   * v3 的规则链是**无条件顺序剥离**，没有「这个词确实带这个后缀」的判断：
+   *   `kiss`   → ies?no ied?no es?no **s$ → `kis`** → 后续都不匹配 → `kis`
+   *   `kissed` → ies?no ied?no es?no s$?no ing?no ... **ed$ → `kiss`** → `kiss`
+   * 两侧得到 `kis` vs `kiss`，判不等 → **不是变体** → 触发词表否决 →
+   * 本已 0.917 分（过阈值）的正确答案被改判 `fail` / `other_word`。
+   * `miss ← missed` 同理。而 `fill ← filled` 恰好躲过，因为 `fill` 不以 s 结尾，
+   * 剥出来还是 `fill` —— 这正是「只测一个词看不出 bug」的原因。
+   * kiss / miss 都是 `wy7s_2024`（外研版七上）的真实课本词，不是边缘词。
+   *
+   * ## v4 的修法：生成**全部候选词干**再求交集
+   *
+   * 不再「两侧各剥一次然后比」，而是**各自剥出所有可能的词干，
+   * 只要两个集合有交集就是变体**：
+   *   · 不对称自然消失：`kiss` 的候选含 `kiss` 本身，`kissed` 的候选含 `kiss`
+   *   · 真实后缀形态仍能识别：`hobbies→{hobbies,hobby}`、`studies→{study}`、
+   *     `boxes→{box}`、`running→{runn,run}`、`stopped→{stopped,stopp,stop}`
+   *   · 基词自身永远在候选里，基词与任意形态都能对上
+   *
+   * v3 修好的既有场景（hobby/hobbies、holiday/holidays）必须保持不回归 ——
+   * 回归用例见 tools/verify-p1-client.js。
    */
-  const stripAffix = (w) => {
-    return w
-      .replace(/ies$/, 'y')      // hobbies → hobby, studies → study
-      .replace(/ied$/, 'y')
-      .replace(/([^aeiou])es$/, '$1')   // boxes → box
-      .replace(/s$/, '')         // books → book（放在 ies 之后）
-      .replace(/ing$/, '')       // running → runn（末尾重复字母另处理）
-      .replace(/([a-z])$/, '$1')     // runn → run
-      .replace(/ed$/, '')
-      .replace(/(er|est)$/, '')  // bigger → big（双写另处理）
-      .replace(/([a-z])$/, '$1');
+
+  /** 英语里会双写的辅音字母。还原时只认这些，避免把 kiss→kis 这类基词也毁掉 */
+  const DOUBLE_CONSONANTS = 'bdgklmnprt';
+
+  /**
+   * 还原末尾重复辅音：runn→run, stopp→stop, bigg→big, popped→pop。
+   * 不是英语双写惯用字母就不动（kiss / miss / pass 保持原样）。
+   *
+   * @param {string} w 单词
+   * @returns {string} 还原后的词；不适用时原样返回
+   */
+  const undouble = (w) => {
+    const n = w.length;
+    if (n >= 3 && w[n - 1] === w[n - 2] && DOUBLE_CONSONANTS.indexOf(w[n - 1]) !== -1) {
+      return w.slice(0, -1);
+    }
+    return w;
   };
 
+  /**
+   * 一个词的**全部候选词干**（数组去重，至少含原词本身）。
+   *
+   * 每条规则**独立试一次**，而不是串成一条链 —— 这是 v3→v4 的关键：
+   * 串起来时前一条规则的副作用会污染后一条（`/s$/` 把 `kiss` 变成 `kis`，
+   * 后面就再也回不到 `kiss`）；独立试探保证每种构词路径都被考虑到。
+   *
+   * @param {string} w 已 normalize 的单个词
+   * @returns {string[]} 候选词干列表
+   */
+  const stemsOf = (w) => {
+    const out = [];
+    /** @param {string} x 候选词干 @returns {void} */
+    const add = (x) => {
+      if (x && x.length >= 2 && out.indexOf(x) === -1) out.push(x);
+    };
+
+    add(w);                                        // 基词自身（kiss 的正解就在这里）
+    add(w.replace(/ies$/, 'y'));                   // studies → study
+    add(w.replace(/ied$/, 'y'));                   // tried → try
+    if (/([^aeiou])es$/.test(w)) add(w.replace(/([^aeiou])es$/, '$1'));  // boxes → box
+    /**
+     * 复数 / 第三人称 `-s`。这条**必须对所有词都试**（holidays → holiday
+     * 走的就是它：holiday+s 是 -ays 不是 -ies，之前按"s 结尾就不剥"的
+     * 粗守卫会把 holiday/holidays 判成两个词，那是 v3 修好过的场景，不能丢）。
+     *
+     * 那 v3 的病根怎么不算回来了？—— 因为 v3 拿的是**唯一**的剥离结果去比，
+     * `kiss` 被这一条改写成 `kis` 就再也回不去了；而v4 里 `kiss` 本身
+     * 早已在上面的 add(w) 里，`kis` 只是**多出来的一个候选**。
+     * 判据是「两集合有交集」，多一个候选只会让匹配更宽松，
+     * 不会像 v3 那样把唯一的正确答案改坏。
+     * 残留风险仅限于 `kis`/`pas` 这类无意义短串恰好也是别的词 —— 课本词表里没有。
+     */
+    add(w.replace(/s$/, ''));                     // books → book, holidays → holiday
+    add(w.replace(/ing$/, ''));                    // running → runn
+    add(w.replace(/ed$/, ''));                     // kissed → kiss, filled → fill
+    add(w.replace(/ier$/, 'y'));                   // happier → happy
+    add(w.replace(/iest$/, 'y'));                  // happiest → happy
+    add(w.replace(/er$/, ''));                     // bigger → bigg
+    add(w.replace(/est$/, ''));                    // biggest → bigg
+
+    // 辅音重复还原 —— v3 里那两行死代码真正想做的事（限定英语双写辅音）
+    for (let i = 0; i < out.length; i++) add(undouble(out[i]));
+
+    return out;
+  };
+
+  /**
+   * 候选词干集合求交集：任一共同词干即视为同一词的形态变化。
+   *
+   * @param {string} cand 候选词（ASR 听到的）
+   * @param {string} exp 期望词
+   * @returns {boolean} 是否为同一词的形态变化
+   */
   const isVariantOf = (cand, exp) => {
     if (cand === exp) return true;
     if (!cand || !exp) return false;
-    // 只对单词语判变体；短语交给"包含"逻辑
+    // 只对单词语判变体；短语交给「包含」逻辑
     if (cand.indexOf(' ') !== -1 || exp.indexOf(' ') !== -1) return false;
-    return stripAffix(cand) === stripAffix(exp);
+    const a = stemsOf(cand);
+    const b = stemsOf(exp);
+    for (let i = 0; i < a.length; i++) {
+      if (b.indexOf(a[i]) !== -1) return true;
+    }
+    return false;
   };
 
   let veto = null;
@@ -244,8 +342,16 @@ function judge(expected, heard, vocab, opts) {
     let sPhone = 0;
     if (c.phones.length) {
       sPhone = jaroElem(expPhones, c.phones);
-      // 长度护栏：候选音素比期望长很多时衰减（防"读了一长串"蒙分）
-      if (c.phones.length - expPhones.length > 1) {
+      // 长度护栏：候选音素比期望长很多时衰减（防"读了一长串"蒙分）。
+      // 豁免：**形态变体**（kissing←kiss / kissed←kiss）多出来的音素是
+      // 构词后缀的一部分，不是蒙分——ASR 又常把短促的尾音听成 -ing/-ed，
+      // 学生明明读对了却被护栏压穿 borderline 线判 fail（kiss←kissing
+      // 实测 0.8667 → 0.6713 < 0.68，DEV-P1-LENGTH-GUARD-FALSE-FAIL）。
+      // 判据与词表否决共用 isVariantOf（词干交集），短语不参与豁免；
+      // 非变体的长串（notebook←book 这类）照旧衰减。实测分布见
+      // tools/analyze-len-guard.js 修前/修后两份 JSON（2026-10-17）。
+      const isVar = spNorm.indexOf(' ') === -1 && isVariantOf(spNorm, expNorm);
+      if (!isVar && c.phones.length - expPhones.length > 1) {
         sPhone *= Math.pow(expPhones.length / c.phones.length, LEN_POW);
       }
     }
@@ -274,6 +380,45 @@ function judge(expected, heard, vocab, opts) {
     reason = 'other_word';
   }
 
+  /**
+   * 字母兜底的分数**封顶 borderline，永不判 pass**（2026-09-30）。
+   *
+   * ## 为什么这不是调阈值能解决的
+   * sPhone 与 sChar 是**两种量纲**：前者量「发音像不像」，后者量「是不是同一个词」。
+   * 代码用 Math.max 合并两者，等于把「词形相似」当「发音相似」用。
+   * 后果实测：holiday←holliday 得 0.91、kiss←kis 得 0.871，都判 pass ——
+   * 而后者（s 尾读成 z）是**真实的读音错误**，不是容错。
+   * 提到 0.88 只能盖住 0.871 那批，0.91 那批照样 pass —— 阈值治不了量纲错。
+   *
+   * ## 触发前提是可机械验证的，不是"感觉像 letters"
+   * 实测穷举（音素表内 866 词两两互判，抽样 4189 对）：**letters 单独定出 pass 的对数 = 0**。
+   * 也就是说 via=letters 只在「听到的词查不到音素」（sPhone=0）时发生；
+   * 只要听到的词在表内，sPhone 就有值，letters 永远轮不到定档。
+   * ⚠️ 这条互斥性被 tools/verify-p1-client.js ⑧ 钉住：将来若有人把 letters 的
+   * 触发条件改宽（例如改成「音素相似度低于 X 就落 letters」），会静默吃掉
+   * phoneme 路径的正确判定 —— 那时门禁会红。
+   *
+   * ## 为什么封顶 borderline 而不是 fail
+   * fail 的文案是「这个词有点难」；na 的文案是「暂时评不了」。
+   * 而这个分支的真实成因是**工具能力不足**（听到的词不在音素表内，
+   * 无从判断发音），不是学生读错 —— 判 fail 是冤枉，判 na 是放弃反馈。
+   * borderline 至少还承认"听到了这个词，只是没判断准"。
+   * 配套文案见 suggestMap 的 lettersOnly 分支：**如实交代是识别没听准**，
+   * 否则学生会以为是自己读得不好，反复练一个已经会读的词。
+   *
+   * ## 为什么判据用 via 而不是分数
+   * 分数是连续的、随 ASR 输出浮动；via 是**离散的判据**（听到的词在不在音素表），
+   * 可以用门禁机械断言。靠阈值把关则每次 ASR 换服务商都要重调。
+   */
+  if (via === 'letters' && band === 'pass') {
+    band = 'borderline';
+    // reason 沿用现有取值集合，**不新增 'letters_only'**：
+    // 实测 reason 既不落盘（saveRecord 只存 date/band/score/heard/ms），
+    // 也不被 analysis.js 读 —— 加一个没人读的字段就是死代码。
+    // 「letters 路径占比」这个统计需求应该走门禁实测，不该靠运行时留痕。
+    reason = 'unclear';
+  }
+
   const verdictMap = {
     pass: '读得不错',
     borderline: '再试一次',
@@ -285,6 +430,21 @@ function judge(expected, heard, vocab, opts) {
     fail: '点下面的喇叭听标准发音，跟着读一遍'
   };
 
+  /**
+   * letters 路径专属文案：只有「因工具能力不足而降档」时用。
+   *
+   * 为什么必须和普通 borderline 分开：普通 borderline 的成因是**发音接近但不确定**
+   * （真的读得不准），提示「慢一点、把每个音节读清楚」是对的；
+   * 而 letters 分支的成因是「ASR 听到的词不在音素表内，无从判断」——
+   * 同一个词，学生可能读得完全正确（ASR 转写误差），也可能读错（真的没读对），
+   * **文本层无法区分**（两种情形的输入完全一样，见上方注释）。
+   * 对一个实际读对了的学生说「慢一点」是误导，会让他反复练一个已经会读的词。
+   * 所以这里如实交代工具边界，把"是不是没读准"这件事还给语音本身去判断。
+   */
+  const suggest = (via === 'letters' && band === 'borderline')
+    ? '这次没能听准，没法判断你的读音 —— 跟标准发音比一比再读一次吧'
+    : suggestMap[band];
+
   return {
     ok: band === 'pass',
     band: band,
@@ -295,7 +455,7 @@ function judge(expected, heard, vocab, opts) {
     detail: veto ? ('听成了词表里的「' + veto + '」')
                  : ('匹配「' + bestSpan + '」· ' + (via === 'phoneme' ? '按发音比对' : '按拼写比对')),
     verdict: verdictMap[band],
-    suggestion: suggestMap[band],
+    suggestion: suggest,
     heard: heard || ''
   };
 }

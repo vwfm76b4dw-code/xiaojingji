@@ -1,12 +1,25 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
+
   <!-- 学习量 -->
-  <view class="card">
+  <view class="card" style="margin-top: 24rpx;">
     <view class="section-label">学习量</view>
+
+    <view class="row" bindtap="toggle" data-k="autoDaily">
+      <view class="row-main">
+        <text class="row-title">自动学习量（推荐）</text>
+        <text class="t-hint">本地看你近 7 天的数据，帮你定今天的新词与复习量 —— 不联网、不连 AI</text>
+      </view>
+      <view class="switch {{cfg.autoDaily ? 'on' : ''}}"><view class="knob"></view></view>
+    </view>
+
+    <view wx:if="{{cfg.autoDaily}}" class="t-hint" style="margin-top: 8rpx; padding: 12rpx 16rpx; background: var(--green-wash); border-radius: var(--r-sm);">
+      已启用：数值会随你近 7 天表现微调；下面两个值是「推荐之前的基准」，开关关掉时仍生效。
+    </view>
 
     <view class="row">
       <view class="row-main">
         <text class="row-title">每日新词数</text>
-        <text class="t-hint">每天第一次学的单词数量</text>
+        <text class="t-hint">{{cfg.autoDaily ? '基准值 · 自动模式开启时由本地建议替代' : '每天第一次学的单词数量'}}</text>
       </view>
       <view class="stepper">
         <view class="step-btn" data-k="dailyNewWords" data-d="-5" data-min="5" data-max="50" bindtap="step">−</view>
@@ -18,7 +31,7 @@
     <view class="row">
       <view class="row-main">
         <text class="row-title">每日复习上限</text>
-        <text class="t-hint">词库变大后防止一次涌出太多</text>
+        <text class="t-hint">{{cfg.autoDaily ? '基准值 · 自动模式开启时由本地建议替代' : '词库变大后防止一次涌出太多'}}</text>
       </view>
       <view class="stepper">
         <view class="step-btn" data-k="dailyReviewMax" data-d="-10" data-min="10" data-max="200" bindtap="step">−</view>
@@ -26,11 +39,21 @@
         <view class="step-btn" data-k="dailyReviewMax" data-d="10" data-min="10" data-max="200" bindtap="step">＋</view>
       </view>
     </view>
+  </view>
 
+  <!-- 朗读练习 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <view class="section-label">朗读练习（AI 听音评测）</view>
+
+    <!--
+      词数放在这里而不是「学习量」：它只被朗读页读（pronounce.js 的 cfg.sessionSize），
+      复习页根本不看它。放在「学习量」卡片里会让学生以为调完复习量就变了 ——
+      一个改了没反应的开关，比没有这个开关更伤信任。
+    -->
     <view class="row">
       <view class="row-main">
-        <text class="row-title">单轮词数</text>
-        <text class="t-hint">一次复习做多少个词，做完给反馈</text>
+        <text class="row-title">朗读练习词数</text>
+        <text class="t-hint">朗读页一次练多少个词</text>
       </view>
       <view class="stepper">
         <view class="step-btn" data-k="sessionSize" data-d="-5" data-min="5" data-max="50" bindtap="step">−</view>
@@ -38,11 +61,6 @@
         <view class="step-btn" data-k="sessionSize" data-d="5" data-min="5" data-max="50" bindtap="step">＋</view>
       </view>
     </view>
-  </view>
-
-  <!-- 朗读练习 -->
-  <view class="card" style="margin-top: 24rpx;">
-    <view class="section-label">朗读练习（AI 听音评测）</view>
 
     <view class="row" bindtap="toggle" data-k="autoPlayAudio">
       <view class="row-main">
@@ -88,56 +106,42 @@
       </view>
       <view class="switch {{cfg.showHook ? 'on' : ''}}"><view class="knob"></view></view>
     </view>
-  </view>
 
-  <!-- 朗读服务 -->
-  <view class="card" style="margin-top: 24rpx;">
-    <view class="section-label">朗读服务</view>
-
-    <view class="svc {{asrOk ? 'ok' : 'bad'}}">
-      <text>{{asrMsg}}</text>
-    </view>
-
-    <block wx:if="{{!editingBase}}">
-      <view class="kv-row">
-        <text class="t-sub">服务地址</text>
-        <text class="t-mono svc-url">{{asrBase}}</text>
+    <view class="row" bindtap="toggle" data-k="sfx">
+      <view class="row-main">
+        <text class="row-title">反馈音效</text>
+        <text class="t-hint">答对/答错的提示音（朗读页不响）</text>
       </view>
-      <view class="btn-row" style="margin-top: 20rpx;">
-        <button class="btn ghost small" bindtap="editBase">修改地址</button>
-        <button class="btn ghost small" bindtap="testService">测试连接</button>
-      </view>
-    </block>
-
-    <block wx:else>
-      <input class="input" value="{{draftBase}}" bindinput="onBaseInput" placeholder="http://192.168.1.5:8766" />
-      <view class="t-hint" style="margin-top: 12rpx;">
-        真机调试要填电脑局域网 IP（127.0.0.1 在手机上指向手机自己）
-      </view>
-      <view class="btn-row" style="margin-top: 20rpx;">
-        <button class="btn ghost small" bindtap="cancelBase">取消</button>
-        <button class="btn primary small" bindtap="saveBase">保存并测试</button>
-      </view>
-    </block>
-
-    <view class="btn-row" style="margin-top: 24rpx;">
-      <button class="btn primary small" bindtap="goPronounce">去朗读练习</button>
+      <view class="switch {{cfg.sfx ? 'on' : ''}}"><view class="knob"></view></view>
     </view>
   </view>
 
-  <!-- 数据 -->
+
+
+  <!-- 主题卡：不受家长锁（外观偏好不改学习行为），所以放在折叠组之外。
+       原来它夹在第 3、4 张被锁卡中间，为把 6 张收成一个连续分组挪到了这里。 -->
+  <!--
+    主题（2026-09-25）：5 套清透浅色配色，点选即时生效并持久化。
+    为什么独立成卡而不是塞进「反馈与显示」：色卡一行 5 个占宽，混进行式开关里
+    会把那两行开关挤成不对称；独立卡片与设置页其余分区同构（section-label + 内容）。
+    为什么不过家长锁：外观偏好不改学习行为、不碰数据（见 settings.js pickTheme 注释）。
+  -->
   <view class="card" style="margin-top: 24rpx;">
-    <view class="section-label">数据</view>
-    <view class="btn-row">
-      <button class="btn ghost small" bindtap="clearPronRecords">清空朗读记录</button>
-      <button class="btn danger-line small" bindtap="resetAll">恢复默认设置</button>
+    <view class="section-label">主题</view>
+    <view class="theme-grid">
+      <view wx:for="{{themes}}" wx:key="id"
+            class="theme-swatch {{themeId === item.id ? 'on' : ''}}"
+            data-theme="{{item.id}}" bindtap="pickTheme"
+            aria-role="button" aria-label="主题 {{item.label}}">
+        <view class="sw-dot" style="background: {{item.swatch}};"></view>
+        <text class="sw-name">{{item.label}}</text>
+      </view>
     </view>
-    <view class="t-hint" style="margin-top: 14rpx;">
-      学习进度不在这些操作范围内，不会被清掉
-    </view>
+    <view class="t-hint" style="margin-top: 12rpx;">{{themeDesc}}</view>
   </view>
 
   <view class="foot t-hint">
-    单词复习调度器 · 数据只存本机
+    小鲸记单词 · 数据只存本机
   </view>
+
 </view>

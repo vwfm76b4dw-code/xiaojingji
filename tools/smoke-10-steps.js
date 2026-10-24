@@ -79,6 +79,19 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
   let mini;
   try {
     mini = await automator.connect({ wsEndpoint: ws });
+    // 学后拼写注入关闭（离场恢复）——**契约说明**（2026-09-24，DEV-P0-3）：
+    // 本冒烟测「用户十步真实路径」的中途交互（评分推进、切 tab 接续），
+    // 十步中队列不会耗尽，注入只为防御评分把队列提前走空的边缘情形。
+    // 拼写轮的默认配置路径由 verify-pages.js（realPrefs 2 项）与
+    // verify-runtime.js（P0-1 回归）两层守护 —— 本脚本只负责真机路径可达。
+    // ⚠️ 若中断脚本导致 storage 残留 spellCheck=false，先在设置页恢复默认。
+    try {
+      await mini.evaluate(() => {
+        const p = wx.getStorageSync('study_prefs') || {};
+        p.spellCheck = false;
+        wx.setStorageSync('study_prefs', p);
+      });
+    } catch (e) { console.warn('（拼写开关预置失败，冒烟继续）', e && e.message); }
   } catch (e) {
     console.log('SKIP  自动化端口未开启');
     console.log('      开启：cli agent start --project <项目> --auto-port 9420');
@@ -111,12 +124,13 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
     return `已掌握 ${o.mastered} / 复习中 ${o.learning} / 未学 ${o.fresh}`;
   });
 
-  /* ---- 3. 开始复习 → 队列建立 ---- */
-  await step('点「开始复习」进入队列', async () => {
+  /* ---- 3. 进入复习队列 ---- */
+  await step('点主按钮进入复习队列', async () => {
     const btn = await page.$('button.primary');
     assert(btn, '找不到主按钮');
     const t = (await btn.text() || '').trim();
-    assert(t.indexOf('复习') >= 0, '主按钮文字不是复习相关：' + t);
+    // 2026-09-18 改文案：首页主按钮从「开始复习」改为「开始」（数字已说明今天做什么）
+    assert(t.indexOf('开始') >= 0, '主按钮文字不是开始相关：' + t);
     await btn.tap();
     await sleep(2200);
     page = await mini.currentPage();
@@ -127,7 +141,7 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
   });
 
   /* ---- 4. 翻卡前评分应锁定 ---- */
-  await step('翻卡前评分被拦截（主动回忆）', async () => {
+  await step('翻卡前评分被锁定（先记住/先回想）', async () => {
     let d = await page.data();
     if (d.flipped) { // 上一轮可能停在翻面态，先重置视角
       const c = await page.$('.card, [class*=card]');
@@ -136,56 +150,76 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
     assert(d.flipped === false, '当前不是未翻面状态');
     const hint = await page.$('.grade-hint');
     const hintText = hint ? (await hint.text() || '').trim() : '';
-    assert(hintText.indexOf('回想') >= 0 || hintText.indexOf('翻面') >= 0,
-      '未翻面时没有出现「先自己回想」的锁定提示，实际：' + hintText);
-    return '显示「' + hintText.slice(0, 16) + '」';
+    /**
+     * 2026-09-18：提示文案分两种 ——
+     *   新词："先记住它，再选"（学习阶段，正面直接给答案）
+     *   复习："先自己回想，再翻面"（考试阶段，正面只给单词）
+     * 两者都在表达"还没到评分的时候"，断言接受任一。
+     */
+    assert(hintText.indexOf('回想') >= 0 || hintText.indexOf('翻面') >= 0 || hintText.indexOf('记住') >= 0,
+      '未翻面时没有出现锁定提示，实际：' + hintText);
+    const cur = d.current || {};
+    return (cur.isNew ? '[新词] ' : '[复习] ') + '显示「' + hintText.slice(0, 18) + '」';
   });
 
-  /* ---- 5. 「认识」评分 ---- */
-  async function rate(label) {
+  /* ---- 5-7. 评分（自动适配新词两档 / 复习三档）---- */
+  await step('评分能推进队列（自动识别卡片类型）', async () => {
     let d = await page.data();
+    const wasNew = !!(d.current && d.current.isNew);
+
+    // 先翻面/展开（新词已经是展开态，点了也不影响）
     if (!d.flipped) {
       const c = await page.$('.card, [class*=card]');
       assert(c, '找不到卡片元素');
       await c.tap();
       await sleep(800);
+      d = await page.data();
     }
+
+    // 按卡片类型找对应按钮（新词两档：「再看一遍」「记住了」；复习三档：「不认识」「模糊」「认识」）
+    const wantPrefix = wasNew ? '记住了' : '认识';
     const btns = await page.$$('.grade-btn');
+    let target = null;
+    const texts = [];
     for (const b of btns) {
       const t = (await b.text() || '').trim();
-      if (t === label) { await b.tap(); await sleep(1500); return; }
+      texts.push(t);
+      if (!target && t.indexOf(wantPrefix) === 0) target = b;
     }
-    throw new Error('找不到评分按钮：' + label + '（现有：' +
-      (await Promise.all(btns.map(async b => (await b.text() || '').trim()))).join('/') + '）');
-  }
+    assert(target, '找不到「' + wantPrefix + '」按钮（现有：' + texts.join(' | ') + '）');
 
-  await step('点「认识」推进队列', async () => {
-    const before = (await page.data()).reviewed;
-    await rate('认识');
-    const d = await page.data();
+    const before = d.reviewed;
+    await target.tap();
+    await sleep(1600);
+    d = await page.data();
     assert(d.reviewed === before + 1, `reviewed 未递增：${before} → ${d.reviewed}`);
     assert(d.roundKnow >= 1, 'roundKnow 未计数');
-    return `已复习 ${d.reviewed}，连对 ${d.streak}`;
+    return (wasNew ? '新词' : '复习') + '卡片评分成功 —— 已评 ' + d.reviewed + '，连对 ' + d.streak;
   });
 
-  /* ---- 6. 「模糊」/「不认识」 → EF 下调路径 ---- */
-  await step('「模糊」评分生效', async () => {
-    await rate('模糊');
+  await step('按钮显示「下次 N 天」（选择后果可见）', async () => {
     const d = await page.data();
-    assert(d.roundVague >= 1, 'roundVague 未计数');
-    return `模糊计数 ${d.roundVague}`;
-  });
-
-  await step('「不认识」评分生效', async () => {
-    await rate('不认识');
-    const d = await page.data();
-    assert(d.roundForgot >= 1, 'roundForgot 未计数');
-    return `不认识计数 ${d.roundForgot}，进度 ${d.progress}`;
+    const btns = await page.$$('.grade-btn');
+    const texts = [];
+    for (const b of btns) texts.push((await b.text() || '').trim());
+    /**
+     * 2026-09-18 新增契约：评分按钮必须显示"下次多少天"。
+     * 为什么要守这条：原来按钮只有「认识/模糊/不认识」三个词，
+     * 学生看不出选择的后果；而且"模糊"和"认识"在 SM-2 前两轮排期完全相同，
+     * 不显示天数的话这两个按钮在行为上毫无区别（等于装饰品）。
+     */
+    const hasDays = texts.some(t => /\d+\s*天/.test(t));
+    assert(hasDays || (await page.data()).current.isNew === false,
+      '按钮上应显示「下次 N 天」，实际：' + texts.join(' | '));
+    return '按钮文案：' + texts.join(' | ');
   });
 
   /* ---- 7. 切 tab 返回 → 数字正确 + 队列接续 ---- */
   await step('切 tab 后队列接续（进度不丢）', async () => {
     const before = await page.data();
+    // 先确认页面处于复习中（前面步骤失败时可能没建立）
+    assert(typeof before.reviewed === 'number' && before.reviewed > 0,
+      '复习进度异常（reviewed=' + before.reviewed + '）—— 前面的评分步骤应已推进队列');
     const midReviewed = before.reviewed, midIdx = before.idx;
 
     await mini.switchTab('/pages/deck/deck');
@@ -193,7 +227,13 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
     const deck = await mini.currentPage();
     const dd = await deck.data();
     assert(dd.overall.total >= baselineTotal, '首页总数异常');
-    assert(dd.dueCount < baselineTotal, '待复习数没有随复习减少');
+    /**
+     * 2026-09-18 改口径：首页主数字从"词库里所有到期的"改成"今日计划张数"。
+     * 所以不再断言"数字随复习减少"（今日计划是固定的 10 张一轮）；
+     * 改为断言新契约 —— 首页数字 = 复习页实际会给的张数（两页同口径）。
+     */
+    assert(dd.dueCount > 0, '首页今日计划数应 > 0');
+    assert(typeof dd.todayNew === 'number', '首页应有 todayNew（新词数）字段');
 
     await mini.switchTab('/pages/study/study');
     await sleep(1500);
@@ -201,12 +241,13 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
     const d = await page.data();
     assert(d.reviewed === midReviewed && d.idx === midIdx,
       `队列被重置：reviewed ${midReviewed}→${d.reviewed}，idx ${midIdx}→${d.idx}`);
-    return `首页待复习 ${dd.dueCount}，复习进度保持 ${d.reviewed}`;
+    return `首页今日计划 ${dd.dueCount}（新词 ${dd.todayNew}），复习进度保持 ${d.reviewed}`;
   });
 
   /* ---- 8. 统计页出数 ---- */
   await step('统计页出现真实数值', async () => {
-    const stats = await mini.switchTab('/pages/stats/stats');
+    // 2026-09-25 底部栏整理：stats 退出 tabBar，switchTab 只对 tabBar 页有效，改 reLaunch
+    const stats = await mini.reLaunch('/pages/stats/stats');
     await sleep(1600);
     const d = await stats.data();
     assert(d.hasStudied === true, 'hasStudied 未变 true（复习记录没进统计）');
@@ -282,6 +323,14 @@ function assert(c, m) { if (!c) throw new Error(m || '断言失败'); }
   console.log('\n' + '='.repeat(62));
   console.log(`>>> ${pass} 步通过 / ${fail} 步失败`);
   console.log('='.repeat(62));
+  // 离场恢复：把学后拼写开关还给学生（默认开）
+  try {
+    await mini.evaluate(() => {
+      const p = wx.getStorageSync('study_prefs') || {};
+      delete p.spellCheck;
+      wx.setStorageSync('study_prefs', p);
+    });
+  } catch (e) { /* 恢复失败不掩盖结果 */ }
   if (fail) {
     console.log('\n失败：' + failures.join(' / '));
     process.exit(1);

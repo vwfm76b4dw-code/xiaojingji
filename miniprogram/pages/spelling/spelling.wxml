@@ -1,0 +1,153 @@
+<view class="page {{themeClass}} page-fade">
+  <!-- 范围：这一轮拼哪些词 -->
+  <view class="filter-bar">
+    <view class="fp-chips">
+      <view class="chip {{scope === 'due' ? 'on' : ''}}" data-scope="due" bindtap="pickScope">今日到期</view>
+      <view class="chip {{scope === 'weak' ? 'on' : ''}}" data-scope="weak" bindtap="pickScope">错题本</view>
+      <view class="chip {{scope === 'all' ? 'on' : ''}}" data-scope="all" bindtap="pickScope">全部</view>
+    </view>
+    <scroll-view wx:if="{{units.length > 1}}" scroll-x class="unit-scroll">
+      <view class="fp-chips" style="display: inline-flex;">
+        <view class="chip {{unit === 'all' ? 'on' : ''}}" data-unit="all" bindtap="pickUnit">全部单元</view>
+        <view wx:for="{{units}}" wx:key="unit"
+              class="chip {{unit === item.unit ? 'on' : ''}}"
+              data-unit="{{item.unit}}" bindtap="pickUnit">{{item.unit}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <block wx:if="{{!done && current}}">
+    <!-- 进度 -->
+    <view class="topbar">
+      <view class="bar">
+        <view class="bar-fill" style="transform: scaleX({{total ? (idx + 1) / total : 0}});"></view>
+      </view>
+      <view class="topbar-row">
+        <text class="t-hint t-num">{{idx + 1}}/{{total}}</text>
+        <text class="t-hint">拼对 {{okCount}} · 拼错 {{badCount}}</text>
+      </view>
+    </view>
+
+    <!-- 拼写卡：给中文 + 发音，写英文 -->
+    <view class="card stripe yellow spell-card">
+      <view class="face-head">
+        <text class="tag yellow">拼写</text>
+      </view>
+      <view class="spell-meaning">{{current.answer}}</view>
+      <view class="spell-sub t-hint">写出对应的英文单词</view>
+      <view class="play-line">
+        <view class="play-chip {{playingWord === current.id ? 'on' : ''}}" bindtap="playWord"
+              aria-role="button" aria-label="听发音">
+          {{playingWord === current.id ? '■ 停止' : '▶ 听发音'}}
+        </view>
+      </view>
+
+      <!-- 输入态：字母卡片逐一点击填入 -->
+      <block wx:if="{{phase === 'input'}}">
+        <view class="spell-slots">
+          <view wx:for="{{cells}}" wx:key="index"
+                class="slot {{item.fixed ? 'fixed' : (item.ch ? 'on' : '')}}"
+                data-index="{{index}}" bindtap="tapSlot">{{item.ch}}</view>
+        </view>
+
+        <view class="letter-pool">
+          <view wx:for="{{letters}}" wx:key="id"
+                class="letter {{item.used ? 'used' : ''}}"
+                data-id="{{item.id}}" bindtap="tapLetter">{{item.ch}}</view>
+        </view>
+
+        <view class="t-hint spell-tip">点字母卡片填入 · 点已填的格子退回</view>
+        <button class="btn primary big" bindtap="check" disabled="{{!canCheck}}">检查</button>
+      </block>
+
+      <!-- 结果态：逐字高亮 + 错因 + 订正 -->
+      <block wx:if="{{phase === 'result'}}">
+        <view class="sp-result {{verdict.ok ? 'ok' : ''}}">
+          <view class="sp-verdict">{{verdict.ok ? '拼对了' : '拼错了 · ' + verdict.errType}}</view>
+          <view class="sp-nodes">
+            <text wx:for="{{verdict.nodes}}" wx:key="index"
+                  class="sp-ch {{item.state}}">{{item.ch}}</text>
+          </view>
+          <view class="t-hint">{{verdict.hint}}</view>
+        </view>
+
+        <!--
+          写盘失败提示 + 「再试一次」（2026-09-30 补）。
+
+          为什么必须给这个入口：check() 里 setData(phase:'result') 发生在
+          **落盘之前**（界面先要有结果可显示）。一旦 SM-2 写盘失败，
+          界面停在"已判分"而进度其实没推进 —— 只留「下一个」的话，
+          学生只能跳过（这个词的进度静默丢失）或反复点（每次都失败）。
+          这里让失败**可见且可重做**：点一下回到 input 重拼，
+          该词重排到队尾，届时会重新判分并重新落盘。
+        -->
+        <view wx:if="{{saveFailed}}" class="sp-result">
+          <view class="sp-verdict">进度没能保存</view>
+          <view class="t-hint">
+            这一次的拼写结果没有记进学习进度（可能是手机存储忙）。
+            点「再试一次」重新提交一次就不会丢。
+          </view>
+        </view>
+
+        <button wx:if="{{saveFailed}}" class="btn primary big" bindtap="retrySave">
+          再试一次
+        </button>
+        <button class="btn primary big" bindtap="next">
+          {{idx + 1 >= total ? '看本轮小结' : '下一个'}}
+        </button>
+      </block>
+    </view>
+
+    <!-- 记录分区：本轮逐题留痕 -->
+    <view wx:if="{{log.length > 0}}" class="card spell-log">
+      <view class="section-label">本轮记录</view>
+      <view class="log-row" wx:for="{{log}}" wx:key="index">
+        <text class="log-mark {{item.ok ? 'ok' : 'bad'}}">{{item.ok ? '✓' : '✗'}}</text>
+        <text class="log-word">{{item.word}}</text>
+        <text class="log-typed t-hint">{{item.ok ? '' : '写成 ' + item.typed}}</text>
+        <text class="log-type t-hint">{{item.ok ? '' : item.errType}}</text>
+      </view>
+      <view class="t-hint" style="margin-top: 12rpx;">
+        累计的错误原因分析在「统计」页 · 拼写表现。
+      </view>
+    </view>
+  </block>
+
+  <!-- 完成态 -->
+  <block wx:if="{{done}}">
+    <view class="card stripe {{badCount > 0 ? 'yellow' : 'green'}} done-card pop">
+      <view class="done-title">{{total > 0 ? '这一轮拼完了' : '这个范围暂时没有要拼的词'}}</view>
+      <view wx:if="{{total > 0}}" class="done-num t-num">{{reviewed}}</view>
+      <view class="t-sub" wx:if="{{total > 0}}">个单词拼写完毕</view>
+
+      <block wx:if="{{total > 0}}">
+        <view class="spell-stat-row">
+          <view class="tag green">拼对 {{okCount}}</view>
+          <view class="tag red">拼错 {{badCount}}</view>
+        </view>
+
+        <block wx:if="{{typeSummary.length > 0}}">
+          <view class="section-label" style="margin-top: 24rpx;">错误原因（本轮）</view>
+          <view class="kv" wx:for="{{typeSummary}}" wx:key="type">
+            <text class="t-sub">{{item.type}}</text>
+            <text class="t-num">{{item.count}} 次</text>
+          </view>
+          <view class="t-hint" style="margin-top: 12rpx;">
+            累计分析在「统计」页 · 拼写表现。拼错的词已自动排到后面重练。
+          </view>
+        </block>
+      </block>
+
+      <view class="btn-row" style="margin-top: 32rpx;">
+        <button class="btn ghost" bindtap="again">再来一轮</button>
+        <button class="btn primary" bindtap="goStudy">去复习</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空态 -->
+  <view wx:if="{{ready && !current && !done}}" class="empty">
+    <view class="empty-title">没有可拼写的词</view>
+    <view class="empty-sub">换一个范围试试，或先去「词库」导入教材。</view>
+  </view>
+</view>

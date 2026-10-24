@@ -1,0 +1,10 @@
+{
+  "name": "rankProxy",
+  "version": "1.0.0",
+  "description": "排行榜代理 —— 进步榜（本周 vs 上周），只返回前 3 + 自己",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

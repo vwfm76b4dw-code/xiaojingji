@@ -1,0 +1,495 @@
+{
+ "book": "外研版小学英语三年级上册（一年级起点）",
+ "grade": "g3",
+ "count": 81,
+ "_source": "https://yyld.51jiaoxi.com/sanshang/wybyq_danci.html（51教习网英语朗读宝·外研版小学英语一起点同步词表，按 Module 分组）；koolearn 词书页已改 JS 渲染暂无第二来源，单源 medium",
+ "_confidence": "medium",
+ "words": [
+  {
+   "word": "use",
+   "meaning": "使用，用；用途",
+   "unit": "3A Module 1",
+   "mnemonic": "使用：拿起工具用起来"
+  },
+  {
+   "word": "chopsticks",
+   "meaning": "筷子",
+   "unit": "3A Module 1",
+   "mnemonic": "筷子：两根小棍夹起饭"
+  },
+  {
+   "word": "want",
+   "meaning": "要；想要；需要",
+   "unit": "3A Module 1",
+   "mnemonic": "想要：心里盼着要一个"
+  },
+  {
+   "word": "hungry",
+   "meaning": "饥饿的",
+   "unit": "3A Module 1",
+   "mnemonic": "饿的：肚子咕咕叫"
+  },
+  {
+   "word": "mess",
+   "meaning": "肮脏；凌乱；杂乱；不整洁",
+   "unit": "3A Module 1",
+   "mnemonic": "凌乱：玩具撒了一地"
+  },
+  {
+   "word": "hard",
+   "meaning": "困难的；费劲的；努力的",
+   "unit": "3A Module 1",
+   "mnemonic": "困难的；努力地：难题要认真啃"
+  },
+  {
+   "word": "knife",
+   "meaning": "刀",
+   "unit": "3A Module 1",
+   "mnemonic": "刀：切水果的小刀"
+  },
+  {
+   "word": "fork",
+   "meaning": "餐叉；叉子",
+   "unit": "3A Module 1",
+   "mnemonic": "叉子：齿尖朝上扎牛排"
+  },
+  {
+   "word": "a knife and fork",
+   "meaning": "一副刀叉",
+   "unit": "3A Module 1",
+   "mnemonic": "左手叉右手刀 = 一副刀叉"
+  },
+  {
+   "word": "easy",
+   "meaning": "容易的；简单的",
+   "unit": "3A Module 1",
+   "mnemonic": "容易的：举手就能答出的题"
+  },
+  {
+   "word": "hamburger",
+   "meaning": "汉堡包",
+   "unit": "3A Module 1",
+   "mnemonic": "汉堡：两层面包夹肉饼"
+  },
+  {
+   "word": "chips",
+   "meaning": "（常复）炸薯条",
+   "unit": "3A Module 1",
+   "mnemonic": "chips：一根根炸薯条"
+  },
+  {
+   "word": "grass",
+   "meaning": "草",
+   "unit": "3A Module 1",
+   "mnemonic": "草：操场上绿油油一片"
+  },
+  {
+   "word": "food",
+   "meaning": "食物",
+   "unit": "3A Module 1",
+   "mnemonic": "食物：一日三餐吃进肚的"
+  },
+  {
+   "word": "fast food",
+   "meaning": "快餐",
+   "unit": "3A Module 1",
+   "mnemonic": "快餐：fast（快）+ food（食物）→ 快餐店"
+  },
+  {
+   "word": "make",
+   "meaning": "制作，做；使成为",
+   "unit": "3A Module 2",
+   "mnemonic": "做：动手做一个风车"
+  },
+  {
+   "word": "cake",
+   "meaning": "蛋糕",
+   "unit": "3A Module 2",
+   "mnemonic": "蛋糕：生日蛋糕插满蜡烛"
+  },
+  {
+   "word": "mum",
+   "meaning": "妈妈",
+   "unit": "3A Module 2",
+   "mnemonic": "mum：喊妈妈"
+  },
+  {
+   "word": "dad",
+   "meaning": "（口语）爸爸",
+   "unit": "3A Module 2",
+   "mnemonic": "dad：喊爸爸"
+  },
+  {
+   "word": "quiet",
+   "meaning": "安静的；寂静的",
+   "unit": "3A Module 2",
+   "mnemonic": "安静的：图书馆里轻声语"
+  },
+  {
+   "word": "water",
+   "meaning": "水",
+   "unit": "3A Module 2",
+   "mnemonic": "水：透明无味解渴"
+  },
+  {
+   "word": "lovely",
+   "meaning": "可爱的；美好的；美丽的；极好的",
+   "unit": "3A Module 2",
+   "mnemonic": "可爱的：love 加 ly 惹人爱"
+  },
+  {
+   "word": "naughty",
+   "meaning": "淘气的",
+   "unit": "3A Module 3",
+   "mnemonic": "淘气的：调皮捣蛋鬼"
+  },
+  {
+   "word": "paper",
+   "meaning": "纸做的,纸质的",
+   "unit": "3A Module 3",
+   "mnemonic": "纸：折纸鹤的白纸"
+  },
+  {
+   "word": "boat",
+   "meaning": "小船，舟",
+   "unit": "3A Module 3",
+   "mnemonic": "小船：湖面上一叶小舟慢慢划"
+  },
+  {
+   "word": "dragon boat",
+   "meaning": "龙舟",
+   "unit": "3A Module 3",
+   "mnemonic": "龙舟：端午划桨比赛"
+  },
+  {
+   "word": "people",
+   "meaning": "人们",
+   "unit": "3A Module 3",
+   "mnemonic": "人们：广场上人山人海"
+  },
+  {
+   "word": "row",
+   "meaning": "划（船）",
+   "unit": "3A Module 3",
+   "mnemonic": "一排：桌椅排成行"
+  },
+  {
+   "word": "lake",
+   "meaning": "湖；湖泊",
+   "unit": "3A Module 3",
+   "mnemonic": "lake：一圈岸围住的湖"
+  },
+  {
+   "word": "feed",
+   "meaning": "喂，喂养；为……提供食物",
+   "unit": "3A Module 3",
+   "mnemonic": "feed：撒食喂鱼喂鸡"
+  },
+  {
+   "word": "bread",
+   "meaning": "面包",
+   "unit": "3A Module 3",
+   "mnemonic": "面包：撕一块松软的面包吃"
+  },
+  {
+   "word": "get out",
+   "meaning": "走开,离开",
+   "unit": "3A Module 3",
+   "mnemonic": "get（得到）+ out（外）→ 出去走开"
+  },
+  {
+   "word": "far",
+   "meaning": "较远的",
+   "unit": "3A Module 4",
+   "mnemonic": "远的：走好远才到的那里"
+  },
+  {
+   "word": "fast",
+   "meaning": "快的，迅速的；快",
+   "unit": "3A Module 4",
+   "mnemonic": "快的：跑起来风在耳边响"
+  },
+  {
+   "word": "winner",
+   "meaning": "胜利者；优胜者",
+   "unit": "3A Module 4",
+   "mnemonic": "获胜者：win + ner → 赢的人"
+  },
+  {
+   "word": "can't",
+   "meaning": "不能",
+   "unit": "3A Module 4",
+   "mnemonic": "can not 缩写成 can't：不能"
+  },
+  {
+   "word": "slow",
+   "meaning": "（使）放慢速度；慢的",
+   "unit": "3A Module 4",
+   "mnemonic": "慢的：蜗牛爬得慢吞吞"
+  },
+  {
+   "word": "fly",
+   "meaning": "飞；放飞",
+   "unit": "3A Module 4",
+   "mnemonic": "飞：张开双臂学小鸟"
+  },
+  {
+   "word": "koala",
+   "meaning": "考拉",
+   "unit": "3A Module 4",
+   "mnemonic": "koala：抱树的考拉"
+  },
+  {
+   "word": "climb",
+   "meaning": "攀爬；攀登",
+   "unit": "3A Module 4",
+   "mnemonic": "爬：手脚并用爬上树"
+  },
+  {
+   "word": "cry",
+   "meaning": "哭",
+   "unit": "3A Module 4",
+   "mnemonic": "哭：眼泪吧嗒吧嗒掉"
+  },
+  {
+   "word": "drink",
+   "meaning": "一杯（份）饮料",
+   "unit": "3A Module 5",
+   "mnemonic": "喝：举起杯子咕咚咕咚"
+  },
+  {
+   "word": "shop",
+   "meaning": "商店",
+   "unit": "3A Module 5",
+   "mnemonic": "商店：买东西的铺子"
+  },
+  {
+   "word": "go out",
+   "meaning": "外出，出去",
+   "unit": "3A Module 5",
+   "mnemonic": "go（去）+ out（外）→ 外出"
+  },
+  {
+   "word": "thanks",
+   "meaning": "感谢，谢谢",
+   "unit": "3A Module 5",
+   "mnemonic": "谢谢：thank 加 s 更口语"
+  },
+  {
+   "word": "library",
+   "meaning": "图书馆",
+   "unit": "3A Module 5",
+   "mnemonic": "图书馆：安静看书借书的地方"
+  },
+  {
+   "word": "worry",
+   "meaning": "担心；担忧",
+   "unit": "3A Module 5",
+   "mnemonic": "担心：心里放不下的事"
+  },
+  {
+   "word": "have got",
+   "meaning": "有",
+   "unit": "3A Module 6",
+   "mnemonic": "have（有）+ got → 有"
+  },
+  {
+   "word": "careful",
+   "meaning": "小心；谨慎；小心的；仔细的，认真的",
+   "unit": "3A Module 6",
+   "mnemonic": "小心的：端着满满一杯水慢慢走"
+  },
+  {
+   "word": "wash",
+   "meaning": "洗",
+   "unit": "3A Module 6",
+   "mnemonic": "洗：饭前把手洗干净"
+  },
+  {
+   "word": "has got",
+   "meaning": "（have got的第三人称单数形式)有",
+   "unit": "3A Module 6",
+   "mnemonic": "have got 的三单形式"
+  },
+  {
+   "word": "pear",
+   "meaning": "梨",
+   "unit": "3A Module 6",
+   "mnemonic": "pear：一咬一包甜水的梨"
+  },
+  {
+   "word": "peach",
+   "meaning": "桃子",
+   "unit": "3A Module 6",
+   "mnemonic": "peach：毛茸茸的桃子"
+  },
+  {
+   "word": "headache",
+   "meaning": "头疼，头痛",
+   "unit": "3A Module 7",
+   "mnemonic": "头疼：head（头）+ ache（痛）→ 头痛"
+  },
+  {
+   "word": "stomach ache",
+   "meaning": "胃痛；腹痛",
+   "unit": "3A Module 7",
+   "mnemonic": "胃疼：stomach（胃）+ ache（痛）→ 肚子痛"
+  },
+  {
+   "word": "test",
+   "meaning": "测试；测验；考试",
+   "unit": "3A Module 7",
+   "mnemonic": "test：卷子上的测验"
+  },
+  {
+   "word": "Friday",
+   "meaning": "星期五",
+   "unit": "3A Module 7",
+   "mnemonic": "星期五：一周上学的最后一天"
+  },
+  {
+   "word": "clever",
+   "meaning": "聪明的；聪颖的",
+   "unit": "3A Module 7",
+   "mnemonic": "聪明的：脑筋一转就有答案"
+  },
+  {
+   "word": "cold",
+   "meaning": "感冒",
+   "unit": "3A Module 7",
+   "mnemonic": "冷的：北风一吹缩脖子"
+  },
+  {
+   "word": "class",
+   "meaning": "课",
+   "unit": "3A Module 7",
+   "mnemonic": "班级：同一间教室上课的同学"
+  },
+  {
+   "word": "begin",
+   "meaning": "开始",
+   "unit": "3A Module 7",
+   "mnemonic": "开始：上课铃一响，课就 begin"
+  },
+  {
+   "word": "cough",
+   "meaning": "咳嗽",
+   "unit": "3A Module 7",
+   "mnemonic": "cough：喉咙痒痒地咳嗽"
+  },
+  {
+   "word": "bring",
+   "meaning": "带来",
+   "unit": "3A Module 8",
+   "mnemonic": "带来：把书从家里带到学校"
+  },
+  {
+   "word": "umbrella",
+   "meaning": "伞；雨伞",
+   "unit": "3A Module 8",
+   "mnemonic": "雨伞：下雨撑开一朵花"
+  },
+  {
+   "word": "get",
+   "meaning": "拿,取",
+   "unit": "3A Module 8",
+   "mnemonic": "得到：拿到手里才算 get"
+  },
+  {
+   "word": "which",
+   "meaning": "哪一个，哪一些",
+   "unit": "3A Module 8",
+   "mnemonic": "哪一个：几选一问哪个"
+  },
+  {
+   "word": "broken",
+   "meaning": "破损的；伤残的；残缺的",
+   "unit": "3A Module 8",
+   "mnemonic": "坏掉的：花瓶摔成几瓣没法还原"
+  },
+  {
+   "word": "long jump",
+   "meaning": "跳远",
+   "unit": "3A Module 9",
+   "mnemonic": "跳远：long（长）+ jump（跳）→ 比谁跳得远"
+  },
+  {
+   "word": "make friends",
+   "meaning": "交朋友",
+   "unit": "3A Module 9",
+   "mnemonic": "make（做）+ friends（朋友）→ 交朋友"
+  },
+  {
+   "word": "sports day",
+   "meaning": "运动日",
+   "unit": "3A Module 9",
+   "mnemonic": "运动会：全校比赛的一天"
+  },
+  {
+   "word": "high",
+   "meaning": "高的；在高处，向高处",
+   "unit": "3A Module 9",
+   "mnemonic": "高的：踮脚也够不着"
+  },
+  {
+   "word": "high jump",
+   "meaning": "跳高",
+   "unit": "3A Module 9",
+   "mnemonic": "跳高：high（高）+ jump（跳）→ 越过横杆"
+  },
+  {
+   "word": "race",
+   "meaning": "赛跑；竞赛；比赛",
+   "unit": "3A Module 9",
+   "mnemonic": "赛跑：发令枪响冲出去"
+  },
+  {
+   "word": "run a race",
+   "meaning": "（参加）赛跑",
+   "unit": "3A Module 9",
+   "mnemonic": "run（跑）一场 race（赛）→ 赛跑"
+  },
+  {
+   "word": "star",
+   "meaning": "星；星形；明星",
+   "unit": "3A Module 9",
+   "mnemonic": "星星：夜空眨眼的小光点"
+  },
+  {
+   "word": "uncle",
+   "meaning": "舅父；叔父；伯父；姑父；姨夫",
+   "unit": "3A Module 9",
+   "mnemonic": "叔叔；舅舅：爸爸或妈妈的兄弟"
+  },
+  {
+   "word": "airport",
+   "meaning": "机场",
+   "unit": "3A Module 10",
+   "mnemonic": "机场：air（空中）+ port（港口）→ 飞机的港口"
+  },
+  {
+   "word": "sea",
+   "meaning": "大海，海洋",
+   "unit": "3A Module 10",
+   "mnemonic": "海：蓝蓝的大海波浪翻"
+  },
+  {
+   "word": "visit",
+   "meaning": "拜访，参观",
+   "unit": "3A Module 10",
+   "mnemonic": "参观；拜访：去朋友家串门"
+  },
+  {
+   "word": "Saturday",
+   "meaning": "星期六",
+   "unit": "3A Module 10",
+   "mnemonic": "星期六：放假玩一天"
+  },
+  {
+   "word": "film",
+   "meaning": "电影，影片",
+   "unit": "3A Module 10",
+   "mnemonic": "电影：影院里放映的大片"
+  }
+ ]
+}

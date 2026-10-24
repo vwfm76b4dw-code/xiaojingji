@@ -1,7 +1,41 @@
-<view class="page">
-  <!-- 服务不可用：如实说明（对学生说人话，技术细节在设置页） -->
-  <view wx:if="{{service === 'fail'}}" class="note warn">
+<view class="page {{themeClass}} page-fade">
+  <!-- 服务不可用：如实说明 + 给出可执行的下一步（点它去设置页检查） -->
+  <view wx:if="{{service === 'fail'}}" class="note warn" bindtap="goSettings" aria-role="button" aria-label="去设置页检查语音服务">
     <text>{{serviceMsg}}</text>
+    <text class="note-go">去设置看看 →</text>
+  </view>
+
+  <!-- 首次使用：端上模板正在下载（约 0.75 MB，仅一次）。进度如实展示，
+       让学生知道"在等什么、要多久"，而不是以为按了没反应 -->
+  <view wx:if="{{preparing}}" class="note" aria-live="polite">
+    <text>正在准备发音判定（约 700KB，仅一次）{{preparingPct > 0 ? ' ' + preparingPct + '%' : ''}}</text>
+  </view>
+
+  <!-- 模板下载失败：人话原因 + 可点的重试。资源没上线时重试也不会好，
+       但文案会如实说"等下次更新"；断网时点一下就能续上 -->
+  <view wx:if="{{prepareFailed}}" class="note warn" bindtap="prepareAcoustic" aria-role="button" aria-label="重新下载发音判定资源">
+    <text>{{prepareHint}}</text>
+    <text class="note-go">点此重试 →</text>
+  </view>
+
+  <!-- 「为什么不能用？」自检入口：服务不可用或模板准备失败时出现。
+       展开是四通道账本（插件/云端/本地/端上判定），每条带人话原因 + 可行动指引
+       （尤其 cloud 通道精确到开发者工具里的右键部署项），并可一键复制诊断摘要。
+       排障从"猜"变成"照着做"—— 用户反馈"朗读用不了"时，这是终局答案。 -->
+  <view wx:if="{{service === 'fail' || prepareFailed}}" class="diag-entry" bindtap="toggleDiag"
+        aria-role="button" aria-label="查看为什么朗读不能用">
+    <text>{{diagOpen ? '收起自检 ▴' : '为什么不能用？点这里看原因 ▴'}}</text>
+  </view>
+  <view wx:if="{{diagOpen}}" class="card stripe diag-panel" aria-live="polite">
+    <view wx:for="{{diag}}" wx:key="channel" class="diag-row">
+      <view class="diag-head">
+        <text class="diag-name">{{item.label}}</text>
+        <text class="tag {{item.ok ? 'green' : 'red'}}">{{item.ok ? '可用' : '不可用'}}</text>
+      </view>
+      <view class="t-hint diag-why">{{item.why}}</view>
+      <view wx:if="{{item.guide}}" class="diag-guide">{{item.guide}}</view>
+    </view>
+    <button class="btn ghost diag-copy" bindtap="copyDiag" aria-label="复制诊断信息">复制诊断信息（反馈时粘贴）</button>
   </view>
 
   <view wx:if="{{!ready}}" class="empty">
@@ -11,8 +45,11 @@
   <!-- 完成态 -->
   <block wx:elif="{{finished}}">
     <view class="card stripe green done-card pop">
-      <view class="done-title">这一轮读完了</view>
-      <view class="done-stats">
+      <!-- total === 0 表示"进来时队列就是空的"（读过的轮次 total 会留在队列长度上）。
+           这时说"这一轮读完了"是假话 —— 一个词都没读。 -->
+      <view class="done-title">{{total === 0 ? '暂时没有要读的单词' : '这一轮读完了'}}</view>
+      <!-- 0 个词的四个 0 没有意义（与复习页完成态同一口径：没有统计就不显示统计区） -->
+      <view wx:if="{{total > 0}}" class="done-stats">
         <view class="ds">
           <text class="ds-num t-num" style="color: var(--green);">{{stats.pass}}</text>
           <text class="t-hint">读得不错</text>
@@ -31,13 +68,16 @@
         </view>
       </view>
       <view class="t-hint" style="margin-top: 28rpx; line-height: 1.7;">
-        每个词的朗读结果都记下来了，读不好下次会再遇到。
+        {{total === 0 ? '今天没有到期的词，或词库还是空的。先去复习页看看。'
+                      : '每个词的朗读结果都记下来了，读不好下次会再遇到。'}}
       </view>
     </view>
 
     <view class="btn-row" style="margin-top: 32rpx;">
       <button class="btn ghost" bindtap="goStudy">去复习</button>
-      <button class="btn primary" bindtap="restart">再读一轮</button>
+      <!-- total === 0 时「再读一轮」必然是空动作：buildQueue 会得到同一个空队列，
+           点了界面毫无变化。一个点了没反应的入口比没有入口更伤信任，所以不给。 -->
+      <button wx:if="{{total > 0}}" class="btn primary" bindtap="restart">再读一轮</button>
     </view>
   </block>
 
@@ -50,13 +90,36 @@
       </view>
       <view class="topbar-row">
         <text class="t-hint t-num">{{idx + 1}}/{{total}}</text>
-        <text wx:if="{{service === 'fail'}}" class="t-hint">{{serviceMsg}}</text>
+        <!-- 服务不可用的说明在页顶的 warn 条里（含"去设置"出口），这里不再重复一遍 -->
       </view>
     </view>
 
+    <!--
+      卡片区：在"顶部进度条 ↔ 底部固定操作栏"之间垂直居中。
+      2026-09-19 加这层容器 —— 原来卡片和结果卡直接排在文档流顶部，
+      卡片本身只有约 300rpx 高，它到固定操作栏之间还有约 400px 是空的，
+      整页重心全在上方，看起来像"页面没做完"。
+      现在 .stage 吃掉中间的全部可用高度，内容在其中垂直居中；
+      底部那三个控件是固定操作栏，位置不动（它仍是 position: fixed，不参与这里）。
+    -->
+    <view class="stage">
     <!-- 单词卡 -->
     <view class="card stripe {{result ? (result.band === 'pass' ? 'green' : (result.band === 'fail' ? 'red' : 'yellow')) : ''}} word-card">
       <view class="word">{{card.prompt}}</view>
+
+      <!--
+        音标（2026-09-30 补）。本页此前**完全没有音标** —— 而它是学生唯一
+        专门练"读出来"的地方，恰恰最需要知道"这个词念什么"。
+        复习页（study）与卡片页（card）早就在显示，缺的只有这一页。
+
+        为什么用 phon 而不是直接 phonemes 查表：ipa.forWord 支持多词条目
+        （junior high / information technology…），整条查表必然查不到，
+        逐段拼才有音标。详见 utils/ipa.js。
+        wx:if="{{card.phon}}"：查不到时**整行不渲染** —— 绝不出现
+        「/ /」这种尴尬空态（与 study/card 同一口径，见 ipa.js
+        "半截音标比没有音标更容易误导"那条注释）。
+      -->
+      <view wx:if="{{card.phon}}" class="phon phon-front">/{{card.phon}}/</view>
 
       <!-- 揭示后才显示释义与钩子（避免看到答案才读） -->
       <block wx:if="{{revealed}}">
@@ -67,8 +130,9 @@
           <view class="hook-text">{{card.hook}}</view>
         </view>
       </block>
-      <view wx:else class="t-hint" style="text-align: center; margin-top: 24rpx;">
-        先读出来，读完就能看到释义和记忆钩子
+      <!-- 看答案是明示出口（revealAnswer 原是死 handler）：实在不会读就点它，不装死 -->
+      <view wx:else class="reveal-hint t-hint" bindtap="revealAnswer" aria-role="button" aria-label="看答案">
+        先自己读一遍 —— 实在不会，点这里看答案
       </view>
     </view>
 
@@ -76,7 +140,7 @@
     <view wx:if="{{result}}" class="card result stripe {{result.band}} rise">
       <view class="res-head">
         <text class="res-verdict">{{result.verdict}}</text>
-        <text wx:if="{{result.band !== 'unknown'}}" class="tag">{{result.scorePct}} 分</text>
+        <text wx:if="{{result.band !== 'unknown' && result.band !== 'gray' && result.band !== 'na'}}" class="tag">{{result.scorePct}} 分</text>
       </view>
       <view wx:if="{{result.heard}}" class="t-hint">听到的是「{{result.heard}}」</view>
       <view wx:if="{{result.suggestion}}" class="res-tip">{{result.suggestion}}</view>
@@ -84,8 +148,17 @@
 
     <view wx:if="{{judging}}" class="card result judging">
       <view class="sweep"></view>
-      <view class="t-hint" style="text-align: center; margin-top: 14rpx;">正在听你读的…</view>
+      <!--
+        已等待秒数（2026-09-19 加）：云端判定要 3~5 秒（含云函数冷启动），
+        原来这里只有"正在听你读的…" + 扫光动画，没有任何进度感 ——
+        学生以为卡死了，就会反复按按钮。一个在涨的秒数至少证明"还在跑"。
+      -->
+      <view class="t-hint" style="text-align: center; margin-top: 14rpx;">
+        正在听你读的… <text class="t-num">{{judgeSec}}s</text>
+      </view>
     </view>
+    </view>
+    <!-- /卡片区 -->
 
     <!-- 操作区（底部固定，避免结果卡把它挤出屏幕） -->
     <view class="bottom-bar">
@@ -135,12 +208,19 @@
     </view>
   </block>
 
-  <!-- 没有卡片 -->
-  <view wx:else class="empty">
-    <view class="empty-title">暂时没有要读的单词</view>
-    <view class="empty-sub">今天的部分已完成，或词库还没载入。</view>
-    <view class="btn-row" style="margin-top: 40rpx;">
-      <button class="btn primary" bindtap="goStudy">去复习</button>
-    </view>
-  </view>
+  <!--
+    这里原来还有一个 wx:else 分支（"暂时没有要读的单词" + 「去复习」）。
+    2026-09-19 删除：它**不可达**。
+    依据（pronounce.js buildQueue）：队列为空时走的是
+      setData({ ready: true, finished: true, card: null, total: 0 })
+    —— finished 直接为 true，于是上面的 wx:elif="{{finished}}" 必然先命中；
+    而 next() 走到队尾时也是 setData({ finished: true, card: null })。
+    也就是说 "ready=true 且 finished=false 且 card=null" 这个组合不存在，
+    这个 wx:else 永远不会渲染（QA 的判断成立）。
+
+    它原来承载的场景（"没有词可读"）改由完成态覆盖：
+    完成态的「去复习」按钮就是这条出路，另外标题/说明按 total === 0 区分文案
+    （否则空队列会显示"这一轮读完了 / 每个词的朗读结果都记下来了"，
+     而实际一个词都没读 —— 那是假话）。
+  -->
 </view>

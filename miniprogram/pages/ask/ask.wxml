@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
   <!-- 提问区 -->
   <view class="card stripe ask-box">
     <view class="section-label">问单词</view>
@@ -37,9 +37,18 @@
       </view>
       <view class="ans-text">{{answer}}</view>
 
+      <!-- AI 增强：本地答案先出（快），AI 版生成后原地替换；生成中有扫描条，不再无声无息 -->
+      <view wx:if="{{aiBusy}}" class="ai-enhancing">
+        <view class="sweep"></view>
+        <view class="t-hint">AI 正在生成更完整的回答…</view>
+      </view>
+
       <view class="ans-actions">
         <view class="chip" bindtap="copyAnswer">复制</view>
         <view class="chip" bindtap="clearAll">清空</view>
+        <!-- 问词页此前是孤岛（只有复制/清空）：给出"学了"的下一步 -->
+        <view class="chip" bindtap="goPronounce">去朗读</view>
+        <view wx:if="{{mode === 'no_match'}}" class="chip on" bindtap="goAdd">去添加这个词</view>
       </view>
     </view>
 
@@ -63,6 +72,8 @@
                (item.via === 'family' ? '同族' : '相关'))}}
           </text>
           <text class="src-play">{{playingWord === item.word ? '播放中' : '听'}}</text>
+          <!-- 练这个词：与卡详情页「练这一张」共用单卡通道 -->
+          <view class="chip sm" data-word="{{item.word}}" catchtap="practiceSource">练一下</view>
         </view>
       </view>
       <view class="t-hint" style="text-align: center; margin-top: 16rpx;">

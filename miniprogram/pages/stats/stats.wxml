@@ -1,12 +1,40 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
   <view wx:if="{{!ready}}" class="empty">
     <view class="empty-sub">统计中…</view>
   </view>
 
   <block wx:if="{{ready}}">
+    <!-- 一句话说清这一页的用途：数字 → 行动 -->
+    <view class="t-hint page-usage">这一页不是成绩单：它告诉你"下一步练什么"——带 ▸ 的词，点一下直接送进复习。</view>
+
+    <!-- AI 学习分析：把这一页的数字变成"对这位学生"的三条行动建议 -->
+    <view class="card stripe ai-analysis" style="margin-top: 24rpx;">
+      <view class="metric-top">
+        <view class="section-label" style="margin: 0;">AI 学习分析</view>
+        <button class="btn primary small" bindtap="runAiAnalysis" disabled="{{aiBusy}}">
+          {{aiBusy ? '分析中…' : '生成我的建议'}}
+        </button>
+      </view>
+      <view wx:if="{{aiBusy}}" class="sweep" style="margin-top: 20rpx;"></view>
+      <view wx:if="{{aiAnalysis}}" class="ai-analysis-text">{{aiAnalysis}}</view>
+      <!-- 失败指引（2026-09-25 加）：aiProxy 未部署/密钥未配时给出可执行步骤，
+           常驻而不是瞬时 toast —— "重试也不会好"的失败必须如实交代修法 -->
+      <view wx:if="{{aiFailHint}}" class="note warn" style="margin-top: 16rpx;">
+        <text>{{aiFailHint}}</text>
+      </view>
+      <view wx:if="{{!aiAnalysis && !aiBusy && !aiFailHint}}" class="t-hint" style="margin-top: 12rpx;">
+        把这页的数据交给 AI，生成三条只属于你的建议（需要联网，约 3~5 秒）。
+      </view>
+    </view>
+  <view class="group-head" bindtap="toggleGroup" data-g="g1" aria-role="button" aria-label="展开或收起：进度与习惯">
+    <text class="group-title">进度与习惯</text>
+    <view class="group-caret {{groups.g1 ? 'open' : ''}}"></view>
+  </view>
+  <view wx:if="{{groups.g1}}" class="group-body">
     <!-- 总览数字 -->
-    <view class="card stripe green">
+    <view class="card stripe {{overall.total > 0 ? 'green' : 'gray'}}">
       <view class="section-label">总体进度</view>
+      <block wx:if="{{overall.total > 0}}">
       <view class="big-row">
         <view class="big">
           <view class="big-num t-num">{{overall.percent}}<text class="pct">%</text></view>
@@ -34,6 +62,8 @@
         <text class="t-sub">还没学</text>
         <text class="t-num">{{overall.fresh}}</text>
       </view>
+      </block>
+      <view wx:else class="note">词库还是空的。去「词库」页导入教材或添加单词，进度会在这里生长。</view>
     </view>
 
     <!-- 学习连续性：本页最重要的正反馈。连续天数给足视觉重量，
@@ -72,6 +102,13 @@
       <view wx:else class="note">复习第一个单词后，这里会开始记录你的连续天数与每日打卡。</view>
     </view>
 
+  </view>
+
+  <view class="group-head" bindtap="toggleGroup" data-g="g2" aria-role="button" aria-label="展开或收起：记忆效果">
+    <text class="group-title">记忆效果</text>
+    <view class="group-caret {{groups.g2 ? 'open' : ''}}"></view>
+  </view>
+  <view wx:if="{{groups.g2}}" class="group-body">
     <!-- 记忆保持率：本应用最核心的一个数字 -->
     <view class="card stripe green" style="margin-top: 24rpx;">
       <view class="section-label">记忆保持率</view>
@@ -98,6 +135,7 @@
     <!-- 记忆沉淀指数：四项加权成一个 0-100 的数，环形图 + 逐项解释 -->
     <view class="card stripe" style="margin-top: 24rpx;">
       <view class="section-label">记忆沉淀指数</view>
+      <block wx:if="{{hasReviewEvents}}">
       <view class="sed-row">
         <canvas type="2d" id="c-sediment" class="chart-ring"></canvas>
         <view class="sed-side">
@@ -118,6 +156,8 @@
         四项加权求和：坚持 30% · 规模 25% · 深度 25% · 稳固 20%。
         习惯与坚持合计占一半 —— 背单词失败的主因不是方法，是中断。
       </view>
+      </block>
+      <view wx:else class="note">开始复习后，沉淀指数会随着你的坚持与积累慢慢长起来。</view>
     </view>
 
     <!-- 间隔曲线 -->
@@ -164,6 +204,13 @@
       <view wx:else class="note">复习一段时间后，这里会出现你的记忆自测指标。</view>
     </view>
 
+  </view>
+
+  <view class="group-head" bindtap="toggleGroup" data-g="g3" aria-role="button" aria-label="展开或收起：错题与效率">
+    <text class="group-title">错题与效率</text>
+    <view class="group-caret {{groups.g3 ? 'open' : ''}}"></view>
+  </view>
+  <view wx:if="{{groups.g3}}" class="group-body">
     <!-- 错题本：知道自己哪科薄弱 -->
     <view class="card stripe {{weakCount > 0 ? 'red' : 'gray'}}" style="margin-top: 24rpx;">
       <view class="section-label">错题本</view>
@@ -221,15 +268,23 @@
         </view>
         <view class="t-hint" style="margin-top: 14rpx;">
           复习过的 {{analysis.forgetting.total}} 次里，有 {{analysis.forgetting.forgot}} 次标了
-          「不认识」或「模糊」。统计的是次数而不是词数：同一个词反复忘，本身就是最该留意的情况。
+          「不认识」。统计的是次数而不是词数：同一个词反复忘，本身就是最该留意的情况。
+          标「模糊」的词不算忘记（还能想起大意），但也会进错题本等你回头练。
         </view>
+
+        <!-- 近 14 天忘记率折线：数字之外的"形状"，哪天没守住一眼可见 -->
+        <view class="section-label" style="margin-top: 24rpx;">近 14 天忘记率</view>
+        <canvas type="2d" id="c-forget" class="chart-line" style="height: 140px;"></canvas>
 
         <block wx:if="{{forgotWords.length > 0}}">
           <view class="section-label" style="margin-top: 24rpx;">最需要回头看的词</view>
-          <view class="kv" wx:for="{{forgotWords}}" wx:key="wordId">
+          <view class="kv tap-kv" wx:for="{{forgotWords}}" wx:key="wordId"
+                data-wid="{{item.wordId}}" bindtap="practiceWord"
+                aria-role="button" aria-label="去复习 {{item.word}}">
             <text class="t-sub">{{item.word}}</text>
-            <text class="t-num">忘过 {{item.count}} 次</text>
+            <text class="t-num">忘过 {{item.count}} 次 ▸</text>
           </view>
+          <view class="t-hint" style="margin-top: 8rpx;">点词名直接去复习这一张。</view>
         </block>
         <view wx:else class="note info" style="margin-top: 20rpx;">
           还没有答错过的记录，保持下去。
@@ -240,14 +295,24 @@
       </view>
     </view>
 
+  </view>
+
+  <view class="group-head" bindtap="toggleGroup" data-g="g4" aria-role="button" aria-label="展开或收起：分布与朗读">
+    <text class="group-title">分布与朗读</text>
+    <view class="group-caret {{groups.g4 ? 'open' : ''}}"></view>
+  </view>
+  <view wx:if="{{groups.g4}}" class="group-body">
     <!-- 复习轮次分布 -->
     <view class="card stripe" style="margin-top: 24rpx;">
       <view class="section-label">复习轮次分布</view>
-      <canvas type="2d" id="c-rotdist" class="chart-bars"></canvas>
-      <view class="t-hint" style="margin-top: 12rpx; line-height: 1.7;">
-        横轴是复习过的轮数。多数卡从「1 轮」逐步走向「4 轮+」，
-        说明它们正被推入更长的复习间隔。
-      </view>
+      <block wx:if="{{hasReviewEvents}}">
+        <canvas type="2d" id="c-rotdist" class="chart-bars"></canvas>
+        <view class="t-hint" style="margin-top: 12rpx; line-height: 1.7;">
+          横轴是复习过的轮数。多数卡从「1 轮」逐步走向「4 轮+」，
+          说明它们正被推入更长的复习间隔。
+        </view>
+      </block>
+      <view wx:else class="note">复习第一个单词后，这里会显示各轮次的卡量分布。</view>
     </view>
 
     <!-- 星期分布：哪天学得多、哪天忘得快 -->
@@ -263,7 +328,11 @@
     <!-- 学科分布 -->
     <view class="card stripe" style="margin-top: 24rpx;">
       <view class="section-label">词库分布</view>
-      <canvas type="2d" id="c-subjects" class="chart-hbar" style="height: {{subjects.length * 34 + 20}}px;"></canvas>
+      <block wx:if="{{subjects.length > 0}}">
+        <canvas type="2d" id="c-subjects" class="chart-hbar" style="height: {{subjects.length * 34 + 20}}px;"></canvas>
+        <view class="t-hint" style="margin-top: 12rpx;">每行是一个学科（教材）的卡量。</view>
+      </block>
+      <view wx:else class="note">词库还是空的。回「词库」页导入教材或添加单词。</view>
     </view>
 
     <!-- 朗读表现：数据来自朗读页写入的 pron_records -->
@@ -286,9 +355,63 @@
         <view class="t-hint">
           共评测 {{analysis.pronunciation.attempts}} 次，覆盖 {{analysis.pronunciation.words}} 个词。
         </view>
+
+        <!-- 发音薄弱词 top10（analysis 一直算着，此前没接线 —— 读了却不知道自己差在哪） -->
+        <block wx:if="{{pronWorst.length > 0}}">
+          <view class="section-label" style="margin-top: 24rpx;">最需要练的词</view>
+          <view class="kv tap-kv" wx:for="{{pronWorst}}" wx:key="wordId"
+                data-wid="{{item.wordId}}" bindtap="practiceWord"
+                aria-role="button" aria-label="去复习 {{item.word}}">
+            <text class="t-sub">{{item.word}}</text>
+            <text class="t-num">{{item.trouble}} / {{item.attempts}} 次不达标 ▸</text>
+          </view>
+          <view class="t-hint" style="margin-top: 8rpx;">点词名直接去复习这一张。</view>
+        </block>
       </block>
       <view wx:else class="note">
         还没有朗读记录。去「朗读」页按住按钮读一个词，这里会统计读准率与各档次数。
+      </view>
+    </view>
+
+  </view>
+
+    <!-- 拼写表现：历史错误原因分析（拼写练习写入的 spell_records） -->
+    <view class="card stripe {{hasSpell ? 'yellow' : 'gray'}}" style="margin-top: 24rpx;">
+      <view class="section-label">拼写表现</view>
+      <block wx:if="{{hasSpell}}">
+        <view class="metric-top">
+          <text class="t-sub">拼写正确率</text>
+          <text class="metric-val t-num">{{spell.rate}}%</text>
+        </view>
+        <view class="bar">
+          <view class="bar-fill yellow" style="transform: scaleX({{spell.rate / 100}});"></view>
+        </view>
+        <view class="t-hint" style="margin-top: 14rpx;">
+          共拼过 {{spell.attempts}} 次，拼对 {{spell.ok}} 次。拼写是产出型任务，
+          比认词难 —— 正确率低于认词正确率是正常的，看错在哪类原因。
+        </view>
+
+        <block wx:if="{{spell.errTypes.length > 0}}">
+          <view class="section-label" style="margin-top: 24rpx;">错误原因分布</view>
+          <view class="kv" wx:for="{{spell.errTypes}}" wx:key="type">
+            <text class="t-sub">{{item.type}}</text>
+            <text class="t-num">{{item.count}} 次</text>
+          </view>
+        </block>
+
+        <block wx:if="{{spell.worst.length > 0}}">
+          <view class="section-label" style="margin-top: 24rpx;">最常拼错的词</view>
+          <view class="kv tap-kv" wx:for="{{spell.worst}}" wx:key="wordId"
+                data-wid="{{item.wordId}}" bindtap="practiceWord"
+                aria-role="button" aria-label="去复习 {{item.word}}">
+            <text class="t-sub">{{item.word}}</text>
+            <text class="t-num">错 {{item.fail}}/{{item.attempts}} 次 ▸</text>
+          </view>
+          <view class="t-hint" style="margin-top: 8rpx;">点词名直接去复习这一张。</view>
+        </block>
+      </block>
+      <view wx:else class="note">
+        还没有拼写记录。去首页「单词拼写」练几个词，这里会分析你的错误原因。
       </view>
     </view>
 

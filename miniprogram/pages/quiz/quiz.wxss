@@ -1,0 +1,163 @@
+/* ============================================================
+ * 单元测验页
+ *
+ * 视觉沿用全局纸感体系，只用 token：不引新色、不用渐变、不用发光阴影。
+ * 字母槽/字母库刻意与拼写轮**长得一样** —— 同一个交互在项目里出现两次时
+ * 长得不一样，用户要重新学一遍。
+ * ============================================================ */
+
+/* ---------------- 单元列表 ---------------- */
+
+.q-intro { line-height: 1.75; margin-bottom: 20rpx; }
+
+.q-sum { font-size: 26rpx; color: var(--ink-2); }
+.q-sum-n { font-size: 40rpx; font-weight: 600; color: var(--green); margin: 0 4rpx; }
+
+.q-unit { margin-top: 20rpx; }
+
+/* 没解锁的单元压暗：一眼看出"还不能考"，而不是点进去才被拦 */
+.q-unit.locked { opacity: 0.55; }
+
+.q-unit-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.q-unit-name { font-size: 30rpx; color: var(--ink); font-weight: 600; }
+
+.q-pass { background: var(--green-tint); color: var(--green-d); } /* 2026-09-25 收编：原 0,130,92,0.12 裸值 */
+.q-ready { background: var(--yellow-wash-2); color: var(--yellow-ink); }
+.q-lock { background: var(--card-2); color: var(--ink-hint); }
+
+.q-unit-bar { margin-top: 16rpx; }
+.q-unit-sub { margin-top: 12rpx; }
+
+/* ---------------- 答题 ---------------- */
+
+.q-run-head { padding-bottom: 24rpx; }
+
+.q-run-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+
+.q-card { margin-top: 20rpx; text-align: center; }
+
+.q-word {
+  font-size: 52rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* 拼写题给的是中文提示，字号略小一点 —— 中文在这个字号下已经很占宽 */
+.q-word-cn { font-size: 42rpx; }
+
+.q-ask { margin-top: 10rpx; }
+
+.q-choices { margin-top: 28rpx; }
+
+.q-choice {
+  padding: 22rpx 24rpx;
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: var(--ink);
+  background: var(--card-2);
+  border-radius: var(--r-md);
+  border: 2rpx solid transparent;
+  line-height: 1.5;
+}
+
+/* 答完才上色：正确项一律标绿（即使没选它），选错的标红 */
+.q-choice.right {
+  background: var(--green-tint); /* 2026-09-25 收编：原 0,130,92,0.12 裸值 */
+  border-color: var(--green);
+  color: var(--green-d);
+}
+
+.q-choice.wrong {
+  background: var(--red-tint);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* 字母槽 */
+.q-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12rpx;
+  margin-top: 28rpx;
+}
+
+.q-slot {
+  min-width: 64rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  font-size: 34rpx;
+  color: var(--ink);
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+  border-bottom: 4rpx solid var(--line-2);
+}
+
+/* 连字符/空格这类固定位：不可点、视觉更淡 */
+.q-slot.fixed { color: var(--ink-hint); border-bottom-color: transparent; }
+.q-slot.filled { border-bottom-color: var(--green); }
+.q-slot.ok { background: var(--green-tint); border-bottom-color: var(--green); color: var(--green-d); } /* 2026-09-25 收编：原 0,130,92,0.14 裸值 */
+.q-slot.bad { background: var(--red-tint-2); border-bottom-color: var(--red); color: var(--red); }
+
+/* 字母库 */
+.q-bank {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+  margin-top: 36rpx;
+}
+
+.q-letter {
+  width: 76rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color: var(--ink);
+  background: var(--card);
+  border: 2rpx solid var(--line-2);
+  border-radius: var(--r-sm);}
+
+/* 用掉的字母压暗但**不隐藏**：位置不变，手不用重新找 */
+.q-letter.used { opacity: 0.28; }
+
+/* 显式验证（2026-09-25）：验证按钮独立成行；防呆抖动挂这一层 ——
+   与复习页 .spell-verify / 识别轮 .grade 同一哲学（抖"刚点的操作"，不抖题卡）。 */
+.q-verify { margin-top: 28rpx; }
+
+/* ---------------- 判定 ---------------- */
+
+.q-verdict { margin-top: 20rpx; text-align: center; }
+.q-verdict.ok { background: var(--green-wash); } /* 2026-09-25 收编：原 0,130,92,0.08 裸值 */
+.q-verdict.no { background: var(--red-wash); }
+
+.q-verdict-main { font-size: 32rpx; font-weight: 600; color: var(--ink); }
+.q-verdict.ok .q-verdict-main { color: var(--green-d); }
+.q-verdict.no .q-verdict-main { color: var(--red); }
+
+.q-verdict-right { margin-top: 10rpx; font-size: 28rpx; color: var(--ink-2); }
+
+/* ---------------- 结果 ---------------- */
+
+.q-done { margin-top: 20rpx; text-align: center; }
+.q-done-title { font-size: 32rpx; color: var(--ink); }
+.q-done-num { font-size: 88rpx; font-weight: 600; color: var(--green); line-height: 1.2; }
+
+.q-legend { background: var(--green-tint); color: var(--green-d); margin-top: 18rpx; } /* 2026-09-25 收编：原 0,130,92,0.16 裸值 */
+.q-gain { background: var(--yellow-tint); color: var(--yellow-ink); margin-top: 18rpx; }
+.q-hint { margin-top: 18rpx; line-height: 1.7; }

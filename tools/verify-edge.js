@@ -13,6 +13,8 @@
  *   二、读取净化层 sanitize —— 存储被外部改坏后的修正契约（含"合法数据零改动"）
  *   三、跨模块真边界 —— 真实 store + 真实算法跑完整闭环
  *   四、真实数据完整性 —— 预置词库 / 课本词库的结构校验
+ *   五、教材词库导入（wy7s_2024）
+ *   六、单元归属往返 —— 种子/导入 → 落库 → 投影（「按单元学习」的事故盲区）
  *
  * 运行：node tools/verify-edge.js
  */
@@ -39,7 +41,8 @@ global.wx = {
 };
 
 const storeMod = require(path.join(ROOT, 'utils', 'store.js'));
-const { dueWords, selfCheck, pointsOf, masteredCount, MASTERED_INTERVAL } = require(path.join(ROOT, 'utils', 'schedule.js'));
+const { dueWords, selfCheck, pointsOf, masteredCount, MASTERED_INTERVAL,
+  unitsOf, UNGROUPED_UNIT } = require(path.join(ROOT, 'utils', 'schedule.js'));
 const { sm2, GRADE } = require(path.join(ROOT, 'utils', 'sm2.js'));
 const { todayStr, addDays, isValidDateStr } = require(path.join(ROOT, 'utils', 'date.js'));
 const aiCore = require(path.join(ROOT, 'utils', 'ai-core.js'));
@@ -59,6 +62,21 @@ function toItem(w) {
 
 const TODAY = todayStr();
 const TOMORROW = addDays(TODAY, 1);
+/**
+ * 「一个合法的未来日期」的构造器（2026-09-30 加）。
+ *
+ * 为什么需要它：造数据时凡是要表达"这个日期还没到期、净化不该碰它"，
+ * **一律用 `addDays(TODAY, N)` 算，不得硬编码绝对日期**。
+ * 硬编码出来的"未来"会随真实时钟悄悄变成"过去"——
+ * `dueWords` 判到期用的是 `nextReview <= today`（字典序），
+ * 所以 `'2027-01-01'` 在 2026 年是未来、2027 年之后就是已到期，
+ * 届时一个跟当时改动毫无关系的用例会自己变红（实测：
+ * 真实时钟下84 项全绿，把时钟冻结到 2027-03-15 立刻炸 `4 !== 3`）。
+ *
+ * 取 30 天而不是 1 天：留出余量，让"跨天跑"这件事也不会影响语义
+ * （1 天太贴边，跨一次午夜就又是一次时钟相关失败）。
+ */
+const FUTURE = addDays(TODAY, 30);
 
 let pass = 0, fail = 0;
 const problems = [];
@@ -581,7 +599,23 @@ check('净化：nextReview 非法日期串回落到今天（让该词至少能�
     { word: 'a', meaning: 'm', nextReview: 'NaN-NaN-NaN' },
     { word: 'b', meaning: 'm', nextReview: '2026-02-30' },
     { word: 'c', meaning: 'm', nextReview: 20260916 },
-    { word: 'd', meaning: 'm', nextReview: '2027-01-01' }
+    /**
+     * 词 d 是**对照组**：一个合法的未来日期，净化**不该**碰它。
+     *
+     * ⚠️ 这里必须用 `addDays(TODAY, N)` 算出来，不能硬编码 '2027-01-01'
+     * （2026-09-30 修：这是一枚定时炸弹，2027-01-01 一到就炸）。
+     *
+     * 失败机理值得记下来，因为它**不是**"今天恰好能过"那么简单：
+     * 本条断言 `dueWords(got, TODAY).length === 3` 依赖"d 还没到期"。
+     * 而 d 是否到期由 `d.nextReview <= TODAY`（字典序）决定 ——
+     * 一旦真实时钟越过 2027-01-01，d 就从"未来"变成"已到期"，
+     * due 数量从 3 变 4，这条用例**在未来某天必然失败**。
+     * 也就是说：即使净化逻辑一行不改，只要时间走到 2027-01-01 之后，
+     * 门禁就会自己变红 —— 报的是一个跟当时改动毫无关系的错。
+     *
+     * 换成相对 TODAY 计算后，"d 是未来"这件事由构造保证，与真实时钟无关。
+     */
+    { word: 'd', meaning: 'm', nextReview: FUTURE }
   ]);
   const got = quietly(() => storeMod.loadWords());
   const byWord = {};
@@ -589,8 +623,9 @@ check('净化：nextReview 非法日期串回落到今天（让该词至少能�
   assert.strictEqual(byWord.a, TODAY, "'NaN-NaN-NaN' 应回落到今天，实际 " + byWord.a);
   assert.strictEqual(byWord.b, TODAY, "'2026-02-30' 格式对但不存在，应回落到今天，实际 " + byWord.b);
   assert.strictEqual(byWord.c, TODAY, '数字型日期应回落到今天，实际 ' + byWord.c);
-  assert.strictEqual(byWord.d, '2027-01-01', '合法未来日期不该被改动，实际 ' + byWord.d);
-  assert.strictEqual(dueWords(got, TODAY).length, 3, '回落成今天的 3 条应重新进队列');
+  assert.strictEqual(byWord.d, FUTURE, '合法未来日期不该被改动，实际 ' + byWord.d);
+  assert.strictEqual(dueWords(got, TODAY).length, 3,
+    '回落成今天的 3 条应重新进队列（d 未到期不应计入）');
 });
 
 check('净化：history 非数组 → []；条目内 date / q / interval 非法各自修正', () => {
@@ -802,10 +837,16 @@ check('预置词库：无重复词（忽略大小写），PRESET_MAP 索引才�
   assert.deepStrictEqual(dup, [], '重复词：' + dup.join(', '));
 });
 
-check('课本词库：20 个课本 json 结构一致，且 words.length 与 count 字段相符', () => {
+check('课本词库：json 与注册表一一对应（结构一致，words.length 与 count 字段相符）', () => {
+  // 册数的权威是注册表（curriculum-books.js），不是这里的写死数字 ——
+  // 2026-09-25 注册表扩到 32 册时本断言被漏改，红了基线（20 !== 32）。
+  // 改成动态取注册表 list().length 后，以后加册只需改注册表一处，这道门禁自动跟上。
+  const books = require(path.join(ROOT, 'pack-curriculum', 'utils', 'curriculum-books.js'));
+  const expected = books.list().length;
   const dir = path.join(ROOT, 'data', 'curriculum');
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') && f !== 'missing.json').sort();
-  assert.strictEqual(files.length, 20, '课本 json 应为 20 个，实际 ' + files.length);
+  assert.strictEqual(files.length, expected,
+    '课本 json 应为 ' + expected + ' 个（与注册表一致），实际 ' + files.length);
   const bad = [];
   files.forEach(f => {
     const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
@@ -912,6 +953,514 @@ check('教材词库：释义带词性前缀（pos 非空时），无 pos 的短�
   });
   assert.deepStrictEqual(bad, [], '这些释义拼坏了：' + bad.slice(0, 10).join(', '));
 });
+
+/*======================== 六、单元归属往返（种子/导入 → 落库 → 投影） ========================
+ *
+ * ## 为什么必须单独加这一节（2026-09-18 事故）
+ * 「按单元学习」在真引擎里**完全失效**：295 个词全部显示为「未分组」，一个单元都筛不出来。
+ * 根因是同一个模式出现了两次 —— makeItem() 支持 extra.unit，但两个调用方都漏传：
+ *   · seedWords()  —— 首页 295 词的来源
+ *   · addItems()   —— AI 录入 / 教材导入的路径（最严重：页面层 curriculum.js 的 toItem()
+ *                    明明带上了 unit，传到 store.addItems() 被吃掉，页面的修复被静默抵消）
+ *
+ * ## 为什么原有 13 道门禁全绿却没发现
+ * 现有断言用的都是**人造卡片**（直接构造带 unit 的对象喂给 pickCards / unitsOf），
+ * 从来没有覆盖「种子 / 导入 → 落库 → 投影成卡片」这条真实往返链路。
+ * 字段在 store 层被静默丢弃，只有真引擎端到端才暴露。
+ * 这一节把该链路钉在 Node 层：只要 store 再丢一次 unit，这里立刻红。
+ *
+ * ## 为什么"不触碰 SM-2 状态"是最关键的一条
+ * backfillUnits() 会遍历全表并写盘。如果它顺手把 sanitize() 的内存修正一起落盘，
+ * 学生的 ef / reps / interval / nextReview / history 就会被静默改写 ——
+ * 那比"没分组"严重得多：分组错了用户看得见，进度被改了用户看不见。
+ */
+
+/** 落一条"旧版存量词"（没有 unit，且 SM-2 字段齐全）—— 模拟 backfillUnits 要处理的真实形状 */
+function legacyItem(id, word, meaning, overrides) {
+  const base = {
+    id: id, word: word, meaning: meaning,
+    ef: 2.5, reps: 0, interval: 0, nextReview: TODAY, createdAt: TODAY, history: []
+  };
+  return Object.assign(base, overrides || {});
+}
+
+function indexBy(list, key) {
+  const out = {};
+  list.forEach(function (x) { out[x[key]] = x; });
+  return out;
+}
+
+check('seedWords 往返：种子词的 unit 落库后仍在（首页 295 词的路径）', () => {
+  reset();
+  const n = storeMod.seedWords([
+    { id: 'seed-a', word: 'apple', meaning: 'n. 苹果', unit: '7A Unit 1' },
+    { id: 'seed-b', word: 'banana', meaning: 'n. 香蕉', unit: '7A Starter' }
+  ]);
+  assert.strictEqual(n, 2, '应载入 2 条，实际 ' + n);
+
+  const byWord = indexBy(storeMod.loadWords(), 'word');
+  assert.strictEqual(byWord['apple'].unit, '7A Unit 1',
+    'seedWords 把 unit 吃掉了（首页 295 词会全落进「未分组」），实际 ' + JSON.stringify(byWord['apple'].unit));
+  assert.strictEqual(byWord['banana'].unit, '7A Starter',
+    'seedWords 把 unit 吃掉了，实际 ' + JSON.stringify(byWord['banana'].unit));
+
+  // 页面读的是 loadCards() 而不是 loadWords()，投影层也要一并钉住
+  const byPrompt = indexBy(storeMod.loadCards(), 'prompt');
+  assert.strictEqual(byPrompt['apple'].unit, '7A Unit 1',
+    '卡片投影丢了 unit，「按单元学习」筛不出来，实际 ' + JSON.stringify(byPrompt['apple'].unit));
+});
+
+check('addItems 往返：带 unit 的词条落库后仍在（教材导入 / AI 录入的路径）', () => {
+  reset();
+  // 这条与 curriculum.js 的 toItem() 是同一形状：页面层已经带上了 unit，
+  // 只要 store.addItems 漏传，页面层的修复就被存储层静默抵消。
+  const r = storeMod.addItems([
+    { id: 'imp-a', word: 'geography', meaning: 'n. 地理', unit: '7A Unit 1' },
+    { id: 'imp-b', word: 'textbook', meaning: 'n. 教科书', unit: '7A Unit 2' }
+  ]);
+  assert.strictEqual(r.added, 2, '应写入 2 条，实际 ' + r.added);
+
+  const byWord = indexBy(storeMod.loadWords(), 'word');
+  assert.strictEqual(byWord['geography'].unit, '7A Unit 1',
+    'addItems 把 unit 吃掉了（导入完仍是「未分组」），实际 ' + JSON.stringify(byWord['geography'].unit));
+  assert.strictEqual(byWord['textbook'].unit, '7A Unit 2',
+    'addItems 把 unit 吃掉了，实际 ' + JSON.stringify(byWord['textbook'].unit));
+
+  const byPrompt = indexBy(storeMod.loadCards(), 'prompt');
+  assert.strictEqual(byPrompt['geography'].unit, '7A Unit 1',
+    '卡片投影丢了 unit，实际 ' + JSON.stringify(byPrompt['geography'].unit));
+});
+
+check('无 unit 的词条落库后不该出现 unit:""（保持"字段不存在"这一种空态）', () => {
+  // 为什么较真：curriculum.js 的注释约定"旧版 19 册没有 unit 就不写空串"。
+  // 一旦某条路径塞了 ''，"有没有单元"就出现两种空态，下游得同时防 undefined 和 ''。
+  const hasOwn = Object.prototype.hasOwnProperty;
+
+  reset();
+  storeMod.addItems([{ word: 'dog', meaning: 'n. 狗' }]);
+  const viaImport = storeMod.loadWords()[0];
+  assert.strictEqual(hasOwn.call(viaImport, 'unit'), false,
+    'addItems 给没有 unit 的词塞了空串，实际 ' + JSON.stringify(viaImport.unit));
+
+  reset();
+  storeMod.seedWords([{ id: 'seed-e', word: 'egg', meaning: 'n. 蛋' }]);
+  const viaSeed = storeMod.loadWords()[0];
+  assert.strictEqual(hasOwn.call(viaSeed, 'unit'), false,
+    'seedWords 给没有 unit 的词塞了空串，实际 ' + JSON.stringify(viaSeed.unit));
+
+  // 但投影成卡片时必须兜底成 ''，页面才能用 `c.unit || 未分组` 得到唯一空态
+  reset();
+  storeMod.addItems([{ word: 'dog', meaning: 'n. 狗' }]);
+  assert.strictEqual(storeMod.loadCards()[0].unit, '',
+    '卡片投影应把缺失的 unit 兜成空串，实际 ' + JSON.stringify(storeMod.loadCards()[0].unit));
+});
+
+check('unitsOf：按 unit 正确分组计数，没有 unit 的词归到「未分组」', () => {
+  reset();
+  storeMod.seedWords([
+    { id: 'u1-a', word: 'apple', meaning: 'n. 苹果', unit: '7A Unit 1' },
+    { id: 'u1-b', word: 'banana', meaning: 'n. 香蕉', unit: '7A Unit 1' },
+    { id: 'u2-a', word: 'cat', meaning: 'n. 猫', unit: '7A Unit 2' },
+    { id: 'no-u', word: 'dog', meaning: 'n. 狗' }
+  ]);
+  const cards = storeMod.loadCards();
+  const units = unitsOf(cards, {});
+  const byName = indexBy(units, 'unit');
+
+  assert.strictEqual(byName['7A Unit 1'].count, 2,
+    'Unit 1 应有 2 条，实际 ' + JSON.stringify(byName['7A Unit 1']));
+  assert.strictEqual(byName['7A Unit 2'].count, 1,
+    'Unit 2 应有 1 条，实际 ' + JSON.stringify(byName['7A Unit 2']));
+  assert.ok(byName[UNGROUPED_UNIT], '没有 unit 的词应归到「' + UNGROUPED_UNIT + '」，实际 ' +
+    JSON.stringify(units.map(function (u) { return u.unit; })));
+  assert.strictEqual(byName[UNGROUPED_UNIT].count, 1,
+    '「未分组」应有 1 条，实际 ' + JSON.stringify(byName[UNGROUPED_UNIT]));
+
+  // 计数之和 = 卡片总数：否则筛选器与顶部"共 N 词"自相矛盾，学生按单元筛会漏词
+  const sum = units.reduce(function (a, u) { return a + u.count; }, 0);
+  assert.strictEqual(sum, cards.length, '各单元计数之和应等于卡片总数，实际 ' + sum + ' != ' + cards.length);
+});
+
+check('unitsOf：排序是数字序不是字典序（Unit 10 必须排在 Unit 2 之后）', () => {
+  reset();
+  // 真课本的单元数会到 10+，这个坑一定会踩到：字典序下 "Unit 10" < "Unit 2"。
+  storeMod.seedWords([
+    { id: 'n10', word: 'apple', meaning: 'n. 苹果', unit: 'Unit 10' },
+    { id: 'n2', word: 'banana', meaning: 'n. 香蕉', unit: 'Unit 2' },
+    { id: 'n1', word: 'cat', meaning: 'n. 猫', unit: 'Unit 1' },
+    { id: 'st', word: 'dog', meaning: 'n. 狗', unit: 'Starter' },
+    { id: 'ng', word: 'egg', meaning: 'n. 蛋' }
+  ]);
+  const names = unitsOf(storeMod.loadCards(), {}).map(function (u) { return u.unit; });
+
+  assert.strictEqual(names[0], 'Starter', 'Starter 应排最前，实际 ' + JSON.stringify(names));
+  assert.ok(names.indexOf('Unit 1') < names.indexOf('Unit 2'),
+    'Unit 1 应排在 Unit 2 之前，实际 ' + JSON.stringify(names));
+  assert.ok(names.indexOf('Unit 10') > names.indexOf('Unit 2'),
+    'Unit 10 应排在 Unit 2 之后（字典序会反过来），实际 ' + JSON.stringify(names));
+  assert.strictEqual(names[names.length - 1], UNGROUPED_UNIT,
+    '抽不出数字的单元（未分组）应排最后，实际 ' + JSON.stringify(names));
+
+  // ⭐ 正向对照：字典序确实会把 10 排在 2 前面，证明上面那条不是在测空气。
+  assert.ok('Unit 10' < 'Unit 2',
+    '（对照）字典序下 Unit 10 本应排在 Unit 2 前面，若此断言失败说明用例前提变了');
+});
+
+/* ⚠️ 已知缺口（只记录，本轮不修）—— 上面那条用的是不带年级前缀的 "Unit N"。
+ *
+ * 本 App 的真实单元名是 "7A Unit N"，而 schedule.js 的 unitRank() 取的是
+ * `String(name).match(/(\d+)/)` 的**第一个**数字：对 "7A Unit 10" 会先命中年级里的 "7"，
+ * rank 退化成 7，与 "7A Unit 2" 的 rank 相等，再走 `a.unit < b.unit` 字典序兜底 ——
+ * 于是 "7A Unit 10" 排在 "7A Unit 2" **前面**，与 unitRank 上方那段
+ * "不能用字典序 —— 那会把 Unit 10 排在 Unit 2 前面" 的注释自相矛盾。
+ *
+ * 实测（本机，2026-09-18）：
+ *   unitsOf([...unit:'7A Unit 10','7A Unit 2','7A Unit 1','7A Starter'...])
+ *   → ["7A Starter","7A Unit 1","7A Unit 10","7A Unit 2","未分组"]
+ *
+ * 为什么线上没暴露：当前教材 wy7s_2024 只到 "7A Unit 6"，Unit 1~6 的 rank 恰好单调。
+ * 一旦出现 Unit 10（下学期的册很容易到），学生看到的单元列表顺序就会错。
+ * 修法是把 unitRank 改成取**最后一个**数字（如 /(\d+)(?!.*\d)/），属于 miniprogram/ 业务代码改动。
+ * 本轮任务的红线是"不改 miniprogram/ 且门禁全绿"，因此这里不写红灯断言，把决定权留给作者。
+ */
+check('unitsOf：真实单元名 "7A Unit 1~6" 在当前数据范围内仍按数字序排', () => {
+  reset();
+  storeMod.seedWords([
+    { id: 'r1', word: 'apple', meaning: 'n. 苹果', unit: '7A Unit 1' },
+    { id: 'r2', word: 'banana', meaning: 'n. 香蕉', unit: '7A Unit 2' },
+    { id: 'r6', word: 'cat', meaning: 'n. 猫', unit: '7A Unit 6' },
+    { id: 'rs', word: 'dog', meaning: 'n. 狗', unit: '7A Starter' }
+  ]);
+  const names = unitsOf(storeMod.loadCards(), {}).map(function (u) { return u.unit; });
+  assert.deepStrictEqual(names, ['7A Starter', '7A Unit 1', '7A Unit 2', '7A Unit 6'],
+    '当前教材的单元顺序变了，实际 ' + JSON.stringify(names));
+});
+
+check('backfillUnits：id 匹配路径补上 unit，且已有 unit 的词条不被覆盖', () => {
+  reset();
+  putRawStorage([
+    legacyItem('en-001', 'junior high', '初级中学'),
+    // 已有 unit 的词条：用户/新版本已经分过组，种子值不能盖掉它
+    legacyItem('en-002', 'geography', 'n. 地理', { unit: '7A Unit 9' })
+  ]);
+
+  const r = storeMod.backfillUnits([
+    { id: 'en-001', word: 'junior high', meaning: '初级中学', unit: '7A Starter' },
+    { id: 'en-002', word: 'geography', meaning: 'n. 地理', unit: '7A Unit 1' }
+  ]);
+  assert.strictEqual(r.backfilled, 1, '只应补 1 条（另一条已有 unit），实际 ' + JSON.stringify(r));
+
+  const byId = indexBy(storeMod.loadWords(), 'id');
+  assert.strictEqual(byId['en-001'].unit, '7A Starter',
+    '按 id 匹配应补上 unit，实际 ' + JSON.stringify(byId['en-001'].unit));
+  assert.strictEqual(byId['en-002'].unit, '7A Unit 9',
+    '已有 unit 不该被种子值覆盖，实际 ' + JSON.stringify(byId['en-002'].unit));
+});
+
+check('backfillUnits：id 对不上时按 word 小写兜底（教材导入页随机 id 的存量词）', () => {
+  reset();
+  // 学生此前从教材导入页导入过同一批词，id 是 genId() 随机生成的 —— 内容一样但 id 对不上。
+  putRawStorage([legacyItem('m3k9x2a1q', 'Geography', 'n. 地理')]);
+
+  const r = storeMod.backfillUnits([
+    { id: 'en-999', word: 'geography', meaning: 'n. 地理', unit: '7A Unit 1' }
+  ]);
+  assert.strictEqual(r.backfilled, 1, '应按 word 兜底补 1 条，实际 ' + JSON.stringify(r));
+  assert.strictEqual(store['words'][0].unit, '7A Unit 1',
+    'word 小写兜底路径失效（大小写不同的存量词补不上），实际 ' + JSON.stringify(store['words'][0].unit));
+});
+
+check('backfillUnits：幂等 —— 第二次调用不改动任何数据（backfilled===0）', () => {
+  reset();
+  putRawStorage([legacyItem('en-001', 'junior high', '初级中学')]);
+  const seed = [{ id: 'en-001', word: 'junior high', meaning: '初级中学', unit: '7A Starter' }];
+
+  const first = storeMod.backfillUnits(seed);
+  assert.strictEqual(first.backfilled, 1, '首次应补 1 条，实际 ' + JSON.stringify(first));
+
+  const snapshot = JSON.stringify(store['words']);
+  const second = storeMod.backfillUnits(seed);
+  assert.strictEqual(second.backfilled, 0, '第二次不该再补，实际 ' + JSON.stringify(second));
+  assert.strictEqual(second.reason, 'already_done', '第二次的 reason 应为 already_done，实际 ' + second.reason);
+  assert.strictEqual(JSON.stringify(store['words']), snapshot,
+    '第二次调用改动了存储，实际 ' + JSON.stringify(store['words']));
+});
+
+check('backfillUnits：绝不触碰 SM-2 状态（回填不能顺手把 sanitize 的修正落盘）', () => {
+  reset();
+  // 造一条"学了一半"的记录：EF / reps / interval / nextReview / history 全是非默认值。
+  // 回填若改动了它们，学生的进度就被静默重置 —— 比"没分组"严重得多（用户看不见）。
+  const studyState = {
+    ef: 2.1, reps: 4, interval: 17, nextReview: '2026-10-01',
+    history: [{ date: '2026-09-01', q: 5, interval: 17 }, { date: '2026-09-10', q: 3, interval: 17 }]
+  };
+  putRawStorage([
+    legacyItem('en-001', 'junior high', '初级中学', studyState),
+    // 第二条是 sanitize() 会修正的脏记录（ef 是字符串）。
+    // 专门放它，是因为 backfillUnits 的注释声明它"直接读原始存储、不走 loadWords()"，
+    // 就是为了不把内存里的修正一并写盘 —— 这条断言把那个设计决定钉住。
+    legacyItem('en-002', 'geography', 'n. 地理', { ef: '2.1', reps: 3, interval: 6 })
+  ]);
+
+  const r = storeMod.backfillUnits([
+    { id: 'en-001', word: 'junior high', meaning: '初级中学', unit: '7A Starter' },
+    { id: 'en-002', word: 'geography', meaning: 'n. 地理', unit: '7A Unit 1' }
+  ]);
+  assert.strictEqual(r.backfilled, 2, '两条都应被补上，实际 ' + JSON.stringify(r));
+
+  const raw = store['words'];
+  // 整体比对：回填后记录只应有 unit 一处变化，多出/少掉任何键都算越界
+  assert.deepStrictEqual(raw[0], {
+    id: 'en-001', word: 'junior high', meaning: '初级中学',
+    ef: 2.1, reps: 4, interval: 17, nextReview: '2026-10-01', createdAt: TODAY,
+    history: [{ date: '2026-09-01', q: 5, interval: 17 }, { date: '2026-09-10', q: 3, interval: 17 }],
+    unit: '7A Starter'
+  }, '回填改动了 SM-2 状态或其它字段，实际 ' + JSON.stringify(raw[0]));
+
+  assert.strictEqual(raw[1].unit, '7A Unit 1', 'unit 应被补上，实际 ' + JSON.stringify(raw[1].unit));
+  assert.strictEqual(typeof raw[1].ef, 'string',
+    'sanitize 的修正被回填顺手落盘了（ef 应仍是字符串 "2.1"），实际 ' + JSON.stringify(raw[1].ef));
+  assert.strictEqual(raw[1].ef, '2.1', 'ef 被改写成 ' + JSON.stringify(raw[1].ef));
+});
+
+/*======================== 七、拼写判分与错误归类（utils/spelling.js） ========================
+ * 2026-09-24 补（DEV-P0-3）：本模块 09-19 落地、09-21 修过 alignNodes 渲染错位
+ * （P1 项），但此后**零门禁覆盖** —— 修复无守护、可静默回归。本组用 Node 直测
+ * 纯函数：判分四态（对/漏/多/错/顺序）+ 高亮节点对齐（回归 09-21 修复）+ 聚合分析。
+ *========================================================================================*/
+console.log('\n-- 七、拼写判分（spelling.js）--');
+
+const spellingMod = require(path.join(ROOT, 'utils', 'spelling.js'));
+
+check('judge：拼对 → ok、全字符标 ok', () => {
+  const r = spellingMod.judge('apple', 'apple');
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.errType, '');
+  assert.ok(r.nodes.length === 5 && r.nodes.every(n => n.state === 'ok'), '节点状态：' + JSON.stringify(r.nodes));
+});
+
+check('judge：大小写与首尾空格归一（Apple == apple）', () => {
+  assert.strictEqual(spellingMod.judge('  Apple ', 'apple').ok, true);
+});
+
+check('judge：空输入 → 漏写全标 missing、提示可执行', () => {
+  const r = spellingMod.judge('', 'apple');
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.errType, '没有输入');
+  assert.ok(r.nodes.every(n => n.state === 'missing'), '空输入应全标 missing：' + JSON.stringify(r.nodes));
+  assert.ok(r.hint.length > 0, '提示不该为空');
+});
+
+check('judge：字母顺序错（anagram）归类为「字母顺序错了」', () => {
+  const r = spellingMod.judge('aplep', 'apple');
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.errType, '字母顺序错了', '实际 ' + r.errType);
+});
+
+check('judge：漏了字母（appl）→ 漏写位置标 missing', () => {
+  // 前缀 appl 全对、目标侧还剩 e —— tMid 为空才是「漏」；
+  // 若写错在词中（如 appr vs apple：中段 r 对 le），归类是「写错了字母」而非「漏」。
+  const r = spellingMod.judge('appl', 'apple');
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.errType, '漏了字母', '实际 ' + r.errType);
+});
+
+check('judge：多了字母（applep）→ 「多了字母」', () => {
+  const r = spellingMod.judge('applep', 'apple');
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.errType, '多了字母', '实际 ' + r.errType);
+});
+
+check('judge：写错字母（appla）→ 「写错了字母」', () => {
+  const r = spellingMod.judge('appla', 'apple');
+  assert.strictEqual(r.ok, false);
+  assert.strictEqual(r.errType, '写错了字母', '实际 ' + r.errType);
+});
+
+check('alignNodes 回归（09-21 修复）：apple→appla 渲染节点序列正确', () => {
+  // P1 修复的原始缺陷：中段下标漏 pre 偏移，apple 渲染成「appl(a重复)」等错词。
+  // 目标词 apple，typed appla：前缀 app 共 3 位 ok；中段 l/l ok、e/a 错；
+  // 完整节点应为 a p p l e 且仅第 5 位 wrong。
+  const r = spellingMod.judge('appla', 'apple');
+  const chars = r.nodes.map(n => n.ch).join('');
+  assert.strictEqual(chars, 'apple', '渲染出来的应是目标词本身，实际 ' + chars);
+  const states = r.nodes.map(n => n.state).join(',');
+  assert.strictEqual(states, 'ok,ok,ok,ok,wrong', '仅末位应标 wrong，实际 ' + states);
+});
+
+check('alignNodes 回归（09-21 修复）：teacher→teachtr 中段不重复前缀', () => {
+  const r = spellingMod.judge('teachtr', 'teacher');
+  const chars = r.nodes.map(n => n.ch).join('');
+  assert.strictEqual(chars, 'teacher', '渲染应是 teacher，实际 ' + chars);
+  const wrongs = r.nodes.filter(n => n.state === 'wrong').map(n => n.ch);
+  assert.ok(wrongs.length === 1 && wrongs[0] === 'e', '写错位应标在目标词的 e 上，实际 ' + JSON.stringify(wrongs));
+});
+
+check('alignNodes 回归：beautiful→beabtiful 中段错位不串行', () => {
+  const r = spellingMod.judge('beabtiful', 'beautiful');
+  assert.strictEqual(r.nodes.map(n => n.ch).join(''), 'beautiful');
+  assert.strictEqual(r.nodes.filter(n => n.state === 'wrong').length, 1, '应恰好 1 个 wrong');
+});
+
+check('judge：连字符与撇号保留（ice-cream 判对）', () => {
+  assert.strictEqual(spellingMod.judge('ice-cream', 'ice-cream').ok, true);
+  assert.strictEqual(spellingMod.judge('icecream', 'ice-cream').ok, false, '连字符是拼写的一部分，不该归一掉');
+});
+
+check('analyze：拼写历史聚合（attempts/rate/errTypes/worst）', () => {
+  const records = {
+    w1: [{ ok: true, typed: 'apple' }, { ok: false, typed: 'appla', errType: '写错了字母' }],
+    w2: [{ ok: false, typed: 'teachtr', errType: '写错了字母' }],
+    w3: [{ ok: true, typed: 'geography' }]
+  };
+  const a = spellingMod.analyze(records, { w1: 'apple', w2: 'teacher', w3: 'geography' });
+  assert.strictEqual(a.attempts, 4);
+  assert.strictEqual(a.ok, 2);
+  assert.strictEqual(a.rate, 50);
+  assert.strictEqual(a.hasData, true);
+  assert.strictEqual(a.errTypes[0].type, '写错了字母');
+  assert.strictEqual(a.errTypes[0].count, 2);
+  assert.strictEqual(a.worst[0].word, 'apple', 'fail 数并列时序稳定');
+  assert.strictEqual(a.worst.length, 2, '只有失败过的词进 worst');
+});
+
+check('analyze：空记录/词条已删的容错', () => {
+  const a1 = spellingMod.analyze({}, {});
+  assert.strictEqual(a1.hasData, false);
+  assert.strictEqual(a1.rate, 0);
+  const a2 = spellingMod.analyze({ x: [{ ok: false, typed: 'zz', errType: '漏了字母' }] }, {});
+  assert.strictEqual(a2.worst[0].word, '（词条已删除）', '词条已删应给出占位而非 undefined');
+});
+
+/**
+ * 时钟漂移回归（2026-09-30 加，守住上面那枚修掉的定时炸弹）。
+ *
+ * ## 它守什么
+ *
+ * 本文件曾有一条用例靠「硬编码的 future 日期恰好还没到期」而通过：
+ * 真实时钟下 84 项全绿，把时钟冻结到 2027-03-15 立刻炸 `4 !== 3`。
+ * 也就是说它**不是**当时就错，而是**在未来某天会自己变红**，
+ * 报的还是一个跟当时改动毫无关系的错 —— 这类"假绿"最难在评审里被发现。
+ *
+ * ## 为什么直接测「不变量」而不是重跑整个文件（两次走错路的记录）
+ *
+ * 最初想「把时钟冻住重跑本文件、比对三次输出是否一致」。两次都不成立：
+ *   ① 子进程方案：本机**任何 spawn 都 EBUSY**（连 `echo` 都起不来），
+ *      用 `tools/lib/spawn-retry.js` 重试 4 次仍全败 —— 环境限制，不是代码问题。
+ *   ② vm 方案：`vm.runInNewContext` 里`require` 仍解析到宿主 require，
+ *      被测的 store.js 在**宿主上下文**执行、看不见沙箱里的 `wx`，
+ *      副本 57 条用例因 `wx is not defined` 失败 ——
+ *      而「三次输出一致」照样成立（**一致地坏也算一致**），门禁报 PASS。
+ *      换 `runInThisContext` 又要处理递归防 guard，很容易再次变成静默死代码
+ *      （实际就发生过一次：门禁少了一条守护却仍全绿）。
+ *
+ * 教训：**「多次运行结果一致」不能证明「跑对了」**。
+ * 所以改成直接断言那条**真正的不变量**，短、无递归、无子进程：
+ *   「非法 nextReview 一定回落到『当天』，且这 3 条当天一定进 due 队列，
+ *     而合法的未来日期不��、也不进队列」
+ * —— 而「当天」由**注入的 now** 决定，与真实时钟无关。
+ *
+ * ## 为什么这样就够
+ *
+ * 定时炸弹的本质是「造出来的『未来』会变成『过去』」。
+ * 本用例造数据时用的是 `addDays(注入的今天, 30)`，所以上面那条不变量
+ * 在任意 now 下都必须成立 —— 它就是那颗雷的排雷器。
+ * 而上面那条 sanitize 用例也正因为改用了相对量，才不再随日历变红。
+ *
+ * @returns {void}
+ */
+function clockDriftRegression() {
+  const RealDate = Date;
+  const MODULES = ['utils/store.js', 'utils/date.js', 'utils/schedule.js'];
+
+  /**
+   * 在注入的"今天"下重建被测模块，跑一遍关键不变量。
+   *
+   * 必须清require 缓存：store.js / date.js 在**模块顶层**就算出了 `todayStr()`，
+   * 不重新求值的话拿到的仍是真实时钟下那一份，冻结就等于没冻。
+   *
+   * @param {string} dateStr 注入的"今天"（YYYY-MM-DD）
+   * @returns {{today: string, fellBackTo: string, legalKept: string, future: string, dueCount: number}} 观测结果
+   */
+  function probeAt(dateStr) {
+    const FAKE = new RealDate(dateStr + 'T12:00:00').getTime();
+    function FakeDate() {
+      const args = Array.prototype.slice.call(arguments);
+      if (!args.length) return new RealDate(FAKE);
+      return new (Function.prototype.bind.apply(RealDate, [null].concat(args)))();
+    }
+    FakeDate.prototype = RealDate.prototype;
+    FakeDate.now = function () { return FAKE; };
+    FakeDate.parse = RealDate.parse;
+    FakeDate.UTC = RealDate.UTC;
+
+    const realDate = global.Date;
+    const realWx = global.wx;
+    const mem = {};
+    global.Date = FakeDate;
+    global.wx = {
+      getStorageSync: function (k) { return k in mem ? JSON.parse(JSON.stringify(mem[k])) : ''; },
+      setStorageSync: function (k, v) { mem[k] = JSON.parse(JSON.stringify(v)); },
+      removeStorageSync: function (k) { delete mem[k]; }
+    };
+
+    /** 清缓存后按需重新 require（冻结/恢复各调一次） */
+    function reload() {
+      MODULES.forEach(function (m) { delete require.cache[require.resolve(path.join(ROOT, m))]; });
+      return {
+        st: require(path.join(ROOT, 'utils', 'store.js')),
+        dt: require(path.join(ROOT, 'utils', 'date.js')),
+        sch: require(path.join(ROOT, 'utils', 'schedule.js'))
+      };
+    }
+
+    try {
+      const mod = reload();
+      const today = mod.dt.todayStr();
+      const future = mod.dt.addDays(today, 30);
+      mem['words'] = [
+        { word: 'a', meaning: 'm', nextReview: 'NaN-NaN-NaN' },
+        { word: 'b', meaning: 'm', nextReview: '2026-02-30' },
+        { word: 'c', meaning: 'm', nextReview: 20260916 },
+        { word: 'd', meaning: 'm', nextReview: future }
+      ];
+      const got = mod.st.loadWords();
+      return {
+        today: today,
+        future: future,
+        fellBackTo: got[0].nextReview,
+        legalKept: got[3].nextReview,
+        dueCount: mod.sch.dueWords(got, today).length
+      };
+    } finally {
+      global.Date = realDate;
+      global.wx = realWx;
+      reload();   // 恢复真实时钟下的模块，避免污染本文件其余用例
+    }
+  }
+
+  const DATES = ['2027-03-15', '2026-01-01', '2027-12-31'];
+  try {
+    DATES.forEach(function (d) {
+      const r = probeAt(d);
+      assert.strictEqual(r.fellBackTo, r.today,
+        '注入 now=' + d + '：非法 nextReview 应回落到该' + d + '，实际 ' + r.fellBackTo);
+      assert.strictEqual(r.legalKept, r.future,
+        '注入 now=' + d + '：合法未来日期不该被改动，实际 ' + r.legalKept);
+      assert.strictEqual(r.dueCount, 3,
+        '注入 now=' + d + '：回落到当天的 3 条应进队列（合法未来那条不该进），实际 ' + r.dueCount);
+    });
+    pass++;
+    console.log('PASS  时钟漂移回归：注入 ' + DATES.join(' / ') +
+      ' 均为「非法回落到当天 + 3 条到期」');
+  } catch (e) {
+    fail++;
+    problems.push('时钟漂移回归：' + (e && e.message ? e.message : e));
+    console.log('FAIL  时钟漂移回归：' + (e && e.message ? e.message : e));
+  }
+}
+
+clockDriftRegression();
 
 /*======================== 汇总 ========================*/
 console.log('\n>>> ' + pass + ' 通过 / ' + fail + ' 失败');

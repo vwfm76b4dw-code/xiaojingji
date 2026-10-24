@@ -28,10 +28,26 @@
  *   TENCENT_SECRET_ID  / TENCENT_SECRET_KEY  （tencent 时用）
  *   TENCENT_REGION     默认 ap-guangzhou
  *
+ * ## 配额限流（2026-09-30 加，见同目录 quota.js）
+ * 与 aiProxy 同一套实现（云函数按目录独立打包，代码无法跨目录共享，故各存一份）。
+ * ASR 比文本 AI 贵（腾讯按条计费、智谱按音频时长），所以**突发上限收得更紧**。
+ * `status` 不消耗额度 —— 它是前端探可用性的自检入口，扣它配额会让降级判断失真。
+ *
  * 部署：开发者工具右键本目录 → 上传并部署（云端安装依赖）
+ *
+ * ## 部署提醒（2026-09-30 加配额后）
+ * quota.js 是**新增文件**，云函数按目录打包 —— 不重新部署就没有限流。
+ * ⚠️ 必须选「上传并部署：云端安装依赖」：本目录已依赖 wx-server-sdk，
+ * 让云端装依赖才能跑起跨副本的 DB 限流层（否则永久降级为单机限流）。
+ * ⚠️ aiProxy 也要**一起**重新部署（它同样新增了 quota.js），
+ *    且它的 package.json 这次新增了 wx-server-sdk 依赖。
+ * 部署后验证：真机朗读一次 → 云开发日志应出现 `[quota] asrProxy transcribe`。
+ * 阈值可用环境变量调（QUOTA_MINUTE_LIMIT / QUOTA_DAY_LIMIT /
+ * QUOTA_GLOBAL_DAY_LIMIT，0 = 不限制），改完同样要重新部署。
  */
 const https = require('https');
 const crypto = require('crypto');
+const quota = require('./quota.js');
 
 const DEFAULT_GLM_ENDPOINT = 'https://open.bigmodel.cn/api/paas/v4/audio/transcriptions';
 const DEFAULT_GLM_MODEL = 'glm-asr-2512';
@@ -240,13 +256,22 @@ exports.main = async function (event) {
   // 前端先探一下服务可用性，决定走哪条降级路径
   if (action === 'status') {
     const p = resolveProvider();
+    // 2026-09-19 修：status 之前只看 provider 就报"就绪"，但显式 ASR_PROVIDER=tencent
+    // 可以在**钥匙缺失**时照样返回 'tencent'（resolveProvider 对显式值不做钥匙检查）——
+    // 于是 status 报 OK、真转写炸 NO_TENCENT_KEY，学生看到的是"还在准备中"这种假话。
+    // 这里把与 transcribe 相同的钥匙检查补上：status 与真实可用性必须是同一份事实。
+    let ready = false;
+    if (p === 'glm') ready = !!process.env.GLM_API_KEY;
+    else if (p === 'tencent') ready = !!(process.env.TENCENT_SECRET_ID && process.env.TENCENT_SECRET_KEY);
     return {
-      ok: p !== 'off',
+      ok: ready,
       provider: p,
-      code: p === 'off' ? 'NOT_CONFIGURED' : 'OK',
-      msg: p === 'off'
-        ? '云函数未配置语音识别服务（需在云开发控制台配置环境变量）'
-        : '云端语音识别就绪（' + p + '）'
+      code: ready ? 'OK' : 'NOT_CONFIGURED',
+      msg: ready
+        ? '云端语音识别就绪（' + p + '）'
+        : (p === 'off'
+          ? '云函数未配置语音识别服务（需在云开发控制台配置环境变量）'
+          : '已选 ' + p + ' 但密钥未配齐（云开发控制台 → 云函数 → 配置 → 环境变量）')
     };
   }
 
@@ -290,6 +315,14 @@ exports.main = async function (event) {
     return { ok: false, code: 'AUDIO_TOO_BIG', msg: '录音太长了，按住读完单词就松手' };
   }
 
+  // ---- 配额闸：放在所有守卫之后、真正调服务商之前 ----
+  // 空音频/超大音频这些请求压根不会到达服务商，不该占配额（学生手滑连点
+  // "没听清"不该被限流）。先占位再干活，避免并发请求一起通过检查。
+  const q = await quota.guardQuota('asrProxy', 'transcribe');
+  if (!q.allowed) {
+    return { ok: false, code: q.code, msg: q.msg, remain: q.remain };
+  }
+
   try {
     const text = provider === 'glm'
       ? await transcribeGlm(audio, format)
@@ -318,3 +351,6 @@ exports.main = async function (event) {
     return { ok: false, code: code, msg: hint, detail: msg.slice(0, 300) };
   }
 };
+
+// 配额纯函数导出，供门禁在裸 Node（不联网、不装 wx-server-sdk）下直接验证
+exports._quota = quota;

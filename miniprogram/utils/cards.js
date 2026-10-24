@@ -13,8 +13,19 @@
  *
  * ## 缓存
  * loadWords() 每次都要过一遍 sanitize 净化，页面 onShow 频繁调用会有点浪费。
- * 这里做一层**按写入失效**的缓存：store 的写操作会调 invalidate()。
- * 不引时间戳轮询 —— 那种"看起来是缓存其实是延迟"的做法会产生难复现的脏读。
+ * 这里做一层**调用方负责失效**的缓存。不引时间戳轮询 —— 那种"看起来是缓存其实是延迟"
+ * 的做法会产生难复现的脏读。
+ *
+ * ⚠️ **写操作不会自动让缓存失效**（2026-09-19 改正：此处原写"store 的写操作会调
+ * invalidate()"，与实现相反，是句假话）。真正的原因见 store.js 的 backfillUnits()：
+ * store.js 被 cards.js require，反向再 require cards.js 会成环，
+ * 所以 store 里**不能**调 cards.invalidate()。
+ *
+ * 代价是这条约定只能靠调用方自觉：任何"绕过本模块直接写库"的地方，写完后都必须自己调
+ * invalidate()（store.setState/addWord/... 都算，见 app.js、pages/add、pages/card、
+ * pages/curriculum、pages/deck 的写法）。漏调的**症状是静默的** —— 数据其实已经落盘，
+ * 但列表/复习队列读的是缓存里的旧快照，表现就是"我刚加的词在词库里看不到"，
+ * 重启一次又正常。所以这不是可选优化，是这一层对外的契约。
  */
 const store = require('./store.js');
 const SHORT_HOOKS = require('../data/short-hooks.js');
@@ -22,7 +33,12 @@ const SHORT_HOOKS = require('../data/short-hooks.js');
 let _cards = null;
 let _states = null;
 
-/** 作废缓存。store 的任何写操作后都要调用（或由页面在写后显式调用 refresh） */
+/**
+ * 作废缓存。
+ *
+ * ⚠️ 必须由**调用方**显式调用（页面写库之后，或测试绕过 store 直接改 storage 之后）。
+ * store 的写操作不会调它 —— 原因与后果见本文件头部「缓存」一节，别指望它自动发生。
+ */
 function invalidate() {
   _cards = null;
   _states = null;

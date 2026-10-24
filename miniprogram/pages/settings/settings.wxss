@@ -18,7 +18,7 @@
   align-items: center;
   gap: 0;
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -30,9 +30,9 @@
   justify-content: center;
   font-size: 34rpx;
   color: var(--green);
-  transition: background-color 120ms linear;
+  transition: background-color var(--dur-tap) linear;
 }
-.step-btn:active { background: rgba(0, 130, 92, 0.12); }
+.step-btn:active { background: var(--green-tint); }
 .step-val {
   min-width: 80rpx;
   text-align: center;
@@ -48,11 +48,14 @@
 .switch {
   width: 88rpx;
   height: 48rpx;
+  /* 24rpx = 高度 48rpx ÷ 2 的胶囊端：半径由元素高度算出，属于几何量；
+     刻意不归入圆角族（轨道必须是完整胶囊，滑块才滑得自然）。 */
   border-radius: 24rpx;
   background: var(--line-2);
   position: relative;
   flex-shrink: 0;
-  transition: background-color 200ms linear;
+  /* 开关变色是"状态切换"，归 --dur-state；滑块位移在 .knob 上同样用 --dur-state */
+  transition: background-color var(--dur-state) linear;
 }
 .switch.on { background: var(--green); }
 .knob {
@@ -62,8 +65,8 @@
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  background: #FFFDF7;
-  transition: transform 200ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  background: var(--card);
+  transition: transform var(--dur-state) var(--ease-out);
 }
 .switch.on .knob { transform: translateX(40rpx); }
 
@@ -75,27 +78,27 @@
   font-size: 28rpx;
   padding: 16rpx 0;
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   color: var(--ink-2);
-  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  transition: transform var(--dur-tap) var(--ease-out);
 }
-.chip:active { transform: scale(0.96); }
+.chip:active { transform: scale(0.97); }   /* 0.96→0.97：全站按压幅度统一 */
 .chip.on {
   border-color: var(--green);
   color: var(--green);
-  background: rgba(0, 130, 92, 0.08);
+  background: var(--green-wash);
   font-weight: 600;
 }
 
 /* 服务状态条 */
 .svc {
   padding: 20rpx 24rpx;
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   font-size: 26rpx;
   margin-bottom: 20rpx;
 }
-.svc.ok { background: rgba(0, 130, 92, 0.10); color: var(--green-d); }
-.svc.bad { background: rgba(217, 95, 59, 0.10); color: var(--red); }
+.svc.ok { background: var(--green-tint); color: var(--green-d); }
+.svc.bad { background: var(--red-wash-2); color: var(--red); }
 
 .kv-row {
   display: flex;
@@ -109,7 +112,7 @@
 .input {
   background: var(--paper);
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 20rpx 24rpx;
   font-size: 28rpx;
   width: 100%;
@@ -117,3 +120,236 @@
 }
 
 .foot { text-align: center; padding: 48rpx 0 32rpx; }
+
+/* 家长卡锁定态：暗一档提示「这里是敏感区，碰了要验证」
+   不是彻底消失，是半透明+弱对比——视觉上是"暂时锁定"而不是"没有这块" */
+.parent-locked {
+  opacity: 0.75;
+  /* 孩子不会去读下面的小字把动画还性价比 */
+}
+
+.parent-card .knob { transition: transform var(--dur-state, 240ms) var(--ease-out); }
+
+/* ---- 本地模型（实验性）资源下载进度条 ----
+   与 app .bar 的 14rpx 胶囊刻意不同：这条是「下载进度」，用 8rpx 直角条 +
+   主题绿填充，一眼能与「判定尺度」的分段量尺区分开。
+   颜色与动画遵守全局规范：轨道用 --card-2（.bar 同款）、填充用主题绿、
+   动画只走 transform（width 动画会逐帧触发 Layout，是红线禁止项）。 */
+.mp-bar {
+  height: 8rpx;
+  background: var(--card-2);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+.mp-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--green);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--dur-state, 240ms) var(--ease-out, ease-out);
+}
+
+/* ---- 主题色卡（2026-09-25）----
+   一行 5 个等宽：色卡是"选项"不是"入口"，等宽阵列在这里是对的（选项间无主次）；
+   与词库页工具区的三卡等宽被否不矛盾 —— 那三张是动作（有主路径），这五张是纯选项。
+   当前项 = 描边变主色 + 底色 wash（与 .chip.on 同一选中语言，不发明新形态）。 */
+.theme-grid {
+  display: flex;
+  gap: 16rpx;
+}
+.theme-swatch {
+  flex: 1;
+  min-width: 0;               /* 防名称长时把同行其他色卡挤出界（flex 收缩的前提） */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 0 12rpx;
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-sm);
+  background: transparent;
+  transition: transform var(--dur-tap) var(--ease-out),
+              border-color var(--dur-state) linear,
+              background-color var(--dur-state) linear;
+}
+.theme-swatch:active { transform: scale(0.97); }
+.theme-swatch.on {
+  border-color: var(--green);
+  background: var(--green-wash);
+}
+.sw-dot {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  border: 2rpx solid var(--line);   /* 浅色圆点在纸底上需要描边才不隐形 */
+  box-sizing: border-box;
+}
+.sw-name {
+  font-size: 20rpx;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.theme-swatch.on .sw-name { color: var(--green-d); font-weight: 600; }
+
+/* ===================================================================
+   家长密码输入弹层（2026-09-30）
+   为什么不用 wx.showModal({editable:true})：它没有 type 参数，
+   弹的是系统文本键盘，而且 content 会被当成输入框的**初始值**——
+   于是用户看到的是「4~6 位数字，用于锁定设置页。请家长输入：」躺在框里，
+   必须先删掉这段提示才能输数字（用户反馈 2026-09-30）。
+   改成页面内 <input type="number" password>，数字键盘直接可用。
+   =================================================================== */
+.pin-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(46, 74, 98, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48rpx;
+}
+.pin-box {
+  width: 100%;
+  max-width: 560rpx;
+  background: var(--card);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 36rpx 32rpx 28rpx;
+  box-sizing: border-box;
+  /* 纸感平面投影，与 .card 一致（无 blur 的实心偏移，不是发光） */
+  box-shadow: 8rpx 8rpx 0 rgba(46, 74, 98, 0.06);
+}
+.pin-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+}
+.pin-hint {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: var(--ink-2);
+  text-align: center;
+  line-height: 1.5;
+}
+/* 错误提示占位：固定高度，避免"出错时弹层整体往下跳" */
+.pin-err {
+  min-height: 34rpx;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: var(--red);
+  text-align: center;
+}
+/* 数字输入框：居中、等宽字形，遮蔽显示由 password 属性负责 */
+.pin-input {
+  width: 100%;
+  height: 88rpx;
+  margin-top: 8rpx;
+  padding: 0 24rpx;
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-sm);
+  box-sizing: border-box;
+  font-size: 36rpx;
+  color: var(--ink);
+  text-align: center;
+  letter-spacing: 12rpx;
+}
+.pin-input:focus { border-color: var(--green); }
+.pin-btns {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+.pin-btns .btn { flex: 1 1 0; }
+
+/* ===================================================================
+   锁定态的可见性（2026-09-30，用户反馈"设置界面逻辑不清晰"）
+   =================================================================== */
+
+/*
+ * 被家长锁住时整卡压暗。
+ *
+ * 为什么必须"看得见锁"：原实现里锁是隐形的——控件长得完全可点，
+ * 点下去才弹密码框。用户看到的是"一整页设置但改了没反应"，
+ * 于是以为设置坏了。这是"逻辑不清晰"的真正来源：不是布局乱，
+ * 而是**看不出什么能改**。压暗 + 上面的 locked-note 把这件事说清楚。
+ *
+ * 用 opacity 而不是 pointer-events:none：
+ * 后者会让整卡连"看"都点不到（想滑动查看被吞掉手势），
+ * 而这里的诉求是"知道它锁着"，不是"禁止交互"——
+ * 真正的拦截仍在 withParent 里（唯一权威）。
+ */
+.card.is-locked { opacity: 0.55; }
+
+/* 锁定提示条：放在家长卡内部，紧跟卡头，让"下面这些只读"与开关同处一屏 */
+.locked-note {
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+  border-left: 8rpx solid var(--line);
+}
+.locked-note-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6rpx;
+}
+
+/*
+ * 危险区分隔。
+ *
+ * 与 .locked-note 同为"卡片内的一段分区"，但语义相反：
+ * 这里是**已解锁**状态下的破坏性操作区，所以用红色左边条（--red）
+ * 与上面可调的步进器/开关区分开—— 靠颜色与位置，不只靠一行小字。
+ */
+.danger-zone {
+  margin-top: 16rpx;
+  padding-left: 20rpx;
+  border-left: 8rpx solid var(--red);
+}
+
+/* 「修改家长密码」入口：普通设置行样式，箭头与设置页其他列表一致 */
+.pin-change-row {
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid var(--line);
+}
+.row-arrow {
+  font-size: 34rpx;
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+
+/*
+ * 家长设置折叠行（2026-09-30，方案 B）。
+ *
+ * 与 .locked-note 同构（同一张卡内的分区、同一套圆角与左边条），
+ * 但它是**可点的**：所以多了行布局、按下反馈与箭头。
+ * 刻意不引入新视觉语言——它必须看起来就是"家长控制卡的一部分"，
+ * 因为它就是那 6 张卡的标题行。
+ */
+.locked-fold {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding: 22rpx 24rpx;
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+  /* 与 .locked-note 同一根左边条：视觉上把"家长管的"归为一类 */
+  border-left: 8rpx solid var(--line);
+}
+.locked-fold:active { opacity: 0.6; }
+.locked-fold-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4rpx;
+}

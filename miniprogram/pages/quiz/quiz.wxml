@@ -1,0 +1,133 @@
+<view class="page {{themeClass}} page-fade" wx:if="{{ready}}">
+
+  <!-- ============ 阶段一：单元列表 ============ -->
+  <block wx:if="{{stage === 'units'}}">
+    <view class="card">
+      <view class="section-label">单元测验</view>
+      <view class="q-intro t-hint">
+        一个单元的单词都复习过一遍就能考。答对 {{passPct}}% 算通过，首次通过得
+        {{passBonus}} 积分。答错不扣分，随时可以重考 —— 重考只刷新最好成绩。
+      </view>
+      <view class="q-sum">
+        已通过 <text class="q-sum-n t-num">{{passedUnits}}</text> / {{totalUnits}} 个单元
+      </view>
+    </view>
+
+    <view wx:for="{{units}}" wx:key="unit"
+          class="card q-unit {{item.ready ? '' : 'locked'}}"
+          data-unit="{{item.unit}}" bindtap="startUnit"
+          aria-role="button" aria-label="{{item.unit}}，{{item.ready ? '可以考' : '还没解锁'}}">
+      <view class="q-unit-top">
+        <text class="q-unit-name">{{item.unit}}</text>
+        <text wx:if="{{item.passed}}" class="tag q-pass">已通过 {{item.best}}%</text>
+        <text wx:elif="{{item.ready}}" class="tag q-ready">可以考</text>
+        <text wx:else class="tag q-lock">还差 {{item.missing}} 词</text>
+      </view>
+      <view class="bar q-unit-bar">
+        <view class="bar-fill" style="transform: scaleX({{item.learned / item.total}});"></view>
+      </view>
+      <view class="t-hint q-unit-sub">
+        学过 {{item.learned}} / {{item.total}} 个词{{item.best > 0 && !item.passed ? ' · 最好成绩 ' + item.best + '%' : ''}}
+      </view>
+    </view>
+
+    <view wx:if="{{totalUnits === 0}}" class="empty">
+      词库里还没有带单元的单词。
+    </view>
+  </block>
+
+  <!-- ============ 阶段二：答题 ============ -->
+  <block wx:elif="{{stage === 'running'}}">
+    <view class="card q-run-head">
+      <view class="q-run-top">
+        <text class="t-hint">{{unitLabel}}</text>
+        <text class="t-hint">第 {{qi + 1}} / {{questions.length}} 题</text>
+      </view>
+      <view class="bar">
+        <view class="bar-fill" style="transform: scaleX({{progress / 100}});"></view>
+      </view>
+    </view>
+
+    <!-- 选择题：英译中四选一 -->
+    <view wx:if="{{q.type === 'choice'}}" class="card q-card">
+      <view class="q-word">{{q.word}}</view>
+      <view class="q-ask t-hint">选它的意思</view>
+      <view class="q-choices">
+        <view wx:for="{{q.choices}}" wx:key="*this"
+              class="q-choice {{answered && item === q.answer ? 'right' : ''}} {{answered && item === picked && item !== q.answer ? 'wrong' : ''}}"
+              data-v="{{item}}" bindtap="tapChoice">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 拼写题：中译英逐字母点填 -->
+    <view wx:else class="card q-card">
+      <view class="q-word q-word-cn">{{q.meaning}}</view>
+      <view class="q-ask t-hint">拼出这个单词</view>
+      <view class="q-slots">
+        <view wx:for="{{slots}}" wx:key="index"
+              class="q-slot {{item.state}}"
+              data-i="{{index}}" bindtap="tapSlot">{{item.ch}}</view>
+      </view>
+      <view class="q-bank">
+        <view wx:for="{{bank}}" wx:key="id"
+              class="q-letter {{item.used ? 'used' : ''}}"
+              data-id="{{item.id}}" bindtap="tapBank">{{item.ch}}</view>
+      </view>
+
+      <!--
+        显式验证（2026-09-25 用户点名）：填满不自动判分，点「验证」才判。
+        按钮常驻而非填满才出现 —— 这样"没填满就点"的防呆分支才是可达路径
+        （disabled 按钮收不到 tap，防呆就成了死代码）。
+      -->
+      <view class="q-verify {{spellShaking ? 'shake' : ''}}">
+        <button class="btn primary" bindtap="verifySpell"
+                aria-role="button" aria-label="验证拼写">验证</button>
+      </view>
+    </view>
+
+    <!-- 判定：答完**不自动跳**，先让他看清正确答案 —— 验收的教学价值就在这一刻 -->
+    <view wx:if="{{answered}}" class="card q-verdict {{verdict.ok ? 'ok' : 'no'}}">
+      <view class="q-verdict-main">{{verdict.ok ? '答对了' : '答错了'}}</view>
+      <view wx:if="{{!verdict.ok}}" class="q-verdict-right">正确答案：{{verdict.right}}</view>
+      <view class="btn-row">
+        <button class="btn primary" bindtap="nextQuestion">
+          {{qi + 1 >= questions.length ? '看结果' : '下一题'}}
+        </button>
+      </view>
+    </view>
+  </block>
+
+  <!-- ============ 阶段三：结果 ============ -->
+  <block wx:else>
+    <view class="card stripe {{result.passed ? 'green' : 'yellow'}} q-done">
+      <view class="q-done-title">{{say}}</view>
+      <view class="q-done-num t-num">{{result.pct}}%</view>
+      <view class="t-sub">答对 {{result.correct}} / {{result.total}} 题</view>
+
+      <view wx:if="{{result.perfect}}" class="tag q-legend">全对 · 传奇</view>
+      <view wx:elif="{{firstPass}}" class="tag q-gain">首次通过 +{{gained}} 积分</view>
+      <view wx:elif="{{result.passed}}" class="tag q-ready">已通过（重考只刷新最好成绩）</view>
+      <view wx:else class="t-hint q-hint">不到 80%，不计入通过 —— 但也没有任何扣分</view>
+    </view>
+
+    <view wx:if="{{result.wrongIds.length > 0}}" class="card">
+      <view class="section-label">错的 {{result.wrongIds.length}} 个</view>
+      <view class="t-hint q-hint">
+        这些词已经记进错题本了，复习页的「错题本」里能专项重练。
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <button class="btn primary" bindtap="retry">再考一次</button>
+      <button class="btn" bindtap="backToUnits">换一个单元</button>
+    </view>
+    <view class="btn-row">
+      <button class="btn small" bindtap="goGrowth">成长看板</button>
+      <button class="btn small" bindtap="goStudy">去复习</button>
+    </view>
+  </block>
+
+  <view class="foot-note">
+    测验不扣分 · 重考只刷新最好成绩 · 首次通过得积分
+  </view>
+</view>

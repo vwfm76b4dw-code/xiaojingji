@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144"
+     preserveAspectRatio="xMidYMid meet">
+  <!-- 小鲸记单词 · 开屏鲸（2026-09-24）
+       从 out/logo/纸白鲸.svg 的鲸形组派生：**去掉背景矩形与四周描边**，
+       并把两粒气泡也去掉 —— 气泡在开屏里改用 <view> 单独驱动动画
+       （小程序 <image> 加载的 SVG 无法用 WXSS 动画到内部元素，
+         所以可动的部分必须是原生节点，不可动的轮廓才留给 SVG）。
+
+       配色：鲸身 #00825C 主题绿 / 眼睛·嘴线 #FAF6EC 米白（对应纸底上的品牌反色）
+
+       ⚠️ image 组件的 SVG 限制（官方文档明列）：
+          · 不支持百分比单位 —— 本文件全部用绝对坐标，别改成 %；
+          · 不支持 <style> element —— 样式只能写成属性；
+          · mode=scaleToFill 时 WebView 会居中，所以调用处用 aspectFit。 -->
+
+  <g transform="translate(72 78) scale(0.90) translate(-72 -72)">
+    <path d="M20 80
+             C20 58 40 42 66 42
+             C86 42 98 52 103 64
+             C106 54 114 44 126 36
+             C123 50 118 60 110 68
+             C110 70 110 72 110 74
+             C118 82 123 92 126 106
+             C114 98 106 88 103 78
+             C98 88 86 96 66 96
+             C40 96 20 92 20 80 Z" fill="#00825C"/>
+
+    <path d="M25 84 Q40 93 56 89" stroke="#FAF6EC" stroke-width="4.4"
+          fill="none" stroke-linecap="round"/>
+
+    <circle cx="38" cy="67" r="5.6" fill="#FAF6EC"/>
+  </g>
+</svg>

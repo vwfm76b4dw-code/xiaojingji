@@ -1,0 +1,148 @@
+<!--
+  好友页（社交域主页面）。
+  结构：云不可用横幅 → 家长说明（首次） → 我的名片 → 加好友三入口 → 好友周榜 → 晒战报/宠物。
+  样式只用 app.wxss 的 token 与全局类（.card/.btn/.t-hint/.section-label），页内只写布局。
+-->
+<view class="page {{themeClass}}">
+
+  <!-- 云不可用横幅：一切降级的总信号。不复述具体错误码（孩子不需要懂 -501001）。 -->
+  <view wx:if="{{cloudDown}}" class="banner" aria-role="alert">
+    <text class="banner-txt">云服务暂不可用，好友与排行暂时看不了。背单词不受影响。</text>
+  </view>
+
+  <!-- 写给家长的说明：隐私承诺要写在用户看得见的地方，而不是只在隐私协议里。
+       首次进入展开，之后可从名片卡的「隐私说明」再打开。 -->
+  <view wx:if="{{showPrivacy}}" class="card stripe">
+    <view class="section-label">写给家长的说明</view>
+    <text class="privacy-body">好友功能只收集四样东西：孩子自己填的昵称、自己选的头像、
+      好友关系、学习积分。不收集手机号、位置、通讯录；也刻意不做聊天——孩子和同学之间
+      只能看到彼此的积分，说不了话。好友可以随时删除，删除后双方都看不到对方。
+      昵称与头像只对互为好友的同学可见。</text>
+    <view class="btn-row">
+      <button class="btn small" bindtap="dismissPrivacy">我知道了</button>
+    </view>
+  </view>
+
+  <!-- 我的名片。头像/昵称用的是微信官方合规组件：
+       button open-type="chooseAvatar"（用户主动选，不给相册权限）
+       input type="nickname"（拉起微信昵称，不做任何通讯录读取）。 -->
+  <view class="card">
+    <view class="profile-head" bindtap="togglePrivacy" aria-role="button" aria-label="隐私说明">
+      <view class="section-label">我的名片</view>
+      <text class="privacy-link">隐私说明</text>
+    </view>
+    <view class="profile-row">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar"
+              aria-label="选择头像">
+        <!-- 圆环画在内层 view 而不是 button 本身：个别机型基础库会给 button 撑出
+             UA 默认尺寸，128×128 的圆被拉成椭圆（真机反馈 2026-09-25）；
+             内层定尺寸 view 不吃 UA 样式，圆永远正。 -->
+        <view class="avatar-ring">
+          <image wx:if="{{avatarSrc}}" class="avatar-img" src="{{avatarSrc}}" mode="aspectFill"></image>
+          <view wx:else class="avatar-img avatar-blank">
+            <text class="avatar-blank-txt">选头像</text>
+          </view>
+        </view>
+      </button>
+      <view class="profile-form">
+        <input class="nick-input" type="nickname" value="{{nickname}}"
+               placeholder="给自己起个名字" maxlength="12"
+               bindinput="onNickInput" bindblur="onNickInput" />
+        <view wx:if="{{friendId}}" class="fid-row">
+          <text class="fid-label">好友 ID</text>
+          <text class="fid-value t-mono">{{friendId}}</text>
+          <button class="btn small fid-copy" bindtap="copyId">复制</button>
+        </view>
+        <text wx:else class="t-hint">保存名片后，会生成你的专属好友 ID</text>
+      </view>
+    </view>
+    <view class="btn-row">
+      <button class="btn primary" bindtap="saveProfile" disabled="{{saving}}">
+        {{saving ? '保存中…' : '保存名片'}}
+      </button>
+      <button class="btn" open-type="share" bindtap="shareInvite" disabled="{{!friendId}}">
+        推荐给同学
+      </button>
+    </view>
+    <view class="t-hint">头像和昵称只给好友看。不传姓名、不传学了哪些词。</view>
+  </view>
+
+  <!-- 加好友三个入口（契约 §2.4 双入口 + 输 ID 保底）：
+       ① 输好友 ID —— 不依赖任何分享链路，当面抄一下就能加；
+       ② 转发卡片 —— 发布前的公开主入口；
+       ③ 好友码 —— 体验期仅体验成员可扫（服务端 release 失败自动降级 trial 出码）。 -->
+  <view class="card">
+    <view class="section-label">加好友</view>
+    <view class="add-row">
+      <input class="add-input t-mono" value="{{inputId}}" placeholder="输入同学的好友 ID"
+             maxlength="8" bindinput="onIdInput" />
+      <button class="btn small add-go" bindtap="addById" disabled="{{!inputId}}">添加</button>
+    </view>
+    <view class="add-more">
+      <button class="btn small" open-type="share" bindtap="shareInvite">转发邀请卡</button>
+      <button class="btn small" bindtap="makeQr" disabled="{{!friendId}}">生成好友码</button>
+    </view>
+    <!-- 好友码结果区：图片 + 保存到相册 + 原因说明。
+         为什么把保存做成主动作：微信里把一张图发给同学 = 存相册 → 选图发送，
+         「保存到相册」是二维码从"看得见"到"传得出去"的桥；
+         生成失败时 qrNote 给明确原因，兜底入口是上方的「转发邀请卡」。 -->
+    <view wx:if="{{qrFileID}}" class="qr-box">
+      <image class="qr-img" src="{{qrFileID}}" mode="widthFix" aria-label="我的好友码"></image>
+      <view class="qr-actions">
+        <button class="btn primary" bindtap="saveQr" disabled="{{qrSaving}}">
+          {{qrSaving ? '保存中…' : '保存到相册'}}
+        </button>
+      </view>
+      <view class="t-hint qr-hint">首次保存需允许相册权限。存好后发给同学，扫一扫或长按识别即可加你。</view>
+    </view>
+    <view wx:if="{{qrNote}}" class="t-hint qr-note">{{qrNote}}</view>
+  </view>
+
+  <!-- 好友周榜：好友小圈子（5-20 人）+ 本周/累计双列。
+       为什么不做全服榜：初中生在熟人圈里有真实比较欲，在全服榜只有挫败感（研究文档 §2.2-1）。 -->
+  <view class="card">
+    <view class="section-label">好友周榜</view>
+    <view class="lb-head">
+      <text class="lb-col-name">同学</text>
+      <text class="lb-col-num">本周</text>
+      <text class="lb-col-num lb-dim">累计</text>
+    </view>
+    <view wx:if="{{board.length === 0 && !cloudDown}}" class="t-hint lb-empty">
+      还没有好友。用上面的方式加一个，这周就开始比。
+    </view>
+    <view wx:for="{{board}}" wx:key="friendId" class="lb-row {{item.isMe ? 'lb-me' : ''}}">
+      <text class="lb-rank t-num">{{item.rank}}</text>
+      <view class="lb-who">
+        <!-- 头像三级源：fileID（稳定首选）→ avatarUrl（服务端 getTempFileURL 换的
+             临时直链，兜云存储「仅创建者可读写」导致好友读不到别人 fileID 的情况）
+             → avatarLocal（仅 isMe 行，本地持久头像）。fileID 挂了由
+             binderror 自动下落到下一级，不在模板里做优先级判断。 -->
+        <image wx:if="{{item.avatarFileID || item.avatarUrl || item.avatarLocal}}"
+               class="lb-avatar"
+               src="{{item.avatarFileID || item.avatarUrl || item.avatarLocal}}"
+               mode="aspectFill" binderror="onBoardAvatarErr" data-index="{{index}}"></image>
+        <view wx:else class="lb-avatar lb-avatar-blank"></view>
+        <text class="lb-nick">{{item.isMe ? item.nickname + '（我）' : item.nickname}}</text>
+      </view>
+      <text class="lb-num t-num">{{item.pointsWeek}}</text>
+      <text class="lb-num t-num lb-dim">{{item.pointsTotal}}</text>
+    </view>
+    <view class="t-hint lb-foot">本周 = 最近 7 天的积分。没有淘汰，练就有分。</view>
+  </view>
+
+  <!-- 晒战报 + 宠物入口。战报数字用"掌握"口径（连续记住 21 天才算背了），
+       过一遍就吹"背了 N 个"对初中生是虚假激励。
+
+       「去看我的小鲸」按钮已下线（2026-09-30，用户决定暂砍宠物，下个大版本再接）。
+       这是三个宠物入口里的第三个 —— friends.js 的 goPet() 函数本体保留。 -->
+  <view class="card">
+    <view class="section-label">晒一晒</view>
+    <view class="btn-row">
+      <button class="btn primary" open-type="share" bindtap="shareReport">
+        背词战报（已背 {{totalWords}} 词）
+      </button>
+    </view>
+  </view>
+
+  <view class="foot-note">积分同步自本机学习记录，只增不减 · 好友看不到你的词表</view>
+</view>

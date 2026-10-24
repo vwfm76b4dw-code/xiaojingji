@@ -1,0 +1,477 @@
+{
+ "book": "外研版小学英语四年级下册（一年级起点）",
+ "grade": "g4",
+ "count": 78,
+ "_source": "https://yyld.51jiaoxi.com/sixia/wybyq_danci.html（51教习网英语朗读宝·外研版小学英语一起点同步词表，按 Module 分组）；koolearn 词书页已改 JS 渲染暂无第二来源，单源 medium",
+ "_confidence": "medium",
+ "words": [
+  {
+   "word": "machine",
+   "meaning": "机器，机械",
+   "unit": "4A Module 1",
+   "mnemonic": "machine：咔哒转动的机器"
+  },
+  {
+   "word": "welcome",
+   "meaning": "欢迎",
+   "unit": "4A Module 1",
+   "mnemonic": "欢迎：张开双臂请进来"
+  },
+  {
+   "word": "crisp",
+   "meaning": "炸薯片",
+   "unit": "4A Module 1",
+   "mnemonic": "crisp：一咬咔嚓响的薯片"
+  },
+  {
+   "word": "sir",
+   "meaning": "（对男子或男教师的礼貌称呼）先生；长官",
+   "unit": "4A Module 1",
+   "mnemonic": "sir：对男士的敬称 = 先生"
+  },
+  {
+   "word": "potato",
+   "meaning": "马铃薯；土豆",
+   "unit": "4A Module 1",
+   "mnemonic": "土豆：泥土里挖出的圆块"
+  },
+  {
+   "word": "dangerous",
+   "meaning": "危险的",
+   "unit": "4A Module 1",
+   "mnemonic": "危险的：别碰插座，会伤人"
+  },
+  {
+   "word": "put",
+   "meaning": "放，安放；写上",
+   "unit": "4A Module 1",
+   "mnemonic": "放：把书放进书包"
+  },
+  {
+   "word": "wait",
+   "meaning": "等待",
+   "unit": "4A Module 1",
+   "mnemonic": "等待：站住稍等一下"
+  },
+  {
+   "word": "each",
+   "meaning": "各自；每个",
+   "unit": "4A Module 1",
+   "mnemonic": "each：一个一个都各自"
+  },
+  {
+   "word": "cheap",
+   "meaning": "花钱少的；便宜的",
+   "unit": "4A Module 2",
+   "mnemonic": "cheap：价签上的数很小 = 便宜"
+  },
+  {
+   "word": "expensive",
+   "meaning": "昂贵的；价格高的；花钱多的",
+   "unit": "4A Module 2",
+   "mnemonic": "ex + pense：价签上的数很大 = 昂贵"
+  },
+  {
+   "word": "send",
+   "meaning": "邮寄；发送",
+   "unit": "4A Module 2",
+   "mnemonic": "寄；发送：把信投进邮筒"
+  },
+  {
+   "word": "email",
+   "meaning": "电子邮件",
+   "unit": "4A Module 2",
+   "mnemonic": "电子邮件：e（电子）+ mail（信）→ 网上寄的信"
+  },
+  {
+   "word": "cost",
+   "meaning": "费用；花费；价钱为",
+   "unit": "4A Module 2",
+   "mnemonic": "cost：买它要花的价"
+  },
+  {
+   "word": "hundred",
+   "meaning": "百，一百",
+   "unit": "4A Module 2",
+   "mnemonic": "百：一百分满分"
+  },
+  {
+   "word": "shout",
+   "meaning": "呼喊，大叫，喊叫声",
+   "unit": "4A Module 3",
+   "mnemonic": "喊：放开嗓门大声叫"
+  },
+  {
+   "word": "wolf",
+   "meaning": "狼",
+   "unit": "4A Module 3",
+   "mnemonic": "wolf：嗥叫的狼"
+  },
+  {
+   "word": "sheep",
+   "meaning": "（sheep的复数形式）绵羊",
+   "unit": "4A Module 3",
+   "mnemonic": "绵羊：sheep 单复数同形，一团团白云"
+  },
+  {
+   "word": "ran",
+   "meaning": "（run的过去式）跑",
+   "unit": "4A Module 3",
+   "mnemonic": "跑（run 过去式）：一路跑回家"
+  },
+  {
+   "word": "once upon a time",
+   "meaning": "从前",
+   "unit": "4A Module 3",
+   "mnemonic": "故事开头：从前……"
+  },
+  {
+   "word": "look after",
+   "meaning": "照顾，照料",
+   "unit": "4A Module 3",
+   "mnemonic": "look（看）+ after（之后）→ 一直看着 = 照顾"
+  },
+  {
+   "word": "bored",
+   "meaning": "厌倦的；厌烦的;无聊的",
+   "unit": "4A Module 3",
+   "mnemonic": "无聊的：没事干，哈欠一个接一个"
+  },
+  {
+   "word": "village",
+   "meaning": "村庄；乡村；村镇",
+   "unit": "4A Module 3",
+   "mnemonic": "村庄：乡下一排小平房"
+  },
+  {
+   "word": "everyone",
+   "meaning": "每人；人人；所有人",
+   "unit": "4A Module 3",
+   "mnemonic": "每个人：every（每）+ one（人）→ 全体"
+  },
+  {
+   "word": "laughed",
+   "meaning": "（laugh过去式）笑",
+   "unit": "4A Module 3",
+   "mnemonic": "laugh 的过去式：笑了"
+  },
+  {
+   "word": "lie",
+   "meaning": "谎话，谎言",
+   "unit": "4A Module 3",
+   "mnemonic": "lie：编出来的谎话"
+  },
+  {
+   "word": "learnt",
+   "meaning": "（learn的过去式）学习",
+   "unit": "4A Module 3",
+   "mnemonic": "学会（learn 过去式）：已经学会了"
+  },
+  {
+   "word": "lesson",
+   "meaning": "课",
+   "unit": "4A Module 3",
+   "mnemonic": "课：一节一节的课程"
+  },
+  {
+   "word": "wouldn't",
+   "meaning": "将不",
+   "unit": "4A Module 3",
+   "mnemonic": "would not 缩写：将不"
+  },
+  {
+   "word": "into",
+   "meaning": "进入；到......里",
+   "unit": "4A Module 3",
+   "mnemonic": "到……里面：跳进泳池溅起水花"
+  },
+  {
+   "word": "month",
+   "meaning": "月份，月",
+   "unit": "4A Module 3",
+   "mnemonic": "月份：一年十二个月"
+  },
+  {
+   "word": "cheese",
+   "meaning": "奶酪",
+   "unit": "4A Module 3",
+   "mnemonic": "奶酪：芝士片夹进汉堡里"
+  },
+  {
+   "word": "scared",
+   "meaning": "害怕的；害怕，恐惧",
+   "unit": "4A Module 3",
+   "mnemonic": "scare（吓）+ d → 被吓到的 = 害怕"
+  },
+  {
+   "word": "run away",
+   "meaning": "逃走，逃跑",
+   "unit": "4A Module 3",
+   "mnemonic": "run（跑）+ away（远）→ 逃走"
+  },
+  {
+   "word": "concert",
+   "meaning": "音乐会；演奏会",
+   "unit": "4A Module 4",
+   "mnemonic": "音乐会：台上演奏台下听"
+  },
+  {
+   "word": "violin",
+   "meaning": "小提琴",
+   "unit": "4A Module 4",
+   "mnemonic": "violin：架在脖子上的小提琴"
+  },
+  {
+   "word": "guitar",
+   "meaning": "吉他",
+   "unit": "4A Module 4",
+   "mnemonic": "guitar：抱着弹的吉他"
+  },
+  {
+   "word": "nervous",
+   "meaning": "紧张的；焦虑的，惶恐的",
+   "unit": "4A Module 4",
+   "mnemonic": "紧张的：上台前手心冒汗"
+  },
+  {
+   "word": "end",
+   "meaning": "结束；尽头；结尾",
+   "unit": "4A Module 4",
+   "mnemonic": "结束：电影放完字幕升起"
+  },
+  {
+   "word": "proud",
+   "meaning": "自豪的；骄傲的",
+   "unit": "4A Module 4",
+   "mnemonic": "自豪的：得了满分心里美"
+  },
+  {
+   "word": "surprise",
+   "meaning": "意想不到的礼物；意外之事；惊奇",
+   "unit": "4A Module 5",
+   "mnemonic": "surprise：没想到的惊喜"
+  },
+  {
+   "word": "hear",
+   "meaning": "听见",
+   "unit": "4A Module 5",
+   "mnemonic": "听见：耳朵捕捉到声音"
+  },
+  {
+   "word": "special",
+   "meaning": "特殊的；特别的，专门的",
+   "unit": "4A Module 5",
+   "mnemonic": "特别的：独一无二的那个"
+  },
+  {
+   "word": "Father's Day",
+   "meaning": "父亲节",
+   "unit": "4A Module 5",
+   "mnemonic": "father（爸爸）的节日 = 父亲节"
+  },
+  {
+   "word": "message",
+   "meaning": "（书面或口头的）信息；消息；便条；信；口信",
+   "unit": "4A Module 5",
+   "mnemonic": "消息：手机里收到的一条信息"
+  },
+  {
+   "word": "great",
+   "meaning": "很多的，极大的",
+   "unit": "4A Module 6",
+   "mnemonic": "极好的：太棒了，了不起"
+  },
+  {
+   "word": "report",
+   "meaning": "新闻报道",
+   "unit": "4A Module 6",
+   "mnemonic": "report：把消息报出来 = 新闻报道"
+  },
+  {
+   "word": "stick",
+   "meaning": "粘贴，粘住，钉住",
+   "unit": "4A Module 6",
+   "mnemonic": "小棍；粘贴：用胶水粘起来"
+  },
+  {
+   "word": "fantastic",
+   "meaning": "极好的；了不起的",
+   "unit": "4A Module 6",
+   "mnemonic": "极好的：fantasy（幻想）+ tic → 好得像做梦"
+  },
+  {
+   "word": "fun",
+   "meaning": "有趣的，好玩的；乐趣",
+   "unit": "4A Module 6",
+   "mnemonic": "有趣：玩得哈哈笑"
+  },
+  {
+   "word": "meet",
+   "meaning": "迎接；结识；遇见；会面；预见",
+   "unit": "4A Module 6",
+   "mnemonic": "遇见：初次见面握握手"
+  },
+  {
+   "word": "east",
+   "meaning": "东，东方；东部",
+   "unit": "4A Module 6",
+   "mnemonic": "东：太阳从东边升起"
+  },
+  {
+   "word": "west",
+   "meaning": "西，西方；西方的；向西的",
+   "unit": "4A Module 6",
+   "mnemonic": "西：太阳落下的方向"
+  },
+  {
+   "word": "o'clock",
+   "meaning": "（表示整点）……点钟",
+   "unit": "4A Module 6",
+   "mnemonic": "……点钟：o + clock 报整点"
+  },
+  {
+   "word": "time",
+   "meaning": "时间；次，回",
+   "unit": "4A Module 7",
+   "mnemonic": "时间：几点了看时钟"
+  },
+  {
+   "word": "cartoon",
+   "meaning": "动画片",
+   "unit": "4A Module 7",
+   "mnemonic": "cartoon：一集集的动画片"
+  },
+  {
+   "word": "much",
+   "meaning": "很多地；非常，很；许多，大量",
+   "unit": "4A Module 7",
+   "mnemonic": "许多：much 修饰不可数的水"
+  },
+  {
+   "word": "am",
+   "meaning": "上午",
+   "unit": "4A Module 7",
+   "mnemonic": "I am 我是的 am"
+  },
+  {
+   "word": "pm",
+   "meaning": "下午",
+   "unit": "4A Module 7",
+   "mnemonic": "p.m.：日头偏西的下午"
+  },
+  {
+   "word": "best",
+   "meaning": "最，最高程度地；最出色地，最高标准地",
+   "unit": "4A Module 8",
+   "mnemonic": "最好的：成绩单上最好的那个成绩"
+  },
+  {
+   "word": "north",
+   "meaning": "北，北方",
+   "unit": "4A Module 8",
+   "mnemonic": "北：地图上方是北"
+  },
+  {
+   "word": "south",
+   "meaning": "南部；南方",
+   "unit": "4A Module 8",
+   "mnemonic": "南：地图下方是南"
+  },
+  {
+   "word": "rest",
+   "meaning": "休息，歇息；其余",
+   "unit": "4A Module 8",
+   "mnemonic": "休息：累了就歇一歇"
+  },
+  {
+   "word": "have a rest",
+   "meaning": "休息一下",
+   "unit": "4A Module 8",
+   "mnemonic": "休息一下：坐下歇一歇"
+  },
+  {
+   "word": "country",
+   "meaning": "国家；农村",
+   "unit": "4A Module 8",
+   "mnemonic": "国家：地图上一块块国土"
+  },
+  {
+   "word": "speak",
+   "meaning": "会说；会讲（某种语言）；用（某种语言）说话",
+   "unit": "4A Module 8",
+   "mnemonic": "说话：speak 大声讲出来"
+  },
+  {
+   "word": "capital",
+   "meaning": "首都",
+   "unit": "4A Module 8",
+   "mnemonic": "capital：国家政府所在的首都"
+  },
+  {
+   "word": "maybe",
+   "meaning": "也许，大概，可能",
+   "unit": "4A Module 8",
+   "mnemonic": "may（可能）+ be → 也许吧"
+  },
+  {
+   "word": "map",
+   "meaning": "地图",
+   "unit": "4A Module 8",
+   "mnemonic": "地图：摊开找一找北京在哪"
+  },
+  {
+   "word": "because",
+   "meaning": "因为",
+   "unit": "4A Module 9",
+   "mnemonic": "因为：先说原因再说结果"
+  },
+  {
+   "word": "language",
+   "meaning": "语言",
+   "unit": "4A Module 9",
+   "mnemonic": "语言：说出口交流的话"
+  },
+  {
+   "word": "Australian",
+   "meaning": "澳大利亚的；澳大利亚人",
+   "unit": "4A Module 9",
+   "mnemonic": "Australia（澳大利亚）的人"
+  },
+  {
+   "word": "kangaroo",
+   "meaning": "袋鼠",
+   "unit": "4A Module 9",
+   "mnemonic": "kangaroo：肚前有袋的袋鼠"
+  },
+  {
+   "word": "back",
+   "meaning": "后面的",
+   "unit": "4A Module 9",
+   "mnemonic": "回来；背部：拍拍后背，回来吧"
+  },
+  {
+   "word": "postcard",
+   "meaning": "明信片",
+   "unit": "4A Module 10",
+   "mnemonic": "明信片：post（邮寄）+ card（卡片）"
+  },
+  {
+   "word": "plan",
+   "meaning": "计划，打算",
+   "unit": "4A Module 10",
+   "mnemonic": "plan：先画好的计划"
+  },
+  {
+   "word": "museum",
+   "meaning": "博物馆",
+   "unit": "4A Module 10",
+   "mnemonic": "博物馆：Muse（缪斯女神）+ um → 女神殿堂"
+  },
+  {
+   "word": "restaurant",
+   "meaning": "餐馆",
+   "unit": "4A Module 10",
+   "mnemonic": "餐馆：点菜吃饭的店"
+  }
+ ]
+}

@@ -1,0 +1,120 @@
+/**
+ * 「我的」页样式 —— token 全部取自 app.wxss（设计 token 唯一来源）。
+ * 红线：禁渐变、禁发光阴影、动画只动 transform/opacity、必须有 reduced-motion 降级
+ *（文件末尾的 @media 块）。
+ *
+ * 2026-09-25 错位修复审计：间距全部收敛到 8pt 族（8/16/20/24/32/48/64，
+ * 4rpx 仅限排版微调半格）；可读文案的弱色从 --ink-3（2.3:1）提到 --ink-hint（5.1:1）。
+ */
+
+/* ---- 资料卡 ---- */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.avatar {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;   /* 头像用圆是符号约定；页面结构圆角仍走 --r-* 族 */
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  flex-shrink: 0;
+}
+.avatar-blank { display: flex; align-items: center; justify-content: center; }
+.avatar-blank-txt { font-size: 48rpx; color: var(--ink-3); }
+
+.profile-main { min-width: 0; }
+.nick { font-size: 36rpx; font-weight: 600; color: var(--ink); }
+
+/* 好友号一行 = 内容 + 动作（复制）。做成小底牌而不是裸文本：它是全页唯一
+   "可点"的文字行，得有可点相；:active 只动 transform（红线）。
+   padding 从 6/16 提到 10/20：这是行内小动作的热区与视觉约束的平衡 ——
+   撑到 88rpx 触控标准会让小底牌笨重到破坏资料卡层级，主要导航已由
+   .menu-row（96rpx 行高）承担达标触控。 */
+.fid {
+  margin-top: 8rpx;    /* 12→8：贴近昵称，且落回 8pt 族 */
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;           /* 12→8：内容与"复制"之间只需一眼可分 */
+  font-size: 24rpx;
+  color: var(--ink-2);
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+  padding: 10rpx 20rpx;
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.fid:active { transform: scale(0.97); }   /* 0.96→0.97：全站按压幅度统一 */
+.fid-copy { color: var(--green-d); }      /* 动作词用 green-d 不是 green：正文级可读性 */
+.cloud-hint { margin-top: 8rpx; }         /* 10→8：8pt 族 */
+
+.guide-txt { margin-top: 20rpx; }
+.guide-btn { margin-top: 20rpx; }
+
+/* ---- 数据概览条：三格等分 + 竖分隔线（与成长看板 hero-row 同构） ----
+   padding 竖向 28→24：28 不在 8pt 族，且与 .card 的 32rpx 内距形成
+   "卡内再缩半档"的正确层级。 */
+.overview {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+  padding: 24rpx 32rpx;
+}
+.ov-cell { flex: 1; text-align: center; min-width: 0; }
+/* nowrap：数字换行是概览条错位的头号来源（如 1234 在极窄屏被拆成两行）；
+   tabular-nums 已由 .t-num 提供，这里只锁"不换行、宁溢出由 flex 收缩"， */
+.ov-n {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  white-space: nowrap;
+}
+.ov-l {
+  font-size: 24rpx;
+  color: var(--ink-hint);   /* 标签是要读的字，--ink-3 的 2.3:1 不达标 */
+  margin-top: 4rpx;         /* 4rpx 是数字与标签的半格微调（同 app.wxss .btn-sub 先例） */
+}
+.ov-div { width: 2rpx; height: 56rpx; background: var(--line); flex-shrink: 0; }
+
+/* ---- 菜单：行式列表，行间分隔线；:active 用 opacity 反馈（transform/opacity 之内） ----
+   行高 28→24：24+24+行内容(30rpx×1.6=48) = 96rpx ≥ 88rpx 触控标准，
+   28rpx 时 104rpx 偏松，24rpx 收紧一档同时保住触控。 */
+.menu { padding: 8rpx 32rpx; }
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid var(--line);
+  transition: opacity var(--dur-tap) var(--ease-out);
+}
+.menu-row:last-child { border-bottom: none; }
+/* 行式列表不用 scale 按压：整行横向缩窄会让右箭头"游动"，opacity 反馈
+   是列表行的正确形态（卡片/按钮才用 scale，全站统一见 app.wxss）。 */
+.menu-row:active { opacity: 0.6; }
+.menu-name { font-size: 30rpx; color: var(--ink); }
+/* 去向说明是要读的字，不是装饰：--ink-3(2.3:1)→--ink-hint(5.1:1)。
+   这正是 app.wxss --ink-hint token 注释里说的判断口径。 */
+.menu-go { font-size: 24rpx; color: var(--ink-hint); }
+
+/* 分享行必须是 button（open-type="share" 的平台限制），重置回与 .menu-row 一致：
+   button 自带的边框/行高/内边距全清掉，视觉上就是列表里普通的一行。 */
+.menu-share {
+  width: 100%;
+  background: transparent;
+  border-radius: 0;
+  margin: 0;
+  font-size: 30rpx;
+  line-height: inherit;
+  text-align: left;
+}
+.menu-share::after { border: none; }
+
+/* 前庭障碍降级：本页自己挂的过渡只有 .fid 的按压缩放与 .menu-row 的透明度
+   （入场 .rise-soft 在 app.wxss 的全局 reduced-motion 块里已关）。
+   这里显式关掉本文件的过渡 —— 每页自带降级是红线要求，不指望全局块记得我。 */
+@media (prefers-reduced-motion: reduce) {
+  .fid,
+  .menu-row { transition: none; }
+}

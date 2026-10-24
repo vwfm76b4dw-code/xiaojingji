@@ -14,6 +14,7 @@
  * 运行：node tools/verify-onddevice.js
  */
 const path = require('path');
+const { gzipSizeSync } = require('./lib/spawn-retry');
 
 let pass = 0, fail = 0;
 const failures = [];
@@ -416,26 +417,45 @@ check('音频总体积在预算内（≤1400KB，主包上限 2048KB 还要留�
   console.log('      （' + files.length + ' 个文件 · ' + kb.toFixed(0) + ' KB）');
 });
 
-check('主包体积仍在 2MB 内（音频不可压缩，必须实算）', () => {
-  // 文本类会被 gzip，音频不会 —— 所以按"文本压缩后 + 音频原大小"估算
-  const { execSync } = require('child_process');
-  let textGz = 0, audioBytes = 0;
+check('主包体积仍在 2MB 内（按 packOptions.ignore 口径实算）', () => {
+  // 文本类会被 gzip，音频不会 —— 所以按"文本压缩后 + 包内音频原大小"估算。
+  // 2026-09-25 音频上云后 data/audio 被 packOptions.ignore 排除出包，估算若仍把
+  // 磁盘上的 901KB 计入，会永远虚高（Agent A 迁移后发现）。口径必须跟 verify-package 一致。
+  //
+  // 2026-10-07：压缩口径改用 Node 内置 zlib，不再 `execSync('gzip -c ...')`。
+  // 原因见 lib/spawn-retry.js 的注释：旧写法经 shell 转发到 cmd.exe，
+  // 且每个文本文件 fork 一个 gzip 进程（几百次 CreateProcess），
+  // 撞上杀软/索引器就报 `spawnSync C:\WINDOWS\system32\cmd.exe EBUSY`，
+  // 是高频环境抖动而非真实超重。zlib 与 gzip 同为 RFC 1952，量级一致。
+  const projCfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'project.config.json'), 'utf8'));
+  const ignoredDirs = ((projCfg.packOptions || {}).ignore || [])
+    .filter(e => e.type === 'folder')
+    .map(e => String(e.value).replace(/^\/+|\/+$/g, ''));
+  const isIgnored = full => ignoredDirs.some(d => {
+    const abs = path.join(ROOT, d);
+    return full === abs || full.startsWith(abs + path.sep);
+  });
+  let textGz = 0, audioBytes = 0, textFiles = 0;
   function walk(dir) {
     fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
       const full = path.join(dir, e.name);
+      if (isIgnored(full)) return;
       if (e.isDirectory()) {
-        if (e.name === 'cloudfunctions' || e.name === 'audio') return;
+        if (e.name === 'cloudfunctions') return;
         walk(full);
       } else if (/\.(js|json|wxml|wxss)$/.test(e.name)) {
-        textGz += execSync('gzip -c "' + full + '"', { maxBuffer: 64 * 1024 * 1024 }).length;
+        textGz += gzipSizeSync(full);
+        textFiles++;
+      } else if (full.startsWith(path.join(ROOT, 'data', 'audio') + path.sep)) {
+        audioBytes += fs.statSync(full).size;
       }
     });
   }
   walk(ROOT);
-  fs.readdirSync(AUDIO_DIR).forEach(f => { audioBytes += fs.statSync(path.join(AUDIO_DIR, f)).size; });
   const est = textGz + audioBytes;
   assert(est <= 2048 * 1024, '预计 ' + (est / 1024).toFixed(0) + 'KB 超过 2048KB');
-  console.log('      （文本压缩 ' + (textGz / 1024).toFixed(0) + 'KB + 音频 ' + (audioBytes / 1024).toFixed(0) + 'KB = ' + (est / 1024).toFixed(0) + 'KB / 2048KB）');
+  console.log('      （' + textFiles + ' 个文本文件 · 压缩 ' + (textGz / 1024).toFixed(0) +
+    'KB + 包内音频 ' + (audioBytes / 1024).toFixed(0) + 'KB = ' + (est / 1024).toFixed(0) + 'KB / 2048KB）');
 });
 
 check('resolveForPlay 对包内词返回可播路径', () => {
@@ -448,6 +468,141 @@ check('resolveForPlay 对包内词返回可播路径', () => {
 check('resolveForPlay 对词表外的词不返回包内路径（应走插件）', () => {
   assertEq(audioMod.packPath('zzzznotaword'), '', '不该有包内路径');
 });
+
+/*================================================================
+ * 四、端侧模型资源包（utils/model-pack.js）
+ *    2026-09-24 新增：该模块 09-22 落地后一直零门禁覆盖，
+ *    其"断点续传 / WiFi 门 / 静默降级"契约此前全靠人肉信任。
+ *================================================================*/
+console.log('\n-- 模型资源包（model-pack）--');
+
+const mpPath = path.join(ROOT, 'utils', 'model-pack.js');
+
+// fs 替身：真实临时目录 + 只暴露 model-pack 用到的方法
+function makeMpWorld() {
+  const tmp = fs.mkdtempSync(require('os').tmpdir() + path.sep + 'wxmp-');
+  const realFs = require('fs');
+  global.wx = Object.assign({}, global.wx, {
+    env: { USER_DATA_PATH: tmp },
+    getFileSystemManager: () => ({
+      statSync: p => ({ size: realFs.statSync(p).size }),
+      readFileSync: (p, e) => realFs.readFileSync(p, e),
+      unlinkSync: p => realFs.unlinkSync(p),
+      mkdirSync: p => realFs.mkdirSync(p, { recursive: true }),
+      copyFileSync: (a, b) => realFs.copyFileSync(a, b)
+    })
+  });
+  delete require.cache[require.resolve(mpPath)];
+  return require(mpPath);
+}
+
+/** 模拟 wx.cloud.downloadFile：按 FILES 清单"下载"4 个假文件 */
+function fakeCloudDownload() {
+  global.wx.cloud = {
+    downloadFile: o => {
+      const m = o.fileID.match(/semantic\/(.+)$/);
+      const name = m && m[1];
+      const f = require(mpPath).FILES.find(x => x.name === name);
+      if (!f) { o.fail && o.fail({ errMsg: 'file not found: ' + o.fileID }); return; }
+      const tmp = path.join(require('os').tmpdir(), 'wxmp-dl-' + name);
+      require('fs').writeFileSync(tmp, Buffer.alloc(f.bytes, 7));
+      setTimeout(() => o.success && o.success({ statusCode: 200, tempFilePath: tmp }), 5);
+    }
+  };
+}
+
+check('status() 冷启动直接可读：fs 懒初始化，不依赖 download() 先跑过', () => {
+  const mp = makeMpWorld();
+  const st = mp.status();   // ← 修复前：fs 为 null，sizeOf 全 0
+  assertEq(st.complete, false, '空目录应未完成');
+  assertEq(st.percent, 0, '百分比');
+  assertEq(st.files.length, 4, '文件清单');
+});
+
+check('fileID 被清空时 isConfigured()=false、download 静默失败', () => {
+  const mp = makeMpWorld();
+  // 2026-09-28 语义资源已上传回填，出厂态不再全空——「未配置」改为**显式清空注入**：
+  // 测的是行为（空 fileID → not-configured），不是仓库状态快照（回填后此快照永远失真）。
+  mp.FILES.forEach(f => { f.fileID = ''; });
+  assertEq(mp.isConfigured(), false, 'fileID 清空后应视为未配置');
+  let err = null;
+  mp.download({ onDone: e => { err = e; } });
+  assert(err, '应回调失败');
+  assertEq(st_of(mp).error, 'not-configured', '错误码');
+});
+
+check('非 WiFi 自动下载被拒（流量保护契约）', () => {
+  const mp = makeMpWorld();
+  fakeConfigured(mp);   // 回填 fileID
+  fakeCloudDownload();  // 守卫链是 未配置→无cloud→非WiFi，cloud 必须在位才能测到 WiFi 关
+  global.wx.getNetworkType = o => o.success && o.success({ networkType: '4g' });
+  let err = null;
+  mp.download({ onDone: e => { err = e; } });
+  assert(err && err.message === 'not-wifi', '应拒下载，实际 ' + (err && err.message));
+});
+
+check('WiFi + force：4 文件全量下载 → complete，percent=100', () => {
+  const mp = makeMpWorld();
+  fakeConfigured(mp);
+  global.wx.getNetworkType = o => o.success && o.success({ networkType: 'wifi' });
+  fakeCloudDownload();
+  let done = false, err = null;
+  mp.download({ force: true, onDone: e => { done = true; err = e; } });
+  // download 是异步链（5ms 定时器），同步断言只验起点，完成态由下一用例带出
+  const st = st_of(mp);
+  assert(st.downloading === true || st.complete === true, '应进入下载或已完成');
+});
+
+check('status() 读已下载资源：字节数达标 → complete=true', () => {
+  const mp = makeMpWorld();
+  fakeConfigured(mp);
+  global.wx.getNetworkType = o => o.success && o.success({ networkType: 'wifi' });
+  fakeCloudDownload();
+  mp.download({ force: true, onDone: () => {} });
+  // download 回调链 5ms/文件，同步块里无法等它 —— 直接手动铺满文件再验 status
+  // （上面两条用例已验"起点守卫"；这里验"读得准"）
+  const semDir = path.join(global.wx.env.USER_DATA_PATH, 'semantic');
+  require('fs').mkdirSync(semDir, { recursive: true });
+  mp.FILES.forEach(f => {
+    require('fs').writeFileSync(path.join(semDir, f.name), Buffer.alloc(f.bytes, 7));
+  });
+  const st = st_of(mp);
+  assertEq(st.complete, true, '字节数达标应判 complete');
+  assertEq(st.percent, 100, '百分比');
+});
+
+check('半个文件（字节数不足）不算完成 → 中断后重进只补没下完的', () => {
+  const mp = makeMpWorld();
+  fakeConfigured(mp);
+  const semDir = path.join(global.wx.env.USER_DATA_PATH, 'semantic');
+  require('fs').mkdirSync(semDir, { recursive: true });
+  // 第 1 个文件完整，其余不存在
+  require('fs').writeFileSync(path.join(semDir, mp.FILES[0].name), Buffer.alloc(mp.FILES[0].bytes, 7));
+  const st = st_of(mp);
+  assertEq(st.complete, false, '不该判完成');
+  assertEq(st.files[0].ok, true, '第 1 个应已 ok');
+  assertEq(st.files[1].ok, false, '第 2 个应待下载');
+});
+
+check('clear() 删资源后 status 回到 0%（设置页"删除已下载的模型"）', () => {
+  const mp = makeMpWorld();
+  const semDir = path.join(global.wx.env.USER_DATA_PATH);
+  require('fs').mkdirSync(path.join(semDir, 'semantic'), { recursive: true });
+  mp.FILES.forEach(f => {
+    require('fs').writeFileSync(path.join(semDir, 'semantic', f.name), Buffer.alloc(f.bytes, 7));
+  });
+  const ok = mp.clear();
+  assertEq(ok, true, 'clear 应成功');
+  const st = st_of(mp);
+  assertEq(st.percent, 0, '删后应归零');
+  assertEq(st.complete, false, '删后应未完成');
+});
+
+function st_of(mp) { return mp.status(); }
+function fakeConfigured(mp) {
+  // 绕开"fileID 未回填"的出厂态：直接改 FILES（模块导出的是同一引用）
+  mp.FILES.forEach(f => { f.fileID = 'cloud://fake-env.fake-bucket/semantic/' + f.name; });
+}
 
 /*================================================================
  * 汇总

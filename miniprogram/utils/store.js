@@ -167,6 +167,10 @@ function makeItem(word, meaning, example, mnemonic, today, extra) {
     if (extra.difficulty) item.difficulty = extra.difficulty;
     if (extra.subject) item.subject = extra.subject;
     if (extra.batch) item.batch = extra.batch;
+    // 单元归属（如 "7A Unit 2"）——「按单元学习」靠它筛选。
+    // 只在有值时才写：教材导入的 19 册旧词书没有单元信息，
+    // 写个空字符串进去反而会让"有没有单元"的判断变复杂（'' 与 undefined 两种空态）。
+    if (extra.unit) item.unit = extra.unit;
   }
   return item;
 }
@@ -299,7 +303,10 @@ function addItems(items) {
       source: raw.source,
       difficulty: raw.difficulty,
       subject: raw.subject,
-      batch: raw.batch
+      batch: raw.batch,
+      // 单元归属必须一起带走：教材导入页的 toItem() 已经带上了 unit，
+      // 但在这里被吃掉 —— 页面的修复会被 store 层抵消，导入完仍是「未分组」。
+      unit: raw.unit
     }));
     added++;
   });
@@ -343,7 +350,10 @@ function seedWords(seedList) {
       source: s.source,
       difficulty: s.difficulty,
       subject: s.subject,
-      batch: s.batch
+      batch: s.batch,
+      // 同上：漏传 unit 会让首页预置的 295 词全部落进「未分组」，
+      // 「按单元学习」在真机上完全失效（units 只有 1 个）。
+      unit: s.unit
     });
   });
   return saveWords(list) ? list.length : 0;
@@ -386,6 +396,92 @@ function initSeed(seedWordsList) {
     return { seeded: true, count: n };
   }
   return { seeded: false, count: 0, reason: 'save_failed' };
+}
+
+/*===================== 单元归属回填（一次性） =====================*/
+
+const UNIT_BACKFILL_KEY = 'unit_backfill_v1';
+
+/** 落"回填做过"的标记。写失败不致命：下次启动再扫一遍，本函数本身是幂等的 */
+function markUnitBackfillDone() {
+  try { wx.setStorageSync(UNIT_BACKFILL_KEY, 1); } catch (e) { /* 见上 */ }
+}
+
+/**
+ * 一次性存量回填：给"没有 unit"的旧词条补上单元归属。
+ *
+ * 为什么非做不可：seedWords 曾漏传 unit，作者手机和开发者工具里**已经**落库的
+ * 295 条旧词全都没有单元；而 initSeed 靠 seeded_v1 标记位判断"预置过了"，
+ * 不会重灌一遍 —— 只改 seedWords 对存量设备完全无效，录演示时仍是「未分组」。
+ *
+ * 三条纪律：
+ *  1. **只补内容字段**：只写 w.unit；ef/reps/interval/nextReview/history 一个字节都不动。
+ *     所以这里直接读**原始存储**而不是 loadWords() —— 后者会过 sanitize 的修正逻辑，
+ *     拿它的返回值写盘等于把内存里的修正一并落盘，那就不是"只补 unit"了。
+ *  2. **只补空缺**：已有 unit 的词条不覆盖（用户自己分过组，不能被种子值盖掉）。
+ *  3. **幂等**：UNIT_BACKFILL_KEY 只在真正写盘成功后落标记；没有可补的也落标记，
+ *     免得每次启动都全表扫一遍。
+ *
+ * 匹配策略（两级，覆盖两类存量词）：
+ *   ① 按 id 匹配种子词 —— 预置词 id 稳定（如 en-001-junior-high）；
+ *   ② id 匹配不到再按 word 小写文本兜底 —— 覆盖学生此前从教材导入页导入、
+ *      id 由 genId() 随机生成的词条（内容一样但 id 对不上）。
+ *
+ * 返回 { backfilled, reason? }
+ *   reason: 'already_done' | 'no_seed_data' | 'load_failed' | 'empty'
+ *         | 'nothing_to_fill' | 'save_failed'
+ *
+ * 注意：这里**不调 cards.invalidate()** —— cards.js 依赖 store.js，反向 require 会成环。
+ * 失效交给调用方（app.js）在 backfilled > 0 时做。
+ */
+function backfillUnits(seedList) {
+  try {
+    if (wx.getStorageSync(UNIT_BACKFILL_KEY)) return { backfilled: 0, reason: 'already_done' };
+  } catch (e) { /* 读不到标记就按没做过处理，下面会再试一次 */ }
+
+  if (!Array.isArray(seedList) || seedList.length === 0) {
+    return { backfilled: 0, reason: 'no_seed_data' };
+  }
+
+  // 建索引：种子词里没 unit 的跳过（不往表里塞空值，保持"字段不存在"这一种空态）
+  const byId = {};
+  const byWord = {};
+  seedList.forEach(function (s) {
+    const unit = String((s && s.unit) || '').trim();
+    if (!unit) return;
+    if (s.id) byId[s.id] = unit;
+    const key = String((s && s.word) || '').trim().toLowerCase();
+    if (key && byWord[key] === undefined) byWord[key] = unit;
+  });
+
+  let raw;
+  try {
+    raw = wx.getStorageSync(WORDS_KEY);
+  } catch (e) {
+    console.warn('[store] 单元回填：读取词库失败', e);
+    return { backfilled: 0, reason: 'load_failed' };
+  }
+  if (!Array.isArray(raw) || raw.length === 0) {
+    markUnitBackfillDone();
+    return { backfilled: 0, reason: 'empty' };
+  }
+
+  let n = 0;
+  raw.forEach(function (w) {
+    if (!w || typeof w !== 'object' || w.unit) return;
+    const unit = byId[w.id] || byWord[String(w.word || '').trim().toLowerCase()];
+    if (!unit) return;
+    w.unit = unit;
+    n++;
+  });
+
+  if (n === 0) {
+    markUnitBackfillDone();
+    return { backfilled: 0, reason: 'nothing_to_fill' };
+  }
+  if (!saveWords(raw)) return { backfilled: 0, reason: 'save_failed' };
+  markUnitBackfillDone();
+  return { backfilled: n };
 }
 
 /*===================== (cards, states) 视图适配层 =====================*/
@@ -439,7 +535,9 @@ function toCard(w) {
     difficulty: w.difficulty || 2,
     source: w.source || '',
     subject: w.subject || '英语',
-    batch: w.batch || ''
+    batch: w.batch || '',
+    // 单元归属 —— 「按单元学习」的筛选依据（教材导入的旧词书无此字段）
+    unit: w.unit || ''
   };
 }
 
@@ -564,22 +662,75 @@ function countWords() {
 /*===================== 错题本 / 复习偏好 =====================*/
 
 /**
- * 错题本：把"答错过"的词挑出来。
+ * 错题本：把"学生没答对/没读对"的词挑出来。
  *
- * 判定口径：历史里出现过 q < 3（不认识）或 q === 3（模糊）。
- * 为什么不按"当前 EF 低"判：EF 会因为后来的连对而回升，
- * 而"曾经答错"是个**永久有用的事实**——正是需要多练的那批词。
+ * 判定口径（两类来源，取并集）：
+ *   A. **复习评分**：history 里出现过 q < 3（不认识）或 q === 3（模糊）。
+ *      为什么不按"当前 EF 低"判：EF 会因为后来的连对而回升，
+ *      而"曾经答错"是个**永久有用的事实**——正是需要多练的那批词。
+ *   B. **朗读不会读**（2026-09-30 补）：pron_records 里该词有 band==='unknown'
+ *      或 band==='fail' 的记录。
+ *
+ * ## 为什么 B 不写进 history 而是让 weakIds 多认一个数据源
+ *
+ * 看起来最省事的做法是让 markUnknown 往 `history` 里塞一条 q<=3 ——
+ * **那样会污染一整条统计链**，而且是静默的：
+ *   · utils/learn-advisor.js 的 forgetRate14() 明写着「只看复习，
+ *     拼写/朗读的"错"与 SM-2 的"忘记"语义不同，混在一起会把
+ *     "拼错一个字母"也算成"没记住这个词"」；
+ *   · utils/schedule.js 的 byPriority 用 history 里 q<=3 的条数排序；
+ *   · utils/analysis.js 的 intervalGrowth 把 history 首末平均间隔当"成长倍数"，
+ *     凭空多出来的条目会直接改变这个指标；
+ *   · SM-2 的 interval/ef 是从 history 递推出来的，伪造条目等于伪造排期。
+ * 而朗读记录本来就有自己的存储（pron_records，store 已是唯一 owner），
+ * 所以正确的做法是**让错题本认识第二个数据源**，而不是把第二个数据源
+ * 伪装成第一个。
+ *
+ * ## 判据：为什么只有 unknown / fail 算"不会读"
+ *
+ * 学生点「不会读」写的是 unknown；机器判定读错了写的是 fail。
+ * 两者都是"这个词我现在读不出来"，正是错题本要收集的。
+ * 而 borderline（"再试一次"）与 na（缺音素数据、评不了）**不算**：
+ *   · borderline 是"接近了"，收进来会让错题本塞满其实会读的词，
+ *     学生点进「错题重练」发现大半都会，等于这个入口失效；
+ *   · na 根本不是一次失败的评测，是"无法评测"，收进来是纯噪声。
+ * pass 显然不算。
+ *
+ * 与 A 的关系是**并集**：一个词可以只因朗读而进错题本（从未复习过），
+ * 也可以只因答错而进（从未朗读过）。任一成立即入选，去重后返回。
+ *
+ * @returns {string[]} 错题本里的词条 id（唯一，无重复）
  */
 function weakIds() {
   const out = [];
+  const seen = {};
+  const push = (id) => {
+    if (!id || seen[id]) return;
+    seen[id] = true;
+    out.push(id);
+  };
+
+  // A. 复习评分：曾答错/ 模糊
   loadWords().forEach(function (w) {
     const h = w.history || [];
     if (!Array.isArray(h)) return;
     for (let i = 0; i < h.length; i++) {
       const q = Number((h[i] || {}).q);
-      if (Number.isFinite(q) && q <= 3) { out.push(w.id); return; }
+      if (Number.isFinite(q) && q <= 3) { push(w.id); return; }
     }
   });
+
+  // B. 朗读不会读：学生主动标记 unknown，或机器判定 fail
+  const pron = loadPronRecords();
+  Object.keys(pron).forEach(function (id) {
+    const list = pron[id];
+    if (!Array.isArray(list)) return;
+    for (let i = 0; i < list.length; i++) {
+      const band = (list[i] || {}).band;
+      if (band === 'unknown' || band === 'fail') { push(id); return; }
+    }
+  });
+
   return out;
 }
 
@@ -599,6 +750,7 @@ const PREFS_KEY = 'study_prefs';
  * 分组存可以直接取某词的历史，不用每次全表扫描再过滤。
  */
 const PRON_KEY = 'pron_records';
+const SPELL_KEY = 'spell_records';   // 拼写练习记录：{ [wordId]: [{date, typed, ok, errType}] }
 const PRON_PER_WORD = 20;
 
 function loadPronRecords() {
@@ -612,6 +764,36 @@ function loadPronRecords() {
 }
 
 /** 追加一条某词的朗读记录。返回 true/false（写盘成功与否） */
+function loadSpellRecords() {
+  try {
+    const v = wx.getStorageSync(SPELL_KEY);
+    return v && typeof v === 'object' ? v : {};
+  } catch (e) {
+    console.warn('[store] 读取拼写记录失败', e);
+    return {};
+  }
+}
+
+function addSpellRecord(wordId, entry) {
+  if (!wordId) return false;
+  try {
+    const all = loadSpellRecords();
+    const list = all[wordId] || [];
+    list.push(entry);
+    all[wordId] = list.slice(-20);   // 防存储膨胀（与朗读记录同口径）
+    wx.setStorageSync(SPELL_KEY, all);
+    return true;
+  } catch (e) {
+    console.error('[store] 保存拼写记录失败', e);
+    return false;
+  }
+}
+
+function clearSpellRecords() {
+  try { wx.removeStorageSync(SPELL_KEY); return true; }
+  catch (e) { return false; }
+}
+
 function addPronRecord(wordId, entry) {
   if (!wordId) return false;
   try {
@@ -663,9 +845,10 @@ function savePrefs(prefs) {
 
 module.exports = {
   loadWords, saveWords, addWord, addBatch, addItems, updateWord, removeWord,
-  clearAll, seedWords, initSeed,
+  clearAll, seedWords, initSeed, backfillUnits,
   loadCards, loadStates, setState, setStates, studiedIds, clearStates, newState,
   getWord, countWords,
   weakIds, loadPrefs, savePrefs,
-  loadPronRecords, addPronRecord, clearPronRecords, PRON_KEY
+  loadPronRecords, addPronRecord, clearPronRecords, PRON_KEY,
+  loadSpellRecords, addSpellRecord, clearSpellRecords, SPELL_KEY
 };

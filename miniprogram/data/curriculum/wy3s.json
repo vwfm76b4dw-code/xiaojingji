@@ -1,0 +1,1245 @@
+{
+ "book": "外研版2024新版小学英语三年级上册（三年级起点）",
+ "grade": "g3",
+ "count": 206,
+ "_source": "https://yyld.51jiaoxi.com/sanshang/wybsq_danci.html（51教习网英语朗读宝·外研版三起2024新版同步词表，按 Unit 分组）；2024新版暂无第二来源可交叉核对",
+ "_confidence": "medium",
+ "words": [
+  {
+   "word": "hi",
+   "meaning": "嘿，喂，你好",
+   "unit": "3A Welcome",
+   "mnemonic": "嗨：轻快的问好"
+  },
+  {
+   "word": "I",
+   "meaning": "我",
+   "unit": "3A Welcome",
+   "mnemonic": "我：一个人的时候永远大写"
+  },
+  {
+   "word": "be (am,is,are)",
+   "meaning": "是",
+   "unit": "3A Welcome",
+   "mnemonic": "是：我用 am 你用 are，is 跟着他她它"
+  },
+  {
+   "word": "what",
+   "meaning": "什么",
+   "unit": "3A Welcome",
+   "mnemonic": "什么：问东西的疑问词"
+  },
+  {
+   "word": "your",
+   "meaning": "你的；你们的",
+   "unit": "3A Welcome",
+   "mnemonic": "你的；你们的：属于你那样东西"
+  },
+  {
+   "word": "name",
+   "meaning": "名字",
+   "unit": "3A Welcome",
+   "mnemonic": "名字：报名字让人认识你"
+  },
+  {
+   "word": "hello",
+   "meaning": "喂，哈啰，你好",
+   "unit": "3A Welcome",
+   "mnemonic": "你好：见面第一声问候"
+  },
+  {
+   "word": "my",
+   "meaning": "我的",
+   "unit": "3A Welcome",
+   "mnemonic": "我的：这是我的书"
+  },
+  {
+   "word": "goodbye",
+   "meaning": "再见",
+   "unit": "3A Welcome",
+   "mnemonic": "再见：分手时挥挥手"
+  },
+  {
+   "word": "have",
+   "meaning": "有，拥有",
+   "unit": "3A Welcome",
+   "mnemonic": "有：手里拿着一个"
+  },
+  {
+   "word": "a (an)",
+   "meaning": "一（个）",
+   "unit": "3A Welcome",
+   "mnemonic": "一（个）：元音前用 an，如 an apple 一个苹果"
+  },
+  {
+   "word": "nice",
+   "meaning": "令人愉快的",
+   "unit": "3A Welcome",
+   "mnemonic": "令人愉快的：心地好待人亲"
+  },
+  {
+   "word": "day",
+   "meaning": "一天",
+   "unit": "3A Welcome",
+   "mnemonic": "一天：太阳升起又落下"
+  },
+  {
+   "word": "good",
+   "meaning": "好的",
+   "unit": "3A Welcome",
+   "mnemonic": "好的：竖起大拇指称赞"
+  },
+  {
+   "word": "morning",
+   "meaning": "早晨，上午",
+   "unit": "3A Welcome",
+   "mnemonic": "早晨：太阳刚升起的时段"
+  },
+  {
+   "word": "Ms",
+   "meaning": "女士",
+   "unit": "3A Welcome",
+   "mnemonic": "女士：不知婚否这样称"
+  },
+  {
+   "word": "stand",
+   "meaning": "站立",
+   "unit": "3A Welcome",
+   "mnemonic": "站：起立站直"
+  },
+  {
+   "word": "stand up",
+   "meaning": "站起来",
+   "unit": "3A Welcome",
+   "mnemonic": "起立：从座位上站起来"
+  },
+  {
+   "word": "sit",
+   "meaning": "坐",
+   "unit": "3A Welcome",
+   "mnemonic": "坐：坐端正听讲"
+  },
+  {
+   "word": "sit down",
+   "meaning": "坐下",
+   "unit": "3A Welcome",
+   "mnemonic": "坐下：请坐下慢慢说"
+  },
+  {
+   "word": "open",
+   "meaning": "打开",
+   "unit": "3A Welcome",
+   "mnemonic": "打开：推开窗户透透气"
+  },
+  {
+   "word": "book",
+   "meaning": "书",
+   "unit": "3A Welcome",
+   "mnemonic": "书：翻开书页读一读"
+  },
+  {
+   "word": "close",
+   "meaning": "合上",
+   "unit": "3A Welcome",
+   "mnemonic": "关：把窗户关严实"
+  },
+  {
+   "word": "point",
+   "meaning": "指",
+   "unit": "3A Welcome",
+   "mnemonic": "指；点：伸手指向目标"
+  },
+  {
+   "word": "say",
+   "meaning": "说",
+   "unit": "3A Welcome",
+   "mnemonic": "说：开口说一句话"
+  },
+  {
+   "word": "read",
+   "meaning": "阅读",
+   "unit": "3A Welcome",
+   "mnemonic": "读：捧起书本念一念"
+  },
+  {
+   "word": "listen",
+   "meaning": "听",
+   "unit": "3A Welcome",
+   "mnemonic": "听：竖起耳朵认真听"
+  },
+  {
+   "word": "write",
+   "meaning": "写",
+   "unit": "3A Welcome",
+   "mnemonic": "写：拿笔在本上写字"
+  },
+  {
+   "word": "let's",
+   "meaning": "让我们",
+   "unit": "3A Unit 1",
+   "mnemonic": "让我们：let us 缩写，一起做"
+  },
+  {
+   "word": "friend",
+   "meaning": "朋友",
+   "unit": "3A Unit 1",
+   "mnemonic": "朋友：手拉手一起玩"
+  },
+  {
+   "word": "to",
+   "meaning": "（用于动词、名词或形容词后，是意思完整）；向，到，往",
+   "unit": "3A Unit 1",
+   "mnemonic": "到；向：从这里到学校"
+  },
+  {
+   "word": "meet",
+   "meaning": "认识，结识",
+   "unit": "3A Unit 1",
+   "mnemonic": "遇见：初次见面握握手"
+  },
+  {
+   "word": "you",
+   "meaning": "你；你们",
+   "unit": "3A Unit 1",
+   "mnemonic": "你；你们：对着说话的人"
+  },
+  {
+   "word": "play",
+   "meaning": "玩，玩耍",
+   "unit": "3A Unit 1",
+   "mnemonic": "玩；踢（球）：下课一起玩游戏"
+  },
+  {
+   "word": "happy",
+   "meaning": "高兴的，快乐的",
+   "unit": "3A Unit 1",
+   "mnemonic": "快乐的：嘴角上扬笑嘻嘻"
+  },
+  {
+   "word": "new",
+   "meaning": "新的",
+   "unit": "3A Unit 1",
+   "mnemonic": "新的：刚拆封的玩具"
+  },
+  {
+   "word": "do",
+   "meaning": "（构成疑问句或否定句）；做",
+   "unit": "3A Unit 1",
+   "mnemonic": "做：动手把事情做好"
+  },
+  {
+   "word": "they",
+   "meaning": "他们",
+   "unit": "3A Unit 1",
+   "mnemonic": "他们：指一群人"
+  },
+  {
+   "word": "welcome",
+   "meaning": "欢迎",
+   "unit": "3A Unit 1",
+   "mnemonic": "欢迎：张开双臂请进来"
+  },
+  {
+   "word": "everyone",
+   "meaning": "每个人，人人",
+   "unit": "3A Unit 1",
+   "mnemonic": "每个人：every（每）+ one（人）→ 全体"
+  },
+  {
+   "word": "nine",
+   "meaning": "九",
+   "unit": "3A Unit 1",
+   "mnemonic": "九：猫有九条命的传说"
+  },
+  {
+   "word": "she",
+   "meaning": "她",
+   "unit": "3A Unit 1",
+   "mnemonic": "她：指女孩用的那个字"
+  },
+  {
+   "word": "too",
+   "meaning": "也",
+   "unit": "3A Unit 1",
+   "mnemonic": "也；太：他去了我也去"
+  },
+  {
+   "word": "we",
+   "meaning": "我们",
+   "unit": "3A Unit 1",
+   "mnemonic": "我们：说话人一伙人"
+  },
+  {
+   "word": "from",
+   "meaning": "从",
+   "unit": "3A Unit 1",
+   "mnemonic": "从：他来自北京"
+  },
+  {
+   "word": "the",
+   "meaning": "（用于表示正在谈论一个已经提到过、已经知道，或是唯一存在的人或物）",
+   "unit": "3A Unit 1",
+   "mnemonic": "这个：特指那一个"
+  },
+  {
+   "word": "twin",
+   "meaning": "双胞胎中的一个",
+   "unit": "3A Unit 1",
+   "mnemonic": "双胞胎：长得一模一样的俩"
+  },
+  {
+   "word": "he",
+   "meaning": "他",
+   "unit": "3A Unit 1",
+   "mnemonic": "他：指男孩用的那个字"
+  },
+  {
+   "word": "come",
+   "meaning": "来；来到",
+   "unit": "3A Unit 1",
+   "mnemonic": "来：朝我这边走过来"
+  },
+  {
+   "word": "and",
+   "meaning": "然后，接着，和",
+   "unit": "3A Unit 1",
+   "mnemonic": "和：两手相扣连在一起"
+  },
+  {
+   "word": "oh",
+   "meaning": "噢",
+   "unit": "3A Unit 1",
+   "mnemonic": "哦：表示明白了的一声"
+  },
+  {
+   "word": "no",
+   "meaning": "不，不行",
+   "unit": "3A Unit 1",
+   "mnemonic": "不：摇头拒绝说 no"
+  },
+  {
+   "word": "help",
+   "meaning": "帮助，帮忙",
+   "unit": "3A Unit 1",
+   "mnemonic": "帮助：伸手扶一把"
+  },
+  {
+   "word": "here",
+   "meaning": "在这里",
+   "unit": "3A Unit 1",
+   "mnemonic": "这里：就在眼前这个位置"
+  },
+  {
+   "word": "here you are",
+   "meaning": "给你",
+   "unit": "3A Unit 1",
+   "mnemonic": "给你：递东西时说的一句"
+  },
+  {
+   "word": "thank",
+   "meaning": "感谢，向......表示谢意",
+   "unit": "3A Unit 1",
+   "mnemonic": "感谢：受人帮助说声谢"
+  },
+  {
+   "word": "together",
+   "meaning": "一起，一块儿",
+   "unit": "3A Unit 1",
+   "mnemonic": "一起：全班同唱一首歌"
+  },
+  {
+   "word": "OK",
+   "meaning": "行，可以",
+   "unit": "3A Unit 1",
+   "mnemonic": "好的：答应下来的口头语"
+  },
+  {
+   "word": "great",
+   "meaning": "棒极的，极好的",
+   "unit": "3A Unit 1",
+   "mnemonic": "极好的：太棒了，了不起"
+  },
+  {
+   "word": "song",
+   "meaning": "歌曲",
+   "unit": "3A Unit 1",
+   "mnemonic": "歌曲：会唱的一首歌"
+  },
+  {
+   "word": "dear",
+   "meaning": "亲爱的",
+   "unit": "3A Unit 1",
+   "mnemonic": "亲爱的：信开头写 dear 朋友"
+  },
+  {
+   "word": "sing",
+   "meaning": "唱，歌唱",
+   "unit": "3A Unit 1",
+   "mnemonic": "唱：张开嘴哼出歌"
+  },
+  {
+   "word": "now",
+   "meaning": "现在",
+   "unit": "3A Unit 1",
+   "mnemonic": "现在：此时此刻马上"
+  },
+  {
+   "word": "know",
+   "meaning": "认识",
+   "unit": "3A Unit 1",
+   "mnemonic": "知道：心里清楚明白"
+  },
+  {
+   "word": "our",
+   "meaning": "我们的",
+   "unit": "3A Unit 1",
+   "mnemonic": "我们的：属于大家的东西"
+  },
+  {
+   "word": "with",
+   "meaning": "在......一起",
+   "unit": "3A Unit 1",
+   "mnemonic": "和……一起：带着朋友同行"
+  },
+  {
+   "word": "me",
+   "meaning": "我",
+   "unit": "3A Unit 1",
+   "mnemonic": "我（宾格）：把苹果给我"
+  },
+  {
+   "word": "school",
+   "meaning": "学校",
+   "unit": "3A Unit 2",
+   "mnemonic": "学校：背着书包去上学"
+  },
+  {
+   "word": "thing",
+   "meaning": "东西",
+   "unit": "3A Unit 2",
+   "mnemonic": "东西：桌上的任何物件"
+  },
+  {
+   "word": "pack",
+   "meaning": "收拾好",
+   "unit": "3A Unit 2",
+   "mnemonic": "打包：收拾行李装进箱"
+  },
+  {
+   "word": "pen",
+   "meaning": "钢笔",
+   "unit": "3A Unit 2",
+   "mnemonic": "钢笔：吸墨水写钢笔字"
+  },
+  {
+   "word": "pencil",
+   "meaning": "铅笔",
+   "unit": "3A Unit 2",
+   "mnemonic": "铅笔：削尖了写字"
+  },
+  {
+   "word": "pencil case",
+   "meaning": "笔袋；铅笔盒",
+   "unit": "3A Unit 2",
+   "mnemonic": "铅笔盒：装铅笔橡皮的盒子"
+  },
+  {
+   "word": "bag",
+   "meaning": "袋；包",
+   "unit": "3A Unit 2",
+   "mnemonic": "包：背上书包 b-a-g 三个字母装书"
+  },
+  {
+   "word": "for",
+   "meaning": "为了",
+   "unit": "3A Unit 2",
+   "mnemonic": "为了：这份礼物是给你的"
+  },
+  {
+   "word": "ruler",
+   "meaning": "尺子，直尺",
+   "unit": "3A Unit 2",
+   "mnemonic": "尺子：画直线量长短"
+  },
+  {
+   "word": "eraser",
+   "meaning": "橡皮",
+   "unit": "3A Unit 2",
+   "mnemonic": "橡皮：erase（擦）+ er（工具）→ 擦字用的"
+  },
+  {
+   "word": "this",
+   "meaning": "这，这个",
+   "unit": "3A Unit 2",
+   "mnemonic": "这个：指向近处的东西"
+  },
+  {
+   "word": "in",
+   "meaning": "在......里",
+   "unit": "3A Unit 2",
+   "mnemonic": "在……里：鱼在水里游"
+  },
+  {
+   "word": "schoolbag",
+   "meaning": "书包",
+   "unit": "3A Unit 2",
+   "mnemonic": "书包：school（学校）+ bag（包）→ 上学背的包"
+  },
+  {
+   "word": "it",
+   "meaning": "它",
+   "unit": "3A Unit 2",
+   "mnemonic": "它：指动物或事物"
+  },
+  {
+   "word": "not",
+   "meaning": "不，不是",
+   "unit": "3A Unit 2",
+   "mnemonic": "不：加在句子中表示否定"
+  },
+  {
+   "word": "that",
+   "meaning": "那，那个",
+   "unit": "3A Unit 2",
+   "mnemonic": "那个：指向远处的东西"
+  },
+  {
+   "word": "yes",
+   "meaning": "是，对",
+   "unit": "3A Unit 2",
+   "mnemonic": "是：点头同意"
+  },
+  {
+   "word": "guess",
+   "meaning": "猜，猜测",
+   "unit": "3A Unit 2",
+   "mnemonic": "猜：不揭晓答案想一想"
+  },
+  {
+   "word": "find",
+   "meaning": "发现，找到",
+   "unit": "3A Unit 2",
+   "mnemonic": "找到：藏起来的东西被你找到"
+  },
+  {
+   "word": "lost and found",
+   "meaning": "失物招领",
+   "unit": "3A Unit 2",
+   "mnemonic": "失物招领处：丢了东西来这里找"
+  },
+  {
+   "word": "bye",
+   "meaning": "再见，拜拜",
+   "unit": "3A Unit 2",
+   "mnemonic": "再见：挥挥手 bye-bye"
+  },
+  {
+   "word": "kid",
+   "meaning": "小孩，儿童",
+   "unit": "3A Unit 2",
+   "mnemonic": "小孩：kid 是小孩子"
+  },
+  {
+   "word": "take care of sb/sth",
+   "meaning": "照看（照料）某人/某物",
+   "unit": "3A Unit 2",
+   "mnemonic": "照顾：看护好身边的人"
+  },
+  {
+   "word": "there",
+   "meaning": "在那里",
+   "unit": "3A Unit 2",
+   "mnemonic": "那里：指向远处的地方"
+  },
+  {
+   "word": "please",
+   "meaning": "请",
+   "unit": "3A Unit 2",
+   "mnemonic": "请：礼貌用语放句首"
+  },
+  {
+   "word": "back",
+   "meaning": "回到原处",
+   "unit": "3A Unit 2",
+   "mnemonic": "回来；背部：拍拍后背，回来吧"
+  },
+  {
+   "word": "come back",
+   "meaning": "回来",
+   "unit": "3A Unit 2",
+   "mnemonic": "回来：出门玩完再回来"
+  },
+  {
+   "word": "look",
+   "meaning": "看，瞧，望",
+   "unit": "3A Unit 2",
+   "mnemonic": "看：睁大眼睛瞧一瞧"
+  },
+  {
+   "word": "look at sb/sth",
+   "meaning": "看某人/某物",
+   "unit": "3A Unit 2",
+   "mnemonic": "看着某人/某物：目光对准目标"
+  },
+  {
+   "word": "colourful",
+   "meaning": "颜色鲜艳的；色彩丰富的",
+   "unit": "3A Unit 3",
+   "mnemonic": "五彩的：colour + ful → 色彩缤纷"
+  },
+  {
+   "word": "world",
+   "meaning": "世界",
+   "unit": "3A Unit 3",
+   "mnemonic": "世界：地图上的整个地球"
+  },
+  {
+   "word": "hooray",
+   "meaning": "好哇",
+   "unit": "3A Unit 3",
+   "mnemonic": "万岁：欢呼胜利的一声"
+  },
+  {
+   "word": "umbrella",
+   "meaning": "伞；雨伞",
+   "unit": "3A Unit 3",
+   "mnemonic": "雨伞：下雨撑开一朵花"
+  },
+  {
+   "word": "clothes",
+   "meaning": "衣服",
+   "unit": "3A Unit 3",
+   "mnemonic": "衣服：衣柜里挂满上衣裤子"
+  },
+  {
+   "word": "red",
+   "meaning": "红色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "红色：红灯停绿灯行"
+  },
+  {
+   "word": "pink",
+   "meaning": "粉红色的（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "粉色：桃花粉粉嫩嫩"
+  },
+  {
+   "word": "green",
+   "meaning": "绿色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "绿色：树叶春天绿油油"
+  },
+  {
+   "word": "yellow",
+   "meaning": "黄色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "黄色：香蕉皮黄澄澄"
+  },
+  {
+   "word": "orange",
+   "meaning": "橙色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "橙子；橙色：剥开橘子瓣瓣甜"
+  },
+  {
+   "word": "blue",
+   "meaning": "蓝色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "蓝色：抬头看蓝天碧海一片蓝"
+  },
+  {
+   "word": "purple",
+   "meaning": "紫色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "紫色：葡萄熟了紫盈盈"
+  },
+  {
+   "word": "rainbow",
+   "meaning": "彩虹",
+   "unit": "3A Unit 3",
+   "mnemonic": "彩虹：rain（雨）+ bow（弓）→ 雨后天上的七彩弓"
+  },
+  {
+   "word": "want",
+   "meaning": "想要",
+   "unit": "3A Unit 3",
+   "mnemonic": "想要：心里盼着要一个"
+  },
+  {
+   "word": "balloon",
+   "meaning": "气球",
+   "unit": "3A Unit 3",
+   "mnemonic": "气球：ball（球）+ oon（飘）→ 会飘的球"
+  },
+  {
+   "word": "colour",
+   "meaning": "颜色",
+   "unit": "3A Unit 3",
+   "mnemonic": "颜色：红黄蓝绿涂满画纸"
+  },
+  {
+   "word": "can",
+   "meaning": "能，会",
+   "unit": "3A Unit 3",
+   "mnemonic": "能：力所能及做得到"
+  },
+  {
+   "word": "see",
+   "meaning": "看见，看到",
+   "unit": "3A Unit 3",
+   "mnemonic": "看见：睁眼看到全世界"
+  },
+  {
+   "word": "right",
+   "meaning": "正确的，对的",
+   "unit": "3A Unit 3",
+   "mnemonic": "右边；正确的：答案完全正确"
+  },
+  {
+   "word": "first",
+   "meaning": "第一的；首先；最初",
+   "unit": "3A Unit 3",
+   "mnemonic": "第一：跑在最前面的那个"
+  },
+  {
+   "word": "magical",
+   "meaning": "美妙的；有魔力的",
+   "unit": "3A Unit 3",
+   "mnemonic": "有魔力的：magic（魔法）+ al → 会变魔术"
+  },
+  {
+   "word": "fun",
+   "meaning": "有趣的，逗乐的",
+   "unit": "3A Unit 3",
+   "mnemonic": "有趣：玩得哈哈笑"
+  },
+  {
+   "word": "black",
+   "meaning": "黑色（的）",
+   "unit": "3A Unit 3",
+   "mnemonic": "黑色：黑板 blackboard 是黑漆漆的"
+  },
+  {
+   "word": "so",
+   "meaning": "这么，如此",
+   "unit": "3A Unit 3",
+   "mnemonic": "所以；如此：因此结果是这样"
+  },
+  {
+   "word": "many",
+   "meaning": "许多；大量",
+   "unit": "3A Unit 3",
+   "mnemonic": "许多：many 修饰可数的一堆"
+  },
+  {
+   "word": "picture",
+   "meaning": "画，图画",
+   "unit": "3A Unit 3",
+   "mnemonic": "图画：墙上挂着一幅画"
+  },
+  {
+   "word": "today",
+   "meaning": "今天",
+   "unit": "3A Unit 3",
+   "mnemonic": "今天：正在过的这一天"
+  },
+  {
+   "word": "paint",
+   "meaning": "画，作画",
+   "unit": "3A Unit 3",
+   "mnemonic": "颜料；粉刷：刷子蘸漆涂墙壁"
+  },
+  {
+   "word": "number",
+   "meaning": "数；数字",
+   "unit": "3A Unit 4",
+   "mnemonic": "数字：1 到 10 都是它"
+  },
+  {
+   "word": "count",
+   "meaning": "数数",
+   "unit": "3A Unit 4",
+   "mnemonic": "数数：1、2、3 一个个数"
+  },
+  {
+   "word": "how",
+   "meaning": "多少；怎样；如何",
+   "unit": "3A Unit 4",
+   "mnemonic": "怎样：问方式问方法"
+  },
+  {
+   "word": "bird",
+   "meaning": "鸟",
+   "unit": "3A Unit 4",
+   "mnemonic": "鸟：扑扇翅膀飞上枝头"
+  },
+  {
+   "word": "one",
+   "meaning": "一",
+   "unit": "3A Unit 4",
+   "mnemonic": "一：伸出食指表示 1"
+  },
+  {
+   "word": "two",
+   "meaning": "二",
+   "unit": "3A Unit 4",
+   "mnemonic": "二：一双筷子两根"
+  },
+  {
+   "word": "three",
+   "meaning": "三",
+   "unit": "3A Unit 4",
+   "mnemonic": "三：三角形有三条边"
+  },
+  {
+   "word": "four",
+   "meaning": "四",
+   "unit": "3A Unit 4",
+   "mnemonic": "四：桌子四条腿"
+  },
+  {
+   "word": "five",
+   "meaning": "五",
+   "unit": "3A Unit 4",
+   "mnemonic": "五：一只手五个手指头"
+  },
+  {
+   "word": "six",
+   "meaning": "六",
+   "unit": "3A Unit 4",
+   "mnemonic": "六：骰子最大的点数"
+  },
+  {
+   "word": "seven",
+   "meaning": "七",
+   "unit": "3A Unit 4",
+   "mnemonic": "七：一周有七天"
+  },
+  {
+   "word": "eight",
+   "meaning": "八",
+   "unit": "3A Unit 4",
+   "mnemonic": "八：octopus 八条腿对应八"
+  },
+  {
+   "word": "ten",
+   "meaning": "十",
+   "unit": "3A Unit 4",
+   "mnemonic": "十：两只手的手指全张开"
+  },
+  {
+   "word": "eleven",
+   "meaning": "十一",
+   "unit": "3A Unit 4",
+   "mnemonic": "十一：el + even，比十多一"
+  },
+  {
+   "word": "twelve",
+   "meaning": "十二",
+   "unit": "3A Unit 4",
+   "mnemonic": "十二：一年十二个月"
+  },
+  {
+   "word": "rope",
+   "meaning": "绳",
+   "unit": "3A Unit 4",
+   "mnemonic": "绳子：跳绳甩出一个圈"
+  },
+  {
+   "word": "who",
+   "meaning": "谁，什么人",
+   "unit": "3A Unit 4",
+   "mnemonic": "谁：问人的疑问词"
+  },
+  {
+   "word": "make",
+   "meaning": "制作",
+   "unit": "3A Unit 4",
+   "mnemonic": "做：动手做一个风车"
+  },
+  {
+   "word": "Chinese knot",
+   "meaning": "中国结",
+   "unit": "3A Unit 4",
+   "mnemonic": "中国结：红绳编出的结"
+  },
+  {
+   "word": "beautiful",
+   "meaning": "美丽的",
+   "unit": "3A Unit 4",
+   "mnemonic": "美丽的：beauty（美）+ ful → 美美的"
+  },
+  {
+   "word": "only",
+   "meaning": "仅仅",
+   "unit": "3A Unit 4",
+   "mnemonic": "只：仅仅剩下一个"
+  },
+  {
+   "word": "amazing",
+   "meaning": "令人惊讶的",
+   "unit": "3A Unit 4",
+   "mnemonic": "令人惊叹的：amaze（使惊奇）看得嘴都合不上"
+  },
+  {
+   "word": "show",
+   "meaning": "给......看",
+   "unit": "3A Unit 4",
+   "mnemonic": "展示：把画展示给大家看"
+  },
+  {
+   "word": "baby",
+   "meaning": "幼崽；雏鸟",
+   "unit": "3A Unit 4",
+   "mnemonic": "婴儿：抱在怀里的小宝宝"
+  },
+  {
+   "word": "cheep",
+   "meaning": "吱吱（或唧唧）的叫声",
+   "unit": "3A Unit 4",
+   "mnemonic": "（小鸟）吱吱叫：雏鸟张嘴吱吱喳"
+  },
+  {
+   "word": "egg",
+   "meaning": "蛋",
+   "unit": "3A Unit 4",
+   "mnemonic": "蛋：磕开蛋壳煎鸡蛋"
+  },
+  {
+   "word": "hungry",
+   "meaning": "饥饿的",
+   "unit": "3A Unit 4",
+   "mnemonic": "饿的：肚子咕咕叫"
+  },
+  {
+   "word": "around",
+   "meaning": "环绕，在（......）周围",
+   "unit": "3A Unit 4",
+   "mnemonic": "围绕：绕着操场跑一圈"
+  },
+  {
+   "word": "all",
+   "meaning": "全部，所有",
+   "unit": "3A Unit 4",
+   "mnemonic": "全部：盘子里东西一口气全吃光"
+  },
+  {
+   "word": "all around",
+   "meaning": "处处，到处",
+   "unit": "3A Unit 4",
+   "mnemonic": "到处都是：绕着四周全看一圈"
+  },
+  {
+   "word": "big",
+   "meaning": "大的",
+   "unit": "3A Unit 4",
+   "mnemonic": "大的：张开双臂比划一个巨大的圆"
+  },
+  {
+   "word": "little",
+   "meaning": "小的",
+   "unit": "3A Unit 4",
+   "mnemonic": "小的：小小的手印"
+  },
+  {
+   "word": "everywhere",
+   "meaning": "在各个地方；处处",
+   "unit": "3A Unit 4",
+   "mnemonic": "到处：every（每）+ where（地方）→ 各处"
+  },
+  {
+   "word": "family",
+   "meaning": "家庭；家人",
+   "unit": "3A Unit 5",
+   "mnemonic": "家庭：把爸妈和我连在一起的那个词"
+  },
+  {
+   "word": "dad (father)",
+   "meaning": "爸爸",
+   "unit": "3A Unit 5",
+   "mnemonic": "爸爸：叫一声 dad 最亲的人"
+  },
+  {
+   "word": "mum (mother)",
+   "meaning": "妈妈",
+   "unit": "3A Unit 5",
+   "mnemonic": "妈妈：叫一声 mum"
+  },
+  {
+   "word": "brother",
+   "meaning": "哥哥；弟弟",
+   "unit": "3A Unit 5",
+   "mnemonic": "兄弟：同一个爸妈的男孩"
+  },
+  {
+   "word": "sister",
+   "meaning": "姐姐；妹妹",
+   "unit": "3A Unit 5",
+   "mnemonic": "姐妹：同一个爸妈的女孩"
+  },
+  {
+   "word": "grandpa (grandfather)",
+   "meaning": "祖父；外祖父",
+   "unit": "3A Unit 5",
+   "mnemonic": "爷爷：grand + pa → 祖父"
+  },
+  {
+   "word": "grandma (grandmother)",
+   "meaning": "祖母；外祖母",
+   "unit": "3A Unit 5",
+   "mnemonic": "奶奶：grand（大一辈）+ ma → 祖母"
+  },
+  {
+   "word": "but",
+   "meaning": "但是，然而",
+   "unit": "3A Unit 5",
+   "mnemonic": "但是：话锋一转，可后面的才是重点"
+  },
+  {
+   "word": "people",
+   "meaning": "人；人们",
+   "unit": "3A Unit 5",
+   "mnemonic": "人们：广场上人山人海"
+  },
+  {
+   "word": "story",
+   "meaning": "故事",
+   "unit": "3A Unit 5",
+   "mnemonic": "故事：睡前听一个故事"
+  },
+  {
+   "word": "cap",
+   "meaning": "帽子",
+   "unit": "3A Unit 5",
+   "mnemonic": "帽子（鸭舌）：戴在头顶有帽檐"
+  },
+  {
+   "word": "worry",
+   "meaning": "担心",
+   "unit": "3A Unit 5",
+   "mnemonic": "担心：心里放不下的事"
+  },
+  {
+   "word": "on",
+   "meaning": "在......上面",
+   "unit": "3A Unit 5",
+   "mnemonic": "在……上：书放在桌面上"
+  },
+  {
+   "word": "come on",
+   "meaning": "快点；加油",
+   "unit": "3A Unit 5",
+   "mnemonic": "加油：比赛时喊一嗓子"
+  },
+  {
+   "word": "photo",
+   "meaning": "照片，相片",
+   "unit": "3A Unit 5",
+   "mnemonic": "照片：相册里贴满回忆"
+  },
+  {
+   "word": "love",
+   "meaning": "爱，关爱",
+   "unit": "3A Unit 5",
+   "mnemonic": "爱：最爱的人在身边"
+  },
+  {
+   "word": "daddy",
+   "meaning": "爸爸",
+   "unit": "3A Unit 5",
+   "mnemonic": "爸爸（昵称）：dad 加 dy 更亲昵"
+  },
+  {
+   "word": "mummy",
+   "meaning": "妈妈",
+   "unit": "3A Unit 5",
+   "mnemonic": "妈妈（昵称）：mum 加 my 更亲"
+  },
+  {
+   "word": "where",
+   "meaning": "在哪里",
+   "unit": "3A Unit 5",
+   "mnemonic": "哪里：问地点的疑问词"
+  },
+  {
+   "word": "dog",
+   "meaning": "狗",
+   "unit": "3A Unit 5",
+   "mnemonic": "狗：摇尾巴汪汪叫"
+  },
+  {
+   "word": "box",
+   "meaning": "盒；箱",
+   "unit": "3A Unit 5",
+   "mnemonic": "盒子：装玩具的方箱子"
+  },
+  {
+   "word": "sweet",
+   "meaning": "甜蜜的",
+   "unit": "3A Unit 6",
+   "mnemonic": "甜的：糖含在嘴里甜"
+  },
+  {
+   "word": "home",
+   "meaning": "家",
+   "unit": "3A Unit 6",
+   "mnemonic": "家：放学最想回的地方"
+  },
+  {
+   "word": "game",
+   "meaning": "游戏",
+   "unit": "3A Unit 6",
+   "mnemonic": "游戏：下课一起做游戏"
+  },
+  {
+   "word": "room",
+   "meaning": "房间",
+   "unit": "3A Unit 6",
+   "mnemonic": "房间：开门走进的屋子"
+  },
+  {
+   "word": "living room",
+   "meaning": "客厅",
+   "unit": "3A Unit 6",
+   "mnemonic": "客厅：live（生活）+ room → 全家活动的屋"
+  },
+  {
+   "word": "bedroom",
+   "meaning": "卧室",
+   "unit": "3A Unit 6",
+   "mnemonic": "卧室：bed（床）+ room（房间）→ 放床的屋"
+  },
+  {
+   "word": "bathroom",
+   "meaning": "浴室，卫生间",
+   "unit": "3A Unit 6",
+   "mnemonic": "浴室：bath（洗澡）+ room（房间）→ 洗澡间"
+  },
+  {
+   "word": "kitchen",
+   "meaning": "厨房",
+   "unit": "3A Unit 6",
+   "mnemonic": "厨房：妈妈做饭的屋子"
+  },
+  {
+   "word": "dining room",
+   "meaning": "餐厅",
+   "unit": "3A Unit 6",
+   "mnemonic": "餐厅：dine（吃饭）+ room → 吃饭的屋"
+  },
+  {
+   "word": "door",
+   "meaning": "门",
+   "unit": "3A Unit 6",
+   "mnemonic": "门：推开门走进来"
+  },
+  {
+   "word": "chair",
+   "meaning": "椅子",
+   "unit": "3A Unit 6",
+   "mnemonic": "椅子：坐下来，四条腿稳稳的"
+  },
+  {
+   "word": "think",
+   "meaning": "想，认为",
+   "unit": "3A Unit 6",
+   "mnemonic": "想：动脑思考想答案"
+  },
+  {
+   "word": "under",
+   "meaning": "在......下面；在......底下",
+   "unit": "3A Unit 6",
+   "mnemonic": "在下面：小猫躲在桌下"
+  },
+  {
+   "word": "bed",
+   "meaning": "床",
+   "unit": "3A Unit 6",
+   "mnemonic": "床：躺上去盖好被子睡觉"
+  },
+  {
+   "word": "toy",
+   "meaning": "玩具",
+   "unit": "3A Unit 6",
+   "mnemonic": "玩具：玩偶小车积木块"
+  },
+  {
+   "word": "miaow",
+   "meaning": "咪，喵（猫叫声）",
+   "unit": "3A Unit 6",
+   "mnemonic": "喵（猫叫声）：小猫开口就是它"
+  },
+  {
+   "word": "table",
+   "meaning": "桌子",
+   "unit": "3A Unit 6",
+   "mnemonic": "桌子：吃饭写字都在它上面"
+  },
+  {
+   "word": "cat",
+   "meaning": "猫",
+   "unit": "3A Unit 6",
+   "mnemonic": "猫：喵喵叫蹭你裤腿"
+  },
+  {
+   "word": "ball",
+   "meaning": "球",
+   "unit": "3A Unit 6",
+   "mnemonic": "球：拍一下弹起来，圆滚滚"
+  },
+  {
+   "word": "their",
+   "meaning": "他们的",
+   "unit": "3A Unit 6",
+   "mnemonic": "他们的：属于他们的东西"
+  },
+  {
+   "word": "apple",
+   "meaning": "苹果",
+   "unit": "3A Unit 6",
+   "mnemonic": "苹果：a + pp 像两个圆果子 + le"
+  },
+  {
+   "word": "share",
+   "meaning": "共用；分享",
+   "unit": "3A Unit 6",
+   "mnemonic": "分享：一块蛋糕分着吃"
+  },
+  {
+   "word": "put",
+   "meaning": "放",
+   "unit": "3A Unit 6",
+   "mnemonic": "放：把书放进书包"
+  },
+  {
+   "word": "cooking",
+   "meaning": "做饭",
+   "unit": "3A Unit 6",
+   "mnemonic": "烹饪：cook 加 ing 变成做饭这件事"
+  },
+  {
+   "word": "sun",
+   "meaning": "太阳",
+   "unit": "3A Unit 6",
+   "mnemonic": "太阳：东升西落放光芒"
+  },
+  {
+   "word": "like",
+   "meaning": "喜欢",
+   "unit": "3A Unit 6",
+   "mnemonic": "喜欢：最爱吃的就是它"
+  },
+  {
+   "word": "run",
+   "meaning": "跑",
+   "unit": "3A Unit 6",
+   "mnemonic": "跑：迈开大步向前冲"
+  },
+  {
+   "word": "lucky",
+   "meaning": "幸运的",
+   "unit": "3A Unit 6",
+   "mnemonic": "幸运的：luck 加 y 总遇好事"
+  }
+ ]
+}

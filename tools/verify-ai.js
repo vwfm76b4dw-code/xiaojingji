@@ -36,7 +36,7 @@ check('归一化：正常词条原样保留', () => {
 check('归一化：丢弃非英文"单词"（防模型编造中文或句子）', () => {
   const out = aiCore.normalizeItems([
     { word: '单词', meaning: 'word' },
-    { word: 'a whole sentence here', meaning: '句子' },  // 超三词 → 非法
+    { word: 'a whole sentence here that is way too long for any phrase', meaning: '九词长句 → 非法（上限 8 词）' },
     { word: '123abc', meaning: '数字开头' },              // 数字开头 → 非法
     { word: 'abandon', meaning: 'v. 遗弃' },
     { word: 'well-known', meaning: 'adj. 著名的' },        // 连字符合法
@@ -45,13 +45,14 @@ check('归一化：丢弃非英文"单词"（防模型编造中文或句子）',
   assert.deepStrictEqual(out.map(x => x.word), ['abandon', 'well-known', "don't"]);
 });
 
-check('归一化：接受词组（look after）但拒绝长句', () => {
+check('归一化：接受词组与习语（五词以内），超过 8 词仍拒绝', () => {
   const out = aiCore.normalizeItems([
     { word: 'look after', meaning: '照顾' },
     { word: 'a bit', meaning: '一点儿' },
-    { word: 'as happy as a clam', meaning: '非常快活' }   // 五词 → 拒绝
+    { word: 'as happy as a clam', meaning: '非常快活' }
   ]);
-  assert.deepStrictEqual(out.map(x => x.word), ['look after', 'a bit']);
+  // 2026-09-19 放宽到 8 词：'as happy as a clam'（5 词）这类习语合法
+  assert.deepStrictEqual(out.map(x => x.word), ['look after', 'a bit', 'as happy as a clam']);
 });
 
 check('归一化：缺字段的条目被丢弃，不产生半条数据', () => {
@@ -193,14 +194,15 @@ check('清洗：只剥成对引号，词内撇号不能被吃掉（don\'t 必须
 });
 
 check('WORD_RE：接受连字符 / 撇号 / 二至三词词组', () => {
-  const okCases = ['abandon', 'well-known', "don't", 'look after', 'a bit of'];
+  const okCases = ['abandon', 'well-known', "don't", 'look after', 'a bit of',
+                   'Ethics and the rule of law'];
   okCases.forEach(function (w) {
     assert.ok(aiCore.WORD_RE.test(w), '应接受 "' + w + '"，实际被拒');
   });
 });
 
-check('WORD_RE：拒绝数字 / 下划线 / 首字符非字母 / 四词以上 / 非 ASCII / 空串', () => {
-  const badCases = ['abandon1', '_word', ' word', 'a bit of luck', 'café', '', '123', '-abc'];
+check('WORD_RE：拒绝数字 / 下划线 / 首字符非字母 / 八词以上 / 非 ASCII / 空串（2026-09-19 放宽到 8 词短语）', () => {
+  const badCases = ['abandon1', '_word', ' word', 'a bit of luck today please now my friend', 'café', '', '123', '-abc'];
   badCases.forEach(function (w) {
     assert.ok(!aiCore.WORD_RE.test(w), '应拒绝 ' + JSON.stringify(w) + '，实际被接受');
   });
@@ -623,7 +625,12 @@ function loadAi() {
   if (savedWx === undefined) delete global.wx;
 
   // ---- 云函数 main 的失败安全：临时清掉 Key ----
+  // 2026-09-28 修：只删 GLM 不够——provider 探测先查 AGNES_API_KEY（本机环境里它
+  // 常驻，删 GLM 后 agnes 分支接管返回真实数据，「无 Key」用例假红真绿各一半）。
+  // 「无 Key」必须是三个变量全空。
   delete process.env.GLM_API_KEY;
+  delete process.env.AGNES_API_KEY;
+  delete process.env.AI_PROVIDER;
 
   let r;
   try {
@@ -671,6 +678,10 @@ function loadAi() {
   });
 
   // 上游不可达：把 endpoint 指向本机未监听端口，连接被拒 → NETWORK（不外发、不联网）
+  // 2026-09-28 修：同时删 AGNES/AI_PROVIDER——AGNES key 在场时 provider=agnes 走真端点，
+  // 坏 endpoint 根本不生效（本机 AGNES 常驻导致的假红）。
+  delete process.env.AGNES_API_KEY;
+  delete process.env.AI_PROVIDER;
   process.env.GLM_ENDPOINT = 'https://127.0.0.1:1/chat/completions';
   let netFail;
   try { netFail = await fn.main({ action: 'parseBatch', payload: { text: 'abandon 遗弃' } }); }
@@ -685,6 +696,8 @@ function loadAi() {
 
   // 无 Key + 未知 action → NO_KEY：证明 Key 校验优先于 action 分发
   delete process.env.GLM_API_KEY;
+  delete process.env.AGNES_API_KEY;   // 同上：agnes 在场就不是「无 Key」（2026-09-28 补）
+  delete process.env.AI_PROVIDER;
   let noKeyBadAction;
   try { noKeyBadAction = await fn.main({ action: 'hack', payload: {} }); }
   catch (e) { noKeyBadAction = { code: 'THREW' }; }

@@ -52,6 +52,15 @@ function cloudReady() {
 }
 
 /**
+ * 最近一次"碰过云函数"的时刻（真实调用与预热都算）。
+ *
+ * 为什么真实调用也要记：云函数实例是被**任意一次**调用续命的。
+ * 学生刚读完一个词（transcribe 刚刚跑过），紧接着的预热就是纯浪费 ——
+ * 只有"距上次碰它已经过了很久"时，预热才有意义。
+ */
+let _lastCloudUseAt = 0;
+
+/**
  * 调用云函数。**统一包一层**：wx.cloud.callFunction 会抛同步异常，
  * 直接调会让调用方被迫写 try/catch —— 那正是要避免的（页面代码会被污染）。
  */
@@ -61,6 +70,7 @@ function callCloud(data) {
       resolve({ ok: false, code: 'NO_CLOUD' });
       return;
     }
+    _lastCloudUseAt = Date.now();
     try {
       wx.cloud.callFunction({
         name: CLOUD_FN,
@@ -86,6 +96,53 @@ function callCloud(data) {
 /** 云端语音识别是否就绪（设置页用它显示状态） */
 function cloudStatus() {
   return callCloud({ action: 'status' });
+}
+
+/*==================== 预热：把冷启动藏进"还在录音"的那几秒 ====================*/
+
+/**
+ * 两次预热之间的最小间隔。
+ *
+ * 取值依据（两头夹）：
+ *   · 下限 —— 一次完整朗读往返约 8s（录音 1~3s + 云端识别 3~5s）。
+ *     阈值必须远大于它，否则上一次还没出结果，下一次预热又发出去。
+ *   · 上限 —— 云函数实例的空闲回收是**分钟**量级。阈值取到分钟级就等于没有预热
+ *     （学生读完一个词，下一个词时实例已经冷了）。
+ * 45s 落在两者之间：约等于 3~9 个朗读循环。这段时间内实例几乎必然还是热的，
+ * 重复预热零收益；学生真走神超过 45s，实例可能已被回收，这时才值得再预热一次。
+ */
+const PREWARM_MIN_GAP_MS = 45000;
+
+/**
+ * 预热云函数 —— 把冷启动（实测约 3.2s）提前到"学生还在录音"的这 1~3 秒里烧掉。
+ *
+ * ## 为什么用 action:'status'，它花不花钱
+ * 云函数 asrProxy/index.js 的入口第一段就是 `if (action === 'status')`：
+ * 它只调 resolveProvider()（**只读 process.env**）然后**直接 return**，
+ * 根本不进 transcribe 分支 —— 也就是说它**不会向任何 ASR 服务商发请求，
+ * 不消耗识别额度**。代价只有一次云函数调用次数（云开发免费额度 100 万次/月；
+ * 按学生一天读 50 次、每次都预热算，一个月 1500 次，可忽略）。
+ * 所以预热可以放心地按节流高频做。
+ *
+ * ## 为什么 fire-and-forget（不 await、不返回 Promise 给页面）
+ * 预热的唯一价值是"让下一次 transcribe 命中热实例"，它自己的结果无人关心。
+ * 若让页面等它，等于把冷启动又搬回学生面前 —— 与目的相反。
+ * 失败静默：预热失败不影响真调用，真调用自己有完整的降级路径。
+ *
+ * ⚠️ 未经真机验证（2026-09-19 开发者工具自动化通道不可用）：
+ *   云函数实例是否复用由平台调度决定，预热**不保证**命中同一实例
+ *   （并发/冷备会把请求分走）。所以这是**概率性收益**，不是确定性优化。
+ */
+function cloudPrewarm() {
+  if (!cloudReady()) return;
+  const now = Date.now();
+  if (now - _lastCloudUseAt < PREWARM_MIN_GAP_MS) return;
+  // 先记账再发：网络坏掉时预热必然失败，不记账就会在断网期间反复重发
+  // （失败重发毫无收益，真调用自己会报错并给出出路）。
+  _lastCloudUseAt = now;
+  callCloud({ action: 'status' }).then(function (r) {
+    if (!r || !r.ok) console.log('[asr] 预热未就绪：' + ((r && r.code) || 'UNKNOWN'));
+  });
 }
 
 /**
@@ -271,7 +328,10 @@ function hintFor(code) {
   }
   if (code === 'TIMEOUT') return '网络有点慢，再读一次试试';
   if (code === 'QUOTA') return '今天的朗读次数用完了，明天再来';
-  if (code === 'AUTH' || code === 'NOT_CONFIGURED') return '朗读功能还在准备中';
+  // 2026-09-19 改措辞：原来这句是"朗读功能还在准备中" —— 但 AUTH/NOT_CONFIGURED
+  // 是**配置问题**（云端密钥缺失/鉴权失败），不会因为等而变好，"准备中"是撒谎。
+  // 学生能做的事：先用本地对照（跟读原文），或在设置页看服务状态找大人处理。
+  if (code === 'AUTH' || code === 'NOT_CONFIGURED') return '朗读评测暂时用不了，先对照发音自己读一遍';
   if (code === 'AUDIO_TOO_SHORT') return '录得太短了，把整个单词读完';
   if (code === 'ASR_FAILED') return '没听清，再读一次';
   if (code === 'AUDIO_TOO_BIG') return '录太长了，读完单词就松手';
@@ -294,7 +354,7 @@ function techHint(code) {
 
 module.exports = {
   base, setBase, health,
-  cloudReady, cloudStatus, recognizeCloud,
+  cloudReady, cloudStatus, cloudPrewarm, recognizeCloud,
   pronounce, audioUrl, askWord,
   hintFor, techHint,
   BASE_KEY, CLOUD_FN

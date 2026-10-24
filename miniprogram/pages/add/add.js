@@ -1,9 +1,16 @@
 const store = require('../../utils/store.js');
 const cards = require('../../utils/cards.js');
 const ai = require('../../utils/ai.js');
+// 小鲸键盘接线（契约 §2.3）：过滤复用组件的纯逻辑核心，不另写一份 ——
+// 两处各写一遍"联想怎么过滤"迟早口径漂移（与 syllable/quiz 抽纯函数同一理由）
+const asr = require('../../utils/asr.js');
+const kbCore = require('../../components/xj-keyboard/keyboard-core.js');
+const theme = require('../../utils/theme.js');   // 主题接线：data.themeClass + onShow 刷新
 
-Page({
+Page(theme.withTheme({
   data: {
+    // 主题类（根 view 挂 class）：显式声明过「wxml 引用字段必须在 data 初始化」门禁
+    themeClass: 'theme-paper',
     mode: 'single',
     word: '',
     meaning: '',
@@ -22,18 +29,122 @@ Page({
     // ---- 单条 AI 生成状态 ----
     exBusy: false,
     mnBusy: false,
-    aiReady: true        // 云开发是否就绪（onLoad 时探测）
+    aiReady: true,       // 云开发是否就绪（onLoad 时探测）
+
+    // ---- 小鲸键盘（单词字段专用，契约 §2.3）----
+    kbOpen: false,       // 键盘面板是否展开
+    kbSuggestions: [],   // 联想候选（页面用 cards 词表前缀匹配好 ≤5 条，组件保持纯 UI）
+    voiceEnabled: false, // 云识别可用才亮语音键（onLoad 探测，置灰时组件内 toast 兜底）
+    recognizing: false   // 语音识别中：word 行显示"聆听中…"，替代会打断输入流的 toast
   },
 
   switchMode(e) {
     const mode = e.currentTarget.dataset.mode;
     // 切换模式时清掉 AI 的临时结果，避免遗留上一次的预览
-    this.setData({ mode: mode, aiMsg: '', aiItems: [], aiOk: false, aiDupCount: 0 });
+    // kbOpen 一并收起：键盘面板是页面级停靠层，不随单词字段的 wx:if 消失 ——
+    // 切到"批量粘贴"还挂着字母键盘就是界面事故
+    this.setData({ mode: mode, aiMsg: '', aiItems: [], aiOk: false, aiDupCount: 0, kbOpen: false });
   },
 
   onInput(e) {
     const key = e.currentTarget.dataset.k;
     this.setData({ [key]: e.detail.value });
+  },
+
+  /*---------------- 小鲸键盘（单词字段，契约 §2.3）----------------*/
+
+  openWordKb() {
+    this.setData({ kbOpen: true });
+    this._refreshSuggestions();
+  },
+
+  closeWordKb() {
+    this.setData({ kbOpen: false });
+  },
+
+  /**
+   * 联想候选：当前词表前缀匹配 ≤5 条（组件只渲染不过滤 —— 契约 §2.3 的分工）。
+   * 词表取 cards.allCards() 的 prompt（含用户已录与教材已导入的词）：
+   * 联想的意义是"提示已在库里的词"，随口编的词不在库里，不在提示范围。
+   */
+  _refreshSuggestions() {
+    const prompts = cards.allCards().map(function (c) { return c.prompt; });
+    this.setData({ kbSuggestions: kbCore.filterSuggestions(prompts, this.data.word, 5) });
+  },
+
+  onWordInput(e) {
+    this.setData({ word: e.detail.value });
+    this._refreshSuggestions();
+  },
+
+  onWordSuggestion(e) {
+    this.setData({ word: e.detail.value });
+    this._refreshSuggestions();   // 候选命中后按新值重算：完全同名不再推荐（核心函数的行为）
+  },
+
+  /** 完成 = 收键盘。保存另有「保存」按钮 —— 两个动作语义分开，误触代价才小 */
+  onWordSubmit() {
+    this.setData({ kbOpen: false });
+  },
+
+  /*---------------- 语音录入（按住说，松手出词） ----------------*/
+
+  /**
+   * 语音链路：组件按住/松手 → 本页 → RecorderManager(mp3/16k) → asr.recognizeCloud。
+   * 录音参数与朗读页同一套：wav 录音在腾讯 ASR 端解不开（InvalidParameterValue，
+   * 见 pronounce.js 2026-09-19 的实测记录），mp3 三方全兼容 —— 不另起炉灶。
+   */
+  onVoice(e) {
+    const start = !!(e.detail && e.detail.start);
+    if (start) this._startVoice(); else this._stopVoice();
+  },
+
+  _startVoice() {
+    if (!this.recorder) {
+      const rec = wx.getRecorderManager();
+      rec.onStop(res => this._onVoiceFile(res && res.tempFilePath));
+      rec.onError(() => {
+        this.setData({ recognizing: false });
+        wx.showToast({ title: '没录上音，请检查麦克风权限', icon: 'none' });
+      });
+      this.recorder = rec;
+    }
+    this.recorder.start({
+      duration: 6000,               // 单词最长 6 秒足够；到点自动 onStop 兜底按住不松的人
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      encodeBitRate: 48000,
+      format: 'mp3'
+    });
+    this.setData({ recognizing: true });
+  },
+
+  _stopVoice() {
+    if (this.recorder) this.recorder.stop();
+  },
+
+  _onVoiceFile(filePath) {
+    if (!filePath) {
+      this.setData({ recognizing: false });
+      return;
+    }
+    asr.recognizeCloud(filePath).then(r => {
+      this.setData({ recognizing: false });
+      if (!r || !r.ok) {
+        wx.showToast({ title: asr.hintFor(r && r.code), icon: 'none' });
+        return;
+      }
+      // 云端识别回的可能是整句话或中文：只取打头的英文段当单词。
+      // 为什么不原样填入 —— word 字段的规范形是"纯英文词条"，混入标点/释义
+      // 会让卡片索引键脏掉（race（v.）的教训：括注进键是有意设计，意外标点不是）。
+      const m = String(r.text || '').toLowerCase().match(/[a-z][a-z'-]*/);
+      if (!m) {
+        wx.showToast({ title: '没听清是哪个单词，再试一次', icon: 'none' });
+        return;
+      }
+      this.setData({ word: m[0], kbOpen: true });   // 展开键盘让学生确认/补字母
+      this._refreshSuggestions();
+    });
   },
 
   saveSingle() {
@@ -48,7 +159,8 @@ Page({
       return;
     }
     wx.showToast({ title: '已加入今日复习', icon: 'none' });
-    this.setData({ word: '', meaning: '', example: '', mnemonic: '' });
+    // kbSuggestions 一并清空：word 已清空，旧候选留着会显示"与输入无关的联想"
+    this.setData({ word: '', meaning: '', example: '', mnemonic: '', kbSuggestions: [] });
   },
 
   saveBatch() {
@@ -140,9 +252,16 @@ Page({
     this.setData({ mode: 'batch', batch: this.data.aiText, aiMsg: '', aiItems: [], aiOk: false });
   },
 
-  /** 第四条录入来源：教材词库（独立页，按单元批量导入） */
+  /**
+   * 第四条录入来源：教材词库（分包内的独立页，按单元批量导入）。
+   *
+   * ⚠️ 路径带 `pack-curriculum/` 前缀 —— 2026-09-24 起教材页与 24 册数据
+   * 整体搬进分包（主包只剩 46 KB，装不下 293 KB 的教材模块）。
+   * 主包**不能引用分包资源**，但 `navigateTo` 分包页面是官方支持的正常用法，
+   * 跳转时微信会自动下载该分包。
+   */
   goCurriculum() {
-    wx.navigateTo({ url: '/pages/curriculum/curriculum' });
+    wx.navigateTo({ url: '/pack-curriculum/pages/curriculum/curriculum' });
   },
 
   /*---------------- 单条模式下的 AI 辅助生成 ----------------*/
@@ -191,6 +310,11 @@ Page({
 
   /** AI 是否可用（不可用时界面如实说明，而不是点下去才报错） */
   onLoad() {
-    this.setData({ aiReady: ai.isAvailable() });
+    this.setData({
+      aiReady: ai.isAvailable(),
+      // 语音键亮不亮跟着云走：asr.recognizeCloud 只在 cloudReady 时能出结果，
+      // 不ready 就置灰（组件内点它有 toast 兜底解释，页面不必重复拦截）
+      voiceEnabled: asr.cloudReady()
+    });
   }
-});
+}));

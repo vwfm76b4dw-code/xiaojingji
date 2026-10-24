@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "添加单词"
+  "navigationBarTitleText": "添加单词",
+  "usingComponents": {
+    "xj-keyboard": "/components/xj-keyboard/xj-keyboard"
+  }
 }

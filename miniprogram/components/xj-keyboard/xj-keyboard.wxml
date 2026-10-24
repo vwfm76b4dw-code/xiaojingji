@@ -1,0 +1,51 @@
+<!-- 小鲸自带键盘（契约 §2.3）
+     键面一律用 catch 事件：既防止重复触发，也不让 tap 冒泡到页面
+     （录入页"点表单其他位置收键盘"的判断会误伤正在打字的用户）。
+     键帽大小写显示交给 CSS text-transform（.kb-caps），JS 只管值本身。 -->
+<view class="kb" catchtap="noop">
+  <!-- 联想条：纯 UI，候选由页面传入并过滤好（最多 5 条），组件不认识词库 -->
+  <view wx:if="{{mode === 'word' && suggestions.length > 0}}" class="kb-sugs">
+    <view wx:for="{{suggestions}}" wx:key="*this"
+          class="kb-sug" data-v="{{item}}"
+          hover-class="kb-press" catchtap="onSuggestion">{{item}}</view>
+  </view>
+
+  <view class="kb-rows {{shift !== 'off' ? 'kb-caps' : ''}}">
+    <view class="kb-row" wx:for="{{rows}}" wx:for-item="row" wx:for-index="ri" wx:key="id">
+      <!-- 第三行：两侧是 shift / 退格。退格用 touchstart/touchend 而不是 tap ——
+           长按连删要拿到"按下"与"松手"两个时刻，tap 只有点击一下的语义 -->
+      <block wx:if="{{ri === 2}}">
+        <view class="kb-key kb-fn {{shift !== 'off' ? 'kb-shift-on' : ''}}"
+              hover-class="kb-press" catchtap="onShift"
+              aria-role="button" aria-label="大小写切换">⇧</view>
+        <view wx:for="{{row.chs}}" wx:key="*this"
+              class="kb-key" data-ch="{{item}}"
+              hover-class="kb-press" catchtap="onKey">{{item}}</view>
+        <view class="kb-key kb-fn"
+              hover-class="kb-press"
+              catchtouchstart="onBsStart" catchtouchend="onBsEnd" catchtouchcancel="onBsEnd"
+              aria-role="button" aria-label="退格，长按连删">⌫</view>
+      </block>
+      <block wx:else>
+        <view wx:for="{{row.chs}}" wx:key="*this"
+              class="kb-key" data-ch="{{item}}"
+              hover-class="kb-press" catchtap="onKey">{{item}}</view>
+      </block>
+    </view>
+
+    <!-- 底行：语音（按住说，松手出结果；不可用时置灰，组件内 toast 兜底）
+                + 空格（word 模式才有：词库里有 red scarf / in fact 这类词组）
+                + 完成（bindsubmit 抛回页面，页面决定是保存还是收键盘） -->
+    <view class="kb-row">
+      <view class="kb-key kb-fn kb-mic {{voiceEnabled ? '' : 'kb-off'}}"
+            hover-class="kb-press"
+            catchtouchstart="onVoiceStart" catchtouchend="onVoiceEnd" catchtouchcancel="onVoiceEnd"
+            aria-role="button" aria-label="按住说单词">语音</view>
+      <view wx:if="{{mode === 'word'}}" class="kb-key kb-space"
+            hover-class="kb-press" catchtap="onSpace">空格</view>
+      <view class="kb-key kb-go"
+            hover-class="kb-press" catchtap="onSubmit"
+            aria-role="button" aria-label="完成输入">完成</view>
+    </view>
+  </view>
+</view>

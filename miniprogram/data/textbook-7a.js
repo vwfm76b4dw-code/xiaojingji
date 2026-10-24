@@ -3,7 +3,7 @@
  *
  * 本文件由 tools/build-textbook-seed.js 自动生成，请勿手改。
  * 源数据：研发仓 内容生产管线（content/batches/*.json，经质检门把关）。
- * 生成时间：2026-09-17 06:52:36
+ * 生成时间：2026-09-25 12:48:08
  *
  * 用途：首次启动预置词库，让应用开箱即有内容。
  */
@@ -26,7 +26,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-002-ready",
@@ -43,7 +44,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-003-textbook",
@@ -60,7 +62,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-004-eraser",
@@ -77,7 +80,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-005-history",
@@ -94,7 +98,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-006-geography",
@@ -111,7 +116,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-007-biology",
@@ -128,7 +134,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-008-physics",
@@ -145,7 +152,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-009-information-technology",
@@ -161,7 +169,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-010-chemistry",
@@ -178,7 +187,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-011-jacket",
@@ -195,7 +205,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-012-red-scarf",
@@ -211,7 +222,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-013-hat",
@@ -228,7 +240,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-014-grey",
@@ -245,7 +258,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-015-uniform",
@@ -262,7 +276,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-016-teaching-building",
@@ -278,7 +293,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-017-dining-hall",
@@ -294,7 +310,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-018-lab",
@@ -311,7 +328,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-019-hold",
@@ -327,7 +345,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-020-event",
@@ -343,7 +362,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-021-join",
@@ -360,7 +380,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-022-club",
@@ -376,7 +397,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-023-introduce",
@@ -393,7 +415,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-024-yourself",
@@ -409,7 +432,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-025-everyone",
@@ -425,7 +449,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-026-holiday",
@@ -441,7 +466,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-027-enjoy",
@@ -458,7 +484,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-028-nervous",
@@ -475,7 +502,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-029-classmate",
@@ -492,7 +520,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-030-hobby",
@@ -509,7 +538,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-031-need",
@@ -525,7 +555,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-032-activity",
@@ -541,7 +572,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-033-decoration",
@@ -558,7 +590,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Starter",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Starter"
   },
   {
     "id": "en-034-without",
@@ -574,7 +607,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-035-sentence",
@@ -591,7 +625,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-036-start",
@@ -607,7 +642,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-037-point-out",
@@ -624,7 +660,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-038-mistake",
@@ -641,7 +678,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-039-polite",
@@ -657,7 +695,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-040-mind",
@@ -673,7 +712,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-041-hers",
@@ -690,7 +730,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-042-dry",
@@ -707,7 +748,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-043-meaning",
@@ -723,7 +765,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-044-fact",
@@ -740,7 +783,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-045-in-fact",
@@ -756,7 +800,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-046-important",
@@ -773,7 +818,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-047-remember",
@@ -789,7 +835,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-048-really",
@@ -805,7 +852,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-049-problem",
@@ -822,7 +870,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-050-advice",
@@ -839,7 +888,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 1",
     "subject": "英语",
-    "batch": "batch-001-english-words-001-050"
+    "batch": "batch-001-english-words-001-050",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-051-project",
@@ -855,7 +905,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-052-task",
@@ -871,7 +922,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-053-journey",
@@ -887,7 +939,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-054-of-course",
@@ -903,7 +956,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-055-together",
@@ -919,7 +973,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-056-pool",
@@ -935,7 +990,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-057-sail",
@@ -951,7 +1007,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-058-away",
@@ -967,7 +1024,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-059-thought",
@@ -983,7 +1041,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-060-life",
@@ -999,7 +1058,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-061-primary-school",
@@ -1015,7 +1075,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-062-protect",
@@ -1031,7 +1092,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-063-wind",
@@ -1047,7 +1109,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-064-wide",
@@ -1063,7 +1126,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-065-pain",
@@ -1079,7 +1143,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-066-gain",
@@ -1095,7 +1160,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-067-through",
@@ -1111,7 +1177,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-068-storm",
@@ -1127,7 +1194,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-069-hope",
@@ -1143,7 +1211,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 1",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 1"
   },
   {
     "id": "en-070-rock-music",
@@ -1159,7 +1228,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-071-electric",
@@ -1176,7 +1246,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-072-guitar",
@@ -1193,7 +1264,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-073-band",
@@ -1210,7 +1282,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-074-fun",
@@ -1227,7 +1300,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-075-sound",
@@ -1244,7 +1318,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-076-different",
@@ -1261,7 +1336,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-077-suddenly",
@@ -1278,7 +1354,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-078-hit",
@@ -1295,7 +1372,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-079-check",
@@ -1312,7 +1390,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-080-rush",
@@ -1329,7 +1408,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-081-festival",
@@ -1346,7 +1426,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-082-practice",
@@ -1363,7 +1444,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-083-stage",
@@ -1380,7 +1462,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-084-nod",
@@ -1397,7 +1480,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-085-instrument",
@@ -1414,7 +1498,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-086-everybody",
@@ -1431,7 +1516,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-087-skate",
@@ -1448,7 +1534,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-088-volleyball",
@@ -1465,7 +1552,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-089-photography",
@@ -1482,7 +1570,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-090-tradition",
@@ -1499,7 +1588,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-091-paper-cutting",
@@ -1515,7 +1605,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-092-social-media",
@@ -1531,7 +1622,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-093-knowledge",
@@ -1547,7 +1639,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-094-wild",
@@ -1563,7 +1656,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-095-nature",
@@ -1579,7 +1673,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-096-adventure",
@@ -1595,7 +1690,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-097-awake",
@@ -1611,7 +1707,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-098-midnight",
@@ -1627,7 +1724,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-099-appear",
@@ -1643,7 +1741,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-100-heart",
@@ -1659,7 +1758,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-002-english-words-051-100"
+    "batch": "batch-002-english-words-051-100",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-101-almost",
@@ -1676,7 +1776,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-102-tap",
@@ -1693,7 +1794,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-103-shake",
@@ -1710,7 +1812,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-104-bit",
@@ -1727,7 +1830,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-105-lonely",
@@ -1744,7 +1848,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-106-magic",
@@ -1761,7 +1866,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-107-joy",
@@ -1778,7 +1884,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-108-notebook",
@@ -1795,7 +1902,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-109-shelf",
@@ -1812,7 +1920,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-110-leave",
@@ -1829,7 +1938,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-111-page",
@@ -1846,7 +1956,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-112-ending",
@@ -1863,7 +1974,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 2",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 2"
   },
   {
     "id": "en-113-silent",
@@ -1880,7 +1992,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-114-along",
@@ -1897,7 +2010,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-115-mountain",
@@ -1914,7 +2028,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-116-road",
@@ -1931,7 +2046,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-117-handsome",
@@ -1948,7 +2064,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-118-strict",
@@ -1965,7 +2082,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-119-follow",
@@ -1982,7 +2100,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-120-postman",
@@ -1999,7 +2118,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-121-touching",
@@ -2016,7 +2136,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-122-son",
@@ -2033,7 +2154,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-123-serve",
@@ -2050,7 +2172,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-124-area",
@@ -2067,7 +2190,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-125-absent",
@@ -2084,7 +2208,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-126-seldom",
@@ -2101,7 +2226,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-127-position",
@@ -2118,7 +2244,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-128-each",
@@ -2135,7 +2262,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-129-carry",
@@ -2152,7 +2280,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-130-across",
@@ -2169,7 +2298,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-131-memory",
@@ -2186,7 +2316,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-132-tear",
@@ -2203,7 +2334,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-133-growth",
@@ -2220,7 +2352,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-134-hide",
@@ -2237,7 +2370,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-135-care",
@@ -2254,7 +2388,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-136-hug",
@@ -2271,7 +2406,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-137-kiss",
@@ -2288,7 +2424,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-138-reason",
@@ -2305,7 +2442,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-139-marry",
@@ -2322,7 +2460,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-140-harmony",
@@ -2339,7 +2478,8 @@ module.exports = {
     "difficulty": 3,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-141-solve",
@@ -2356,7 +2496,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-142-relationship",
@@ -2373,7 +2514,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-143-parent",
@@ -2390,7 +2532,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-144-race-v",
@@ -2407,7 +2550,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-145-race-n",
@@ -2424,7 +2568,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-146-finish",
@@ -2441,7 +2586,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-147-serious",
@@ -2458,7 +2604,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-148-disease",
@@ -2475,7 +2622,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-149-trailer",
@@ -2492,7 +2640,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-150-pull",
@@ -2509,7 +2658,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-003-english-words-101-150"
+    "batch": "batch-003-english-words-101-150",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-151-refuse",
@@ -2525,7 +2675,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-152-result",
@@ -2541,7 +2692,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-153-matter",
@@ -2557,7 +2709,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-154-power",
@@ -2573,7 +2726,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 3",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 3"
   },
   {
     "id": "en-155-unusual",
@@ -2589,7 +2743,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-156-treat",
@@ -2605,7 +2760,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-157-myself",
@@ -2621,7 +2777,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-158-dumpling",
@@ -2637,7 +2794,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-159-whole",
@@ -2653,7 +2811,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-160-become",
@@ -2669,7 +2828,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-161-chef",
@@ -2685,7 +2845,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-162-cucumber",
@@ -2701,7 +2862,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-163-hang",
@@ -2717,7 +2879,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-164-balloon",
@@ -2733,14 +2896,15 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-165-lantern",
     "word": "lantern",
     "meaning": "n. 提灯; 灯笼",
     "detail": "元宵节、中秋节常见物品。",
-    "mnemonic": "lan（烂/懒）+ tern（tern 海燕）→ 懒得提的海燕灯？更好记：lan（拦）+ tern → 拦住光 → 灯笼。联想：lantern festival（元宵节）。",
+    "mnemonic": "lan 和 lamp（灯）同源 + tern → 提着一盏灯走夜路 = 灯笼。联想：lantern festival（元宵节）。",
     "tags": [
       "外研七上",
       "名词",
@@ -2749,7 +2913,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-166-dish",
@@ -2765,7 +2930,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-167-joke",
@@ -2781,7 +2947,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-168-shocked",
@@ -2797,7 +2964,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-169-laugh",
@@ -2813,7 +2981,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-170-pork",
@@ -2829,7 +2998,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-171-round",
@@ -2845,7 +3015,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-172-shape",
@@ -2861,7 +3032,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-173-reunion",
@@ -2877,7 +3049,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-174-piece",
@@ -2893,7 +3066,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-175-knife",
@@ -2909,7 +3083,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-176-smell",
@@ -2925,7 +3100,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-177-laughter",
@@ -2941,7 +3117,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-178-fill",
@@ -2957,7 +3134,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-179-meal",
@@ -2973,7 +3151,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-180-miss",
@@ -2989,7 +3168,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-181-taste",
@@ -3005,7 +3185,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-182-celebrate",
@@ -3021,7 +3202,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-183-culture",
@@ -3037,7 +3219,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-184-usually",
@@ -3053,7 +3236,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-185-christmas",
@@ -3069,7 +3253,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-186-waste",
@@ -3085,7 +3270,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-187-pollution",
@@ -3101,7 +3287,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-188-plastic",
@@ -3117,7 +3304,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-189-duty",
@@ -3133,7 +3321,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-190-shine",
@@ -3149,7 +3338,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-191-break",
@@ -3165,7 +3355,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-192-emergency",
@@ -3181,7 +3372,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-193-thirsty",
@@ -3197,7 +3389,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-194-challenge",
@@ -3213,7 +3406,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-195-patient",
@@ -3229,7 +3423,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-196-situation",
@@ -3245,7 +3440,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-197-regret",
@@ -3261,7 +3457,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-198-decision",
@@ -3277,7 +3474,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-199-support",
@@ -3293,7 +3491,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-200-medical",
@@ -3309,7 +3508,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-004-english-words-151-200"
+    "batch": "batch-004-english-words-151-200",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-201-bright",
@@ -3325,7 +3525,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-202-festive",
@@ -3341,7 +3542,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-203-firework",
@@ -3357,7 +3559,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 4",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 4"
   },
   {
     "id": "en-204-view",
@@ -3373,7 +3576,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-205-pigeon",
@@ -3389,7 +3593,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-206-surprise",
@@ -3405,7 +3610,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-207-knock-around",
@@ -3421,7 +3627,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-208-droppings",
@@ -3437,7 +3644,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-209-boring",
@@ -3453,7 +3661,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-210-feed",
@@ -3469,7 +3678,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-211-madly",
@@ -3485,7 +3695,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-212-scary",
@@ -3501,7 +3712,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-213-research",
@@ -3517,7 +3729,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-214-recognise",
@@ -3533,7 +3746,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-215-themselves",
@@ -3549,7 +3763,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-216-mirror",
@@ -3565,7 +3780,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-217-itself",
@@ -3581,7 +3797,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-218-maybe",
@@ -3597,7 +3814,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-219-several",
@@ -3613,7 +3831,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-220-kilometre",
@@ -3629,7 +3848,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-221-get-lost",
@@ -3645,7 +3865,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-222-speed",
@@ -3661,7 +3882,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-223-amazing",
@@ -3677,7 +3899,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-224-enough",
@@ -3693,7 +3916,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-225-change",
@@ -3710,7 +3934,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-226-dolphin",
@@ -3726,7 +3951,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-227-beaver",
@@ -3742,7 +3968,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-228-no-wonder",
@@ -3758,7 +3985,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-229-engineer",
@@ -3774,7 +4002,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-230-hero",
@@ -3790,7 +4019,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-231-rescue",
@@ -3807,7 +4037,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-232-missing",
@@ -3823,7 +4054,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-233-dead",
@@ -3839,7 +4071,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-234-dodo",
@@ -3855,7 +4088,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-235-as-dead-as-a-dodo",
@@ -3871,7 +4105,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-236-museum",
@@ -3887,7 +4122,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-237-island",
@@ -3904,7 +4140,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-238-ocean",
@@ -3920,7 +4157,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-239-plenty",
@@ -3936,7 +4174,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-240-friendly",
@@ -3952,7 +4191,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-241-peaceful",
@@ -3968,7 +4208,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-242-arrive",
@@ -3985,7 +4226,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-243-forest",
@@ -4001,7 +4243,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-244-hunt",
@@ -4017,7 +4260,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-245-soon",
@@ -4033,7 +4277,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-246-die-out",
@@ -4049,7 +4294,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-247-full",
@@ -4065,7 +4311,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-248-fantastic",
@@ -4081,7 +4328,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-249-as-happy-as-a-clam",
@@ -4097,7 +4345,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 5",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 5"
   },
   {
     "id": "en-250-within",
@@ -4114,7 +4363,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-005-english-words-201-250"
+    "batch": "batch-005-english-words-201-250",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-251-quarter",
@@ -4130,7 +4380,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-252-workshop",
@@ -4146,7 +4397,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-253-leaf",
@@ -4162,7 +4414,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-254-collect",
@@ -4178,7 +4431,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-255-sunlight",
@@ -4194,7 +4448,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-256-root",
@@ -4210,7 +4465,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-257-send",
@@ -4226,7 +4482,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-258-rise",
@@ -4242,7 +4499,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-259-stem",
@@ -4258,7 +4516,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-260-mix",
@@ -4274,7 +4533,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-261-produce",
@@ -4290,7 +4550,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-262-sugar",
@@ -4306,7 +4567,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-263-product",
@@ -4322,7 +4584,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-264-oxygen",
@@ -4338,7 +4601,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-265-though",
@@ -4354,7 +4618,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-266-breathe",
@@ -4370,7 +4635,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-267-dark",
@@ -4386,7 +4652,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-268-rest",
@@ -4402,7 +4669,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-269-natural",
@@ -4418,7 +4686,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-270-enter",
@@ -4434,7 +4703,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-271-sunflower",
@@ -4450,7 +4720,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-272-seed",
@@ -4466,7 +4737,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-273-grow",
@@ -4482,7 +4754,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-274-rainforest",
@@ -4498,7 +4771,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-275-influence",
@@ -4514,7 +4788,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-276-climate",
@@ -4530,7 +4805,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-277-corn-silk",
@@ -4546,7 +4822,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-278-rose",
@@ -4562,7 +4839,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-279-cotton",
@@ -4578,7 +4856,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-280-bamboo",
@@ -4594,7 +4873,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-281-popular",
@@ -4610,7 +4890,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-282-health",
@@ -4626,7 +4907,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-283-key",
@@ -4642,7 +4924,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-284-teahouse",
@@ -4658,7 +4941,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-285-news",
@@ -4674,7 +4958,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-286-coffee",
@@ -4690,7 +4975,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-287-secret",
@@ -4706,7 +4992,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-288-husband",
@@ -4722,7 +5009,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-289-adult",
@@ -4738,7 +5026,8 @@ module.exports = {
     "difficulty": 2,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-290-weekend",
@@ -4754,7 +5043,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）7A Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-291-chat",
@@ -4770,7 +5060,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-292-relax",
@@ -4786,7 +5077,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-293-yard",
@@ -4802,7 +5094,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-294-biscuit",
@@ -4818,7 +5111,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   },
   {
     "id": "en-295-connect",
@@ -4834,7 +5128,8 @@ module.exports = {
     "difficulty": 1,
     "source": "外研版《英语》七年级上册（2024新版）Unit 6",
     "subject": "英语",
-    "batch": "batch-006-english-words-251-295"
+    "batch": "batch-006-english-words-251-295",
+    "unit": "7A Unit 6"
   }
 ]
 };

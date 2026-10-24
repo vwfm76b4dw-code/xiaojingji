@@ -8,7 +8,26 @@
     "pages/card/card",
     "pages/settings/settings",
     "pages/add/add",
-    "pages/curriculum/curriculum"
+    "pages/spelling/spelling",
+    "pages/growth/growth",
+    "pages/quiz/quiz",
+    "pages/profile/profile"
+  ],
+  "subPackages": [
+    {
+      "root": "pack-curriculum",
+      "name": "curriculum",
+      "pages": [
+        "pages/curriculum/curriculum"
+      ]
+    },
+    {
+      "root": "pack-social",
+      "name": "social",
+      "pages": [
+        "pages/friends/friends"
+      ]
+    }
   ],
   "window": {
     "navigationBarBackgroundColor": "#FAF6EC",
@@ -25,23 +44,27 @@
     "list": [
       {
         "pagePath": "pages/deck/deck",
-        "text": "词库"
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-active.png"
       },
       {
         "pagePath": "pages/study/study",
-        "text": "复习"
+        "text": "复习",
+        "iconPath": "assets/tabbar/book.png",
+        "selectedIconPath": "assets/tabbar/book-active.png"
       },
       {
         "pagePath": "pages/pronounce/pronounce",
-        "text": "朗读"
+        "text": "朗读",
+        "iconPath": "assets/tabbar/mic.png",
+        "selectedIconPath": "assets/tabbar/mic-active.png"
       },
       {
-        "pagePath": "pages/ask/ask",
-        "text": "问词"
-      },
-      {
-        "pagePath": "pages/stats/stats",
-        "text": "统计"
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tabbar/user.png",
+        "selectedIconPath": "assets/tabbar/user-active.png"
       }
     ]
   },

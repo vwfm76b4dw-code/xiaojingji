@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
   <view wx:if="{{!ready}}" class="empty">
     <view class="empty-sub">载入中…</view>
   </view>
@@ -16,11 +16,23 @@
     <view class="card stripe {{statusClass}} main">
       <view class="head">
         <text class="tag green">{{card.subject}}</text>
-        <text class="tag">难度 {{card.difficulty}}</text>
         <text class="tag {{statusClass === 'gray' ? '' : statusClass}}">{{statusText}}</text>
       </view>
 
-      <view class="prompt">{{card.prompt}}</view>
+      <view class="answer-row">
+        <!-- 音节分色：与复习页同一套（sylParts 为 null 时直接渲染原词） -->
+        <view class="prompt">
+          <block wx:if="{{sylParts}}"><text wx:for="{{sylParts}}" wx:key="index" class="syl {{item.c}}">{{item.t}}</text></block>
+          <block wx:else>{{card.prompt}}</block>
+        </view>
+        <!-- 发音：与复习页背面同一交互，卡详情页此前听不到单词 -->
+        <view class="play-chip {{playingWord === card.id ? 'on' : ''}}" bindtap="playWord"
+              aria-role="button" aria-label="朗读 {{card.prompt}}">
+          {{playingWord === card.id ? '■ 停止' : '▶ 发音'}}
+        </view>
+      </view>
+      <!-- 音标紧跟单词之后、释义之前：先看形与音，再看义 -->
+      <view wx:if="{{phon}}" class="phon">/{{phon}}/</view>
       <view class="answer">{{card.answer}}</view>
 
       <view wx:if="{{card.detail}}" class="detail">{{card.detail}}</view>
@@ -30,8 +42,10 @@
         <view class="hook-text">{{card.hook}}</view>
       </view>
 
-      <view class="src">
-        <text class="t-hint">来源：{{card.source}}</text>
+      <!-- 来源行（2026-09-25 与复习页同款修复）：srcText 空串时整行不渲染，
+           不再显示"每张卡都一样"的常量级来源 -->
+      <view wx:if="{{srcText}}" class="src">
+        <text class="t-hint">来源：{{srcText}}</text>
       </view>
     </view>
 

@@ -1,0 +1,352 @@
+/* ============================================================
+ * 好友页样式。视觉沿用全局纸感体系，只用 app.wxss token：
+ * 不引新色、不用渐变、不用发光阴影（项目红线）。
+ * 布局类写在页内；.card/.btn/.t-hint/.section-label 等全局类直接复用。
+ * ============================================================ */
+
+/* 页面底垫：最后一卡（晒一晒/宠物入口）不被手势条/屏幕底缘裁掉（真机反馈 2026-09-25）。
+   只覆盖 bottom，其余三边沿用 app.wxss 的 .page 内边距。 */
+.page {
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+}
+
+/* ---------------- 云不可用横幅 ---------------- */
+
+/* 为什么用实底浅黄而不是红色警示：这是"暂时看不了"，不是"出事了"。
+   --card-2（米黄）+ --yellow-ink 文案，与项目"降级不打扰"的基调一致。 */
+.banner {
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 20rpx 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.banner-txt {
+  font-size: 26rpx;
+  color: var(--yellow-ink);
+  line-height: 1.6;
+}
+
+/* ---------------- 家长说明 ---------------- */
+
+.privacy-body {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: var(--ink-hint);
+}
+
+/* ---------------- 我的名片 ---------------- */
+
+/* section-label 和「隐私说明」同行：隐私入口要永远找得到，不能只靠首次弹出。 */
+.profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.privacy-link {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  text-decoration: underline;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  margin-top: 24rpx;
+}
+
+/* 头像按钮：微信要求 open-type="chooseAvatar" 必须是 button，
+   所以把 button 本身做成圆形头像（::after 已由全局 .btn 清掉，
+   这里不用 .btn 类，避免继承按钮配色）。 */
+/* button 只做透明的点击层：圆环画在内层 .avatar-ring 上。
+   为什么不在 button 上画圆：部分机型基础库的 button UA 样式会撑大盒子，
+   128×128 的圆被拉成椭圆（真机反馈 2026-09-25）；内层定尺寸 view 不吃 UA 样式。 */
+.avatar-btn {
+  flex: 0 0 auto;
+  width: 128rpx;
+  height: 128rpx;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-btn::after { border: none; }
+
+.avatar-ring {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  box-sizing: border-box;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.avatar-blank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-2);
+}
+
+.avatar-blank-txt {
+  font-size: 22rpx;
+  color: var(--ink-2);
+}
+
+.profile-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.nick-input {
+  height: 72rpx;
+  padding: 0 20rpx;
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: 30rpx;
+  color: var(--ink);
+}
+
+.fid-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap; /* 见下方 .fid-value 注释：换行救不了溢出，只会让「复制」独占一行 */
+  gap: 12rpx;
+  /* 兜底：ID 再长也不许越出卡片内边距（用户反馈"内容显示到外部"） */
+  overflow: hidden;
+}
+
+.fid-label {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+
+/*
+ * 好友 ID 本体（2026-09-30 修溢出）。
+ *
+ * ## 原实现的错在哪
+ *
+ * 原来只有 `flex-wrap: wrap`，注释写着「窄屏时『复制』按钮换行，不许被挤出卡片裁掉」。
+ * 但 **flex-wrap 只能让 flex 子项换行，阻止不了子项本身溢出**：
+ * `.fid-value` 没有 flex 收缩约束（默认 `flex: 0 1 auto`，但 min-width:auto
+ * 让它不肯缩到内容宽度以下），又没有 ellipsis 三件套，于是 8 位 ID 在窄屏 /
+ * 大字号下直接顶出卡片右边界 —— 也就是用户看到的"显示到外部"。
+ *
+ * ## 修法（三个条件缺一不可）
+ *   ① min-width: 0 —— **flex 子项能收缩的前提**。不加这条，
+ *      overflow:hidden 根本不会触发（这是 flexbox 最常见的误解）。
+ *   ② flex: 1 1 auto —— 允许伸缩，独占剩余空间。
+ *   ③ overflow/text-overflow/white-space 三件套 —— 真正画出省略号。
+ *
+ * 窄屏时优先牺牲 ID 的显示宽度，而不是把「复制」按钮挤到第二行独占：
+ * 按钮换行会让这行变成"标签 / ID / 按钮"三行竖排，比省略号难看得多，
+ * 而 ID 省略后完整值仍可长按复制。
+ */
+.fid-value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  letter-spacing: 2rpx;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 「复制」按钮不进 .btn-row（会被全局 flex:1 拉伸），单独定宽。
+   flex-shrink:0 是关键：窄屏时若允许它被压缩，按钮文字会先于 ID 被挤扁。 */
+.fid-copy {
+  flex: 0 0 auto;
+  width: 108rpx;
+  padding: 10rpx 0;
+}
+
+/* ---------------- 加好友三入口 ---------------- */
+
+.add-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.add-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 20rpx;
+  background: var(--card-2);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: 30rpx;
+  color: var(--ink);
+}
+
+.add-go {
+  flex: 0 0 auto;
+  width: 140rpx;
+}
+
+.add-more {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 20rpx;
+}
+
+.add-more .btn { flex: 1; }
+
+/* ---------------- 好友码（大图 + 保存到相册） ---------------- */
+
+/* 图片与保存按钮成组：qr-box 收拢为一个纵向块，视觉上是"一件事"。
+   为什么要独立成组而不是沿用 add-more：那两行是"入口并排"语义，
+   这里是"结果 + 动作"的主从关系，纵向排布才对。 */
+.qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 兜底：任何子项（含 widthFix 撑高的图片）都不许越出卡片（2026-09-30） */
+  overflow: hidden;
+  /* 二维码要在相册里被扫，必须留白：这里只约束左右，不裁上下 */
+  max-width: 100%;
+}
+
+.qr-img {
+  display: block;
+  width: 320rpx;
+  /* ⚠️ mode="widthFix" 的高度是**按图片原始比例**自动算的，
+     若图片异常（比例很扁/很长）或未来把 width 改成百分比，
+     撑出来的高度可能超出卡片 → 加 max-width/height:auto 收口。
+     border 让图片实际占 320+4rpx，不加 border-box 会挤到 324rpx 溢出。 */
+  max-width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  margin-top: 28rpx;
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+}
+
+/* 保存按钮与二维码同宽：等宽让"这张码 + 这个按钮"看起来是一套。 */
+.qr-actions {
+  width: 320rpx;
+  max-width: 100%;
+  margin-top: 20rpx;
+}
+
+/*
+ * 二维码下方的说明（2026-09-30）。
+ *
+ * 原实现只有 text-align:center，没有换行约束。长句在窄屏/大字号下会撑宽，
+ * 加上 .qr-box 现在有 overflow:hidden，被裁掉的正好是这句话的后半截
+ * （"…扫一扫或长按识别即可加你。"），用户看不到"长按"这个备选路径。
+ * line-height 1.6 是为了让折行后的行距不挤在一起。
+ */
+.qr-hint {
+  margin-top: 12rpx;
+  text-align: center;
+  max-width: 100%;
+  line-height: 1.6;
+  /* 允许在任意字符间断行：中文长句里没有空格，不设这个会整段溢出 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 失败原因说明单独成行（没有 qr-box 时也要有呼吸感）。 */
+.qr-note {
+  margin-top: 12rpx;
+  text-align: center;
+  max-width: 100%;
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ---------------- 好友周榜（双列） ---------------- */
+
+.lb-head {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 2rpx solid var(--line);
+}
+
+.lb-col-name { flex: 1; font-size: 22rpx; color: var(--ink-2); }
+.lb-col-num { flex: 0 0 120rpx; text-align: right; font-size: 22rpx; color: var(--ink-2); }
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+/* 自己那一行用左侧色条标记，不用背景色整行铺满（和 .stripe 同一语言）。 */
+.lb-me {
+  border-left: 8rpx solid var(--green);
+  padding-left: 12rpx;
+  margin-left: -20rpx;
+}
+
+.lb-rank {
+  flex: 0 0 52rpx;
+  font-size: 30rpx;
+  color: var(--ink-2);
+}
+
+.lb-who {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  overflow: hidden;
+}
+
+.lb-avatar {
+  flex: 0 0 auto;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: var(--card-2);
+}
+
+.lb-avatar-blank { border: 2rpx solid var(--line); box-sizing: border-box; }
+
+.lb-nick {
+  font-size: 28rpx;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-num {
+  flex: 0 0 120rpx;
+  text-align: right;
+  font-size: 30rpx;
+  color: var(--ink);
+}
+
+.lb-dim { color: var(--ink-2); }
+
+.lb-empty { padding: 24rpx 0; }
+.lb-foot { margin-top: 16rpx; }

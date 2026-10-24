@@ -370,27 +370,43 @@ function sedimentIndex(evs, retentionInfo, streakInfo, todayStr) {
  * 只统计有记录的词；无记录返回 zero 结构而不是 null，避免页面到处判空。
  */
 function pronunciation(records) {
-  const zero = { words: 0, attempts: 0, pass: 0, borderline: 0, fail: 0, unknown: 0, passRate: 0, worst: [] };
+  const zero = { words: 0, attempts: 0, pass: 0, borderline: 0, fail: 0, unknown: 0, na: 0, passRate: 0, worst: [] };
   if (!records || typeof records !== 'object') return zero;
 
-  let attempts = 0, pass = 0, borderline = 0, fail = 0, unknown = 0;
+  let attempts = 0, pass = 0, borderline = 0, fail = 0, unknown = 0, na = 0;
   const perWord = [];
   Object.keys(records).forEach(function (id) {
     const list = records[id];
     if (!Array.isArray(list) || !list.length) return;
-    let p = 0, f = 0, b = 0, u = 0;
+    let p = 0, f = 0, b = 0, u = 0, n = 0;
     list.forEach(function (r) {
-      attempts++;
       const band = r && r.band;
+      /**
+       * `na` = 期望词缺音素数据，**根本没法评**（见 pron-judge.js 的
+       * expected_no_phoneme 分支）。它不是"读错了"。
+       *
+       * 2026-09-30 修：原来 `na` 落进最后的 else，被当成 fail 计入 ——
+       * 于是学生在统计页看到「朗读读准率 0%」、那个词还进了「最需要练的
+       * 前 10」。他其实一次都没读错，那些词只是**评不了**。
+       * 把"无法评判"谎报成"读错了"，比不显示更糟：
+       * 它会让学生去反复练一个根本练不出结果的词，并以为自己语感有问题。
+       *
+       * 现在：`na` 单独计数，不进 passRate 的分母、也不算 trouble。
+       * ⚠️ 分母口径变了（少算 na），但这正是"读准率"的正确含义：
+       * **只在真的评过的次数里算通过率**。否则数据一多就必然被拉低。
+       */
+      if (band === 'na') { na++; n++; return; }   // 不计入 attempts
+      attempts++;
       if (band === 'pass') { pass++; p++; }
       else if (band === 'borderline') { borderline++; b++; }
       else if (band === 'unknown') { unknown++; u++; }
       else { fail++; f++; }
     });
-    perWord.push({ wordId: id, attempts: list.length, pass: p, fail: f, borderline: b, unknown: u });
+    perWord.push({ wordId: id, attempts: list.length, pass: p, fail: f, borderline: b, unknown: u, na: n });
   });
 
   // 最需要练的：读错、读不准、或"不会读"的次数多
+  // （na 不算 trouble —— 评不了的词练了也白练，列进来是误导）
   const worst = perWord
     .map(function (x) {
       x.trouble = x.fail + x.borderline + x.unknown;
@@ -407,6 +423,7 @@ function pronunciation(records) {
     borderline: borderline,
     fail: fail,
     unknown: unknown,
+    na: na,
     passRate: attempts > 0 ? Math.round((pass / attempts) * 100) : 0,
     worst: worst
   };
@@ -443,7 +460,52 @@ function analyze(cards, states, todayStr, opts) {
   };
 }
 
+/**
+ * 近 N 天的每日忘记率（遗忘统计的可视化数据源）。
+ * 数据来自每张卡的复习历史（history[].date/.q），q<3 记为忘记。
+ * 没有复习的天 rate 记 0（图上是断点前的 0 值，比留空诚实）。
+ */
+function dailyForget(cards, states, today, days) {
+  days = days || 14;
+  const byDate = {};
+  (cards || []).forEach(function (c) {
+    const st = states[c.id];
+    const hist = (st && st.history) || [];
+    hist.forEach(function (h) {
+      if (!h || !h.date) return;
+      const d = byDate[h.date] || (byDate[h.date] = { reviews: 0, forgot: 0 });
+      d.reviews++;
+      if (h.q < 3) d.forgot++;
+    });
+  });
+
+  const out = [];
+  const base = parseDate(today);
+  for (let i = days - 1; i >= 0; i--) {
+    const dt = new Date(base.getTime() - i * 86400000);
+    const key = formatDate(dt);
+    const d = byDate[key] || { reviews: 0, forgot: 0 };
+    out.push({
+      label: key.slice(5).replace('-', '/'),
+      reviews: d.reviews,
+      forgot: d.forgot,
+      rate: d.reviews > 0 ? Math.round((d.forgot / d.reviews) * 100) : 0
+    });
+  }
+  return out;
+}
+
+function parseDate(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || ''));
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date();
+}
+function formatDate(d) {
+  const p = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
 module.exports = {
+  dailyForget,
   analyze,
   // 单项（供测试与局部复用）
   events, dailyCounts, streak, activeRate, intervalGrowth,

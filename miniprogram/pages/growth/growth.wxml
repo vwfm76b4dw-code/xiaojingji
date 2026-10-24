@@ -1,0 +1,296 @@
+<view class="page {{themeClass}} page-fade" wx:if="{{ready}}">
+
+  <!-- 顶部：连胜 + 累计天数。两个数都放大 —— 累计天数**不因断签清零**，
+       这是断签挽回的关键：让他看到"我没白干"。 -->
+  <view class="card hero">
+    <view class="hero-row">
+      <view class="hero-cell">
+        <text class="hero-n t-num">{{streak}}</text>
+        <text class="hero-l">连续天数</text>
+      </view>
+      <view class="hero-div"></view>
+      <view class="hero-cell">
+        <text class="hero-n t-num">{{activeDays}}</text>
+        <text class="hero-l">累计学习</text>
+      </view>
+      <view class="hero-div"></view>
+      <view class="hero-cell">
+        <text class="hero-n t-num">{{best}}</text>
+        <text class="hero-l">最长连胜</text>
+      </view>
+    </view>
+
+    <view class="hero-say">{{say}}</view>
+
+    <view wx:if="{{bridged > 0}}" class="t-hint hero-note">
+      断掉的那几天用掉 {{bridged}} 张护身符，连胜保住了
+    </view>
+    <view wx:elif="{{atRisk}}" class="t-hint hero-note">
+      今天还没练 —— 到今晚 24 点才断，来得及
+    </view>
+
+    <!--
+      「这三个数是怎么算的」可展开说明（2026-09-30 用户原话「怎么这么随机」）。
+      为什么不在数字旁边堆注脚：大字部分必须干净（"连续天数 7"），
+      学生疑惑时点这一行，看到口径的解释；
+      默认收起 = 不打扰已经知道的人。
+      为什么不用 wx.showModal：modal 会脱离上下文，关掉就找不回；
+      展开收起的成本比"再点一次问号"低得多。
+    -->
+    <view class="hero-explain-toggle" bindtap="toggleHeroExplain" aria-role="button" aria-label="这三个数是怎么算的">
+      <text class="t-hint">这三个数是怎么算的？</text>
+      <text class="t-hint hero-caret {{heroExplainOpen ? 'open' : ''}}">›</text>
+    </view>
+    <view wx:if="{{heroExplainOpen}}" class="hero-explain-body">
+      <view class="t-hint explain-line">· <text class="explain-key">连续天数</text>：今天或昨天开始往前数，中间**任意一种**练习（复习/朗读/拼写） Doing 那天就算打卡；断签到今晚 24 点才算数（不凌晨归零）。</view>
+      <view class="t-hint explain-line">· <text class="explain-key">累计学习</text>：所有打过卡的天数加在一起（**断签不清零**）。</view>
+      <view class="t-hint explain-line">· <text class="explain-key">最长连胜</text>：历史上最长的一段连续打卡天数，用于解锁连胜护身符（每 7 天送一张）。</view>
+      <view class="t-hint explain-line">补签/护身符盖掉的天也算打卡。</view>
+    </view>
+  </view>
+
+  <!-- 「学习建议」（2026-09-30 用户原话「基于本地模型做一个小体量的分析，形成数据飞轮」）：
+       advisor 是**纯本地规则引擎，不接 LLM** —— 它的推荐词数/复习上限直接由下面这份
+       近 7 天的事实算出，每个推荐都带着一句"为什么是这个数"。 -->
+  <view class="card advice-card" wx:if="{{advice}}">
+    <view class="advice-head" bindtap="toggleAdvice" aria-role="button" aria-label="学习建议，点展开/收起">
+      <view class="section-label" style="margin: 0;">学习建议</view>
+      <text class="t-hint advice-caret {{adviceOpen ? 'open' : ''}}">›</text>
+    </view>
+
+    <!-- 收起态：一行说清"会推荐多少" -->
+    <view wx:if="{{!adviceOpen}}" class="t-hint" style="margin-top: 12rpx;">
+      今日建议：新词 <text class="t-num advice-num">{{advice.newWords}}</text>
+      个 · 复习上限 <text class="t-num advice-num">{{advice.reviewMax}}</text> 张
+      <text wx:if="{{advice.insufficientData}}">（先用默认值，学几天再调）</text>
+    </view>
+
+    <!-- 展开态：过去 7 天事实 + 为什么这么推荐 + 一键采用 -->
+    <block wx:else>
+      <view class="t-hint advice-summary">{{advice.summary || ''}}</view>
+
+      <view class="advice-facts">
+        <view class="fact">
+          <text class="t-num fact-n">{{advice.inputs.activeDays7}}</text>
+          <text class="t-hint fact-l">近 7 天学了几天</text>
+        </view>
+        <view class="fact">
+          <text class="t-num fact-n">{{advice.inputs.totalActions7}}</text>
+          <text class="t-hint fact-l">7 天动作总数</text>
+        </view>
+        <view class="fact">
+          <text class="t-num fact-n">{{advice.inputs.forget14 === null ? '—' : advice.inputs.forget14Pct + '%'}}</text>
+          <text class="t-hint fact-l">近 14 天忘记率</text>
+        </view>
+        <view class="fact">
+          <text class="t-num fact-n">{{advice.inputs.todayPlan}}</text>
+          <text class="t-hint fact-l">今天到期</text>
+        </view>
+      </view>
+
+      <view class="t-hint advice-reason">{{advice.reason}}</view>
+
+      <view class="advice-target">
+        <text class="t-hint">建议今天</text>
+        <text class="t-num advice-target-num">新词 {{advice.newWords}} · 复习上限 {{advice.reviewMax}}</text>
+      </view>
+
+      <view class="btn-row" wx:if="{{advice.adjusted}}">
+        <button class="btn primary small" bindtap="applyAdvice">采用这个建议</button>
+      </view>
+      <view wx:else class="t-hint" style="margin-top: 8rpx;">
+        当前设置已经与建议一致，不需要调整。
+      </view>
+
+      <view class="t-hint" style="margin-top: 12rpx;">
+        这个建议只在你本机算，不联网、不上传；它只是建议 —— 想自己定在「设置 → 学习量」里改。
+      </view>
+    </block>
+  </view>
+  <view class="card">
+    <view class="section-label">今日目标</view>
+    <view class="goal-row">
+      <text class="goal-num t-num">{{goal.done}}</text>
+      <text class="goal-of">/ {{goal.goal}} 张</text>
+      <text wx:if="{{goal.met}}" class="tag goal-tag">已达标</text>
+    </view>
+    <view class="bar">
+      <view class="bar-fill" style="transform: scaleX({{goal.percent / 100}});"></view>
+    </view>
+    <view class="btn-row">
+      <button class="btn primary" bindtap="goStudy">
+        {{goal.met ? '再练一组' : '去练 ' + goal.remain + ' 张'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 护身符：断签兜底。上限 2 张是刻意的（无限囤会让连胜失去真实性） -->
+  <view class="card">
+    <view class="section-label">护身符</view>
+    <view class="charm-row">
+      <view wx:for="{{[0,1]}}" wx:key="index"
+            class="charm {{index < charms.earned - charms.used ? 'on' : ''}}"></view>
+      <text class="charm-txt">持有 {{charms.available}} / {{charms.max}} 张</text>
+    </view>
+    <view class="t-hint charm-desc">
+      断签当天自动用掉一张，连胜不断。每连续 7 天送一张，也可以用积分换。
+    </view>
+    <view wx:if="{{charms.nextFreeAt > 0}}" class="t-hint charm-desc">
+      再连续 {{charms.nextFreeAt}} 天，送下一张
+    </view>
+    <view class="btn-row">
+      <button class="btn small" bindtap="buyCharm">兑换一张（{{charmPrice}} 积分）</button>
+    </view>
+  </view>
+
+  <!-- 检查点：过了就发积分。掌握里程碑与连胜里程碑两条线并行。 -->
+  <view class="card">
+    <view class="section-label">检查点 {{checkpoints.passedCount}} / {{checkpoints.total}}</view>
+    <view wx:if="{{checkpoints.next}}" class="cp-next">
+      <view class="cp-next-top">
+        <text class="cp-next-name">下一个：{{checkpoints.next.name}}</text>
+        <text class="tag cp-reward">+{{checkpoints.next.reward}}</text>
+      </view>
+      <view class="bar">
+        <view class="bar-fill" style="transform: scaleX({{checkpoints.next.progress}});"></view>
+      </view>
+    </view>
+    <view class="cp-list">
+      <view wx:for="{{checkpoints.list}}" wx:key="id"
+            class="cp-item {{item.passed ? 'on' : ''}}"
+            data-i="{{index}}" bindtap="tapCheckpoint"
+            aria-role="button" aria-label="{{item.name}}，{{item.passed ? '已过' : '未过'}}">
+        <text class="cp-mark">{{item.passed ? '✓' : '○'}}</text>
+        <text class="cp-name">{{item.name}}</text>
+        <text class="cp-pt">+{{item.reward}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 单元测验：主动验收。与上面的检查点**互补** ——
+       检查点是被动里程碑（掌握到 25 个词自动达成），
+       测验是主动的"我点进去答一遍"。 -->
+  <view class="card" bindtap="goQuiz" aria-role="button" aria-label="去单元测验">
+    <view class="section-label">单元测验</view>
+    <view class="qz-row">
+      <text class="qz-num t-num">{{quizPassed}}</text>
+      <text class="qz-of">/ {{quizTotal}} 个单元已通过</text>
+      <text class="qz-go">去考 ›</text>
+    </view>
+    <view class="t-hint qz-desc">
+      单元的词都复习过一遍就能考。答对 80% 通过，首次通过得 50 积分，重考不扣分。
+    </view>
+  </view>
+
+  <!-- 积分：有用途才叫积分。这里把用途直接摆出来，不藏在说明弹窗里。 -->
+  <view class="card">
+    <view class="section-label">积分</view>
+    <view class="pt-row">
+      <text class="pt-num t-num">{{points.total}}</text>
+      <text class="pt-bal">可用 {{balance}}</text>
+    </view>
+    <view class="title-row" bindtap="explainPoints" aria-role="button" aria-label="积分说明">
+      <text class="title-name">{{title.name}}</text>
+      <text wx:if="{{title.nextName}}" class="t-hint title-next">
+        再 {{title.toNext}} 分升「{{title.nextName}}」
+      </text>
+    </view>
+    <view wx:if="{{title.nextName}}" class="bar">
+      <view class="bar-fill" style="transform: scaleX({{title.percent / 100}});"></view>
+    </view>
+
+    <view class="spend-row">
+      <button class="btn small" bindtap="buyExtraBatch" disabled="{{extraBoughtToday}}">
+        {{extraBoughtToday ? '今天已解锁' : '再练一组（' + extraBatchPrice + '）'}}
+      </button>
+      <button class="btn small" bindtap="explainPoints">积分怎么来</button>
+    </view>
+  </view>
+
+  <!-- 进步榜：本周 vs 上周。只显示前 3 + 自己，不显示完整名单。 -->
+  <view class="card">
+    <view class="section-label">进步榜</view>
+
+    <block wx:if="{{!rankOn}}">
+      <view class="t-hint rank-intro">
+        比的是「比上周多练了多少」，不是谁分高。人少也能拿第一 ——
+        刚来的同学上周是 0，练一天就进步了。
+      </view>
+      <view class="t-hint rank-privacy">
+        要参加的话，会上传：昵称、本周练习量、进步幅度、连胜天数、已掌握词数。
+        不传姓名、不传学了哪些词。随时可以退出，退出即删除。
+      </view>
+      <view class="btn-row">
+        <button class="btn primary" bindtap="toggleRank">参加排行榜</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="rank-me" bindtap="editNick" aria-role="button" aria-label="修改榜单昵称">
+        <text class="rank-me-nick">{{rankNick}}</text>
+        <text class="t-hint">点这里改名</text>
+      </view>
+
+      <view wx:if="{{rankErr}}" class="t-hint rank-err">{{rankErr}}</view>
+
+      <view wx:if="{{rankList.length === 0 && !rankErr}}" class="t-hint rank-empty">
+        榜上还没有人。你是第一个。
+      </view>
+
+      <!-- 名次样式不用动态类名（rank-no-{{...}}）：静态门禁解析不了动态类名，
+           会报"未定义的类名"，而且动态拼接本来就查不出问题。
+           这里榜单只有前 3 名，所以整组统一强调即可。 -->
+      <view class="rank-list">
+        <view wx:for="{{rankList}}" wx:key="rank" class="rank-item">
+          <text class="rank-no">{{item.rank}}</text>
+          <text class="rank-nick">{{item.nick}}</text>
+          <text class="rank-prog {{item.progress > 0 ? 'up' : ''}}">
+            {{item.progress > 0 ? '+' : ''}}{{item.progress}}
+          </text>
+        </view>
+      </view>
+
+      <view wx:if="{{rankMe}}" class="rank-item rank-self">
+        <text class="rank-no">{{rankMe.rank}}</text>
+        <text class="rank-nick">{{rankMe.nick}}（我）</text>
+        <text class="rank-prog {{rankMe.progress > 0 ? 'up' : ''}}">
+          {{rankMe.progress > 0 ? '+' : ''}}{{rankMe.progress}}
+        </text>
+      </view>
+
+      <view class="t-hint rank-foot">
+        共 {{rankTotal}} 人在榜 · 本周相对上周的进步幅度
+      </view>
+
+      <view class="spend-row">
+        <button class="btn small" bindtap="refreshRank">刷新</button>
+        <button class="btn danger-line small" bindtap="toggleRank">退出排行榜</button>
+      </view>
+    </block>
+  </view>
+
+  <!-- 好友 & 宠物入口：社交域页面在 pack-social 分包（app.json 注册），主包体积不受影响。
+       放在进步榜旁边：两者都是"和别人比/养点东西"的动机系统，使用场景相邻。
+
+       「我的电子小鲸」入口已下线（2026-09-30，用户决定暂砍宠物，下个大版本再接）。
+       全仓一共三个宠物入口，另两个在 pages/profile 与 pack-social/pages/friends，
+       三处必须一起摘 —— 只摘一处的话，学生从别的页面点进去照样进得去，
+       "下线"就成了假动作。growth.js 的 goPet() 函数本体保留，方便下版接回。 -->
+  <view class="card">
+    <view class="section-label">好友与小鲸</view>
+    <view class="social-row" bindtap="goFriends" aria-role="button" aria-label="去好友页">
+      <text class="social-name">好友周榜</text>
+      <text class="social-go">去看看 ›</text>
+    </view>
+    <view class="t-hint social-desc">和同学比一比本周积分。</view>
+  </view>
+
+  <view class="btn-row foot-row">
+    <button class="btn small" bindtap="goSpelling">练拼写</button>
+    <button class="btn small" bindtap="goStats">看统计</button>
+  </view>
+
+  <view class="foot-note">
+    学习数据只存本机 · 参加排行榜才会把上面那几项传到云端
+  </view>
+</view>

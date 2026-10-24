@@ -1,4 +1,23 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
+  <!--
+    启动资源准备小条（utils/boot-prep.js 的 UI 出口）。
+    首启/清单更新后把 模板 + 294 个发音 + 语义模型 在后台备齐，这个小条
+    只负责"让学生知道在准备什么、到哪一步了"：一行状态 + 一根进度条。
+    为什么不用弹窗/toast：下载要几十秒，toast 三秒就没了；弹窗会打断学习 ——
+    一条可收起的细条是"不打断学习"约束下唯一的两全形态。
+    出现/消失条件见 deck.js syncPrepBar 的注释（verify-boot.js 有断言）。
+  -->
+  <view wx:if="{{prepBar}}" class="card stripe prep-bar" aria-role="button"
+        aria-label="正在准备学习资源，点按收起">
+    <view class="prep-row" bindtap="dismissPrep">
+      <text class="prep-text">正在准备学习资源 {{prepBar.done}}/{{prepBar.total}} · {{prepBar.stageLabel}}</text>
+      <text class="prep-x">收起</text>
+    </view>
+    <view class="bar" style="margin-top: 12rpx;">
+      <view class="bar-fill" style="transform: scaleX({{prepBar.percent / 100}});"></view>
+    </view>
+  </view>
+
   <!-- 搜索：卡片多了之后必需（500 张时靠翻列表找不到） -->
   <view class="search">
     <input class="search-input" placeholder="搜单词：词 / 释义 / 钩子 / 来源"
@@ -6,6 +25,8 @@
            bindinput="onSearchInput" bindconfirm="doSearch" confirm-type="search" />
     <view class="chip" bindtap="doSearch">搜</view>
     <view wx:if="{{searching}}" class="chip" bindtap="clearSearch">清空</view>
+    <!-- 设置常驻入口（用户点名）：顶部任何时刻可见，不用滚到底部找 -->
+    <view class="chip settings-chip" bindtap="goSettings" aria-role="button" aria-label="打开设置">设置</view>
   </view>
 
   <!-- 搜索结果：直接给全量命中，不做分页（本地搜索够快） -->
@@ -27,7 +48,187 @@
     </view>
   </block>
 
-  <!-- 错题本入口：只在有内容时出现 -->
+  <!--
+    总览：一眼看到"我到哪了"。
+    统计区改用原型库的不等宽条带（stat-strip）：已掌握是 hero 格（大 + 绿），
+    其余是背景信息 —— 四个数字原本等大等重，但它们对学生的重要性并不相等。
+  -->
+  <view class="card stripe head rise-soft">
+    <view class="head-top">
+      <view>
+        <view class="t-title">我的单词本</view>
+        <view class="t-hint" style="margin-top: 6rpx;">{{today}}</view>
+      </view>
+      <!-- 积分印章：点一下看积分说明；称号随里程碑升级 -->
+      <view class="stamp-points" bindtap="explainPoints" aria-role="button" aria-label="积分 {{points}}，点看说明">
+        <text class="stamp-n t-num">{{points}}</text>
+        <text class="stamp-l">{{title}}</text>
+      </view>
+    </view>
+
+    <!--
+      连胜条：点进成长看板。
+      为什么放在这里（首页最显眼的位置、印章正下方）：连胜是留存的第一杠杆 ——
+      用户必须**一打开就看见**，才会在意断不断。藏进二级页的连胜等于没有。
+      累计天数一并显示：它不因断签清零，是断签后还愿意回来的关键数字。
+    -->
+    <view class="streak-bar" bindtap="goGrowth" aria-role="button" aria-label="成长看板">
+      <text class="streak-n t-num">{{streakDays}}</text>
+      <text class="streak-l">{{streakLabel}}</text>
+      <text class="streak-total">累计 {{activeDays}} 天</text>
+      <text class="streak-go">看板 ›</text>
+    </view>
+
+    <view class="bar" style="margin-top: 28rpx;">
+      <view class="bar-fill" style="transform: scaleX({{overall.percent / 100}});"></view>
+    </view>
+    <view class="stat-strip">
+      <view class="stat-cell hero">
+        <view class="n t-num">{{overall.percent}}%</view>
+        <view class="l">已掌握</view>
+      </view>
+      <view class="stat-cell">
+        <view class="n t-num">{{overall.learning}}</view>
+        <view class="l">复习中</view>
+      </view>
+      <view class="stat-cell">
+        <view class="n t-num">{{overall.fresh}}</view>
+        <view class="l">还没学</view>
+      </view>
+      <view class="stat-cell">
+        <view class="n t-num">{{overall.total}}</view>
+        <view class="l">总数</view>
+      </view>
+    </view>
+  </view>
+
+  <!--
+    今日任务。
+    2026-09-18 改：数字从"词库里所有到期的（229）"改成"今日计划张数（10）"。
+    为什么：229 那个数字对初中生是劝退的（"今天做不完"），而系统实际只给 10 张。
+    现在这个数字与复习页实际打开的完全一致，学生看到的就是今天要做的量。
+  -->
+  <block wx:if="{{overall.total > 0}}">
+  <view class="section-label" style="margin-top: 32rpx;">今日任务</view>
+  <view class="card stripe {{dueCount > 0 ? 'yellow' : 'gray'}} due rise-soft" style="--rise-delay: 60ms;">
+    <view class="due-row">
+      <view>
+        <view class="due-num t-num">{{dueCount}}</view>
+        <view class="t-sub">{{dueCount > 0 ? '今天要练的' : '今天的练完了'}}</view>
+      </view>
+      <button class="btn primary" style="min-width: 240rpx;" bindtap="goStudy" disabled="{{dueCount === 0}}">
+        {{dueCount > 0 ? '开始' : '已完成'}}
+        <text wx:if="{{dueCount > 0}}" class="btn-sub">约 {{dueMins}} 分钟</text>
+      </button>
+    </view>
+
+    <!--
+      说清这 N 张是怎么来的（新词 / 复习各几张）—— 比一个孤零零的数字有用。
+      前面那截是**当前范围**（学生选过单元时才有）：没有它，选了「7A Starter」
+      之后这个数字为什么不是全库那个数，学生无从得知（数字与范围打架）。
+      只加在既有这行文字的开头，不新增卡片、不动布局。
+    -->
+    <view wx:if="{{dueCount > 0}}" class="t-hint" style="margin-top: 16rpx;">
+      {{scopeLabel ? scopeLabel + ' · ' : ''}}新词 {{todayNew}} 个 · 复习 {{todayReview}} 个
+    </view>
+
+    <!-- 今日进度条：一天一块，学完今天这块今天就赢了（不用抬头看一辈子的百分比） -->
+    <view style="margin-top: 20rpx;">
+      <view class="bar"><view class="bar-fill" style="transform: scaleX({{todayPlan > 0 ? todayDone / todayPlan : 0}});"></view></view>
+      <view class="t-hint" style="margin-top: 8rpx;">今日进度 {{todayDone}}/{{todayPlan}}</view>
+    </view>
+
+    <!-- 词库总量用副文案说，不用主数字（它是背景信息，不是今天的任务） -->
+    <view wx:if="{{dueCount > 0 && freshTotal > 0}}" class="t-hint" style="margin-top: 8rpx;">
+      词库里还有 {{freshTotal}} 个词没学
+    </view>
+
+    <!-- 下一批到期日也按当前范围算（见 deck.js refresh 的 nextDue），同样带上范围前缀 -->
+    <view wx:if="{{dueCount === 0 && nextDue}}" class="t-hint" style="margin-top: 16rpx;">
+      {{scopeLabel ? scopeLabel + ' · ' : ''}}下一批到期：{{nextDue}}
+    </view>
+  </view>
+  </block>
+
+  <!--
+    按单元练（2026-09-18 新增）。
+    学生的真实场景是"明天听写 Unit 2，我只背这一单元"——这个筛选原来只藏在
+    复习页的筛选面板里，学生打开首页根本看不到，等于没有入口。
+    只在单元数 > 1 时显示：只有一个单元时筛选是装饰品（与复习页筛选面板同一口径）。
+
+    交互元素的口径与复习页筛选面板一致（chip/tag/t-hint 都是同一套 token），
+    但这里刻意用**竖排整行**而不是 chip 云：首页宽度固定，7 个单元名长短不一
+    （"7A Starter" 与 "7A Unit 2"），chip 会自动换行成参差不齐的几行 ——
+    正是"界面错位"的典型成因。整行列表每行左侧名字、右侧数字，长短名字都不会互相挤压。
+  -->
+  <block wx:if="{{!searching && units.length > 1}}">
+    <view class="section-label" style="margin-top: 32rpx;">按单元练</view>
+    <view class="card stripe unit-card">
+      <view class="unit-hint t-sub">明天听写哪一单元，就只练那一单元。</view>
+      <!--
+        整行可点。data-scope 与 practiceUnit 的分支、与右侧数字三者同源（都看 item.due）：
+        due > 0 → 'due'，点进去就是今天到期的那 N 张；
+        due = 0 → 'all'，点进去是整单元（今天没到期的词也要能练，见下方注释）。
+      -->
+      <view wx:for="{{units}}" wx:key="unit"
+            class="unit-row" data-unit="{{item.unit}}"
+            data-scope="{{item.due > 0 ? 'due' : 'all'}}" bindtap="practiceUnit">
+        <view class="unit-main">
+          <text class="unit-name">{{item.unit}}</text>
+          <text class="unit-prog t-hint t-num">已学 {{item.learned}}/{{item.count}}</text>
+          <!--
+            due = 0 时补一句"点进去会怎样"。
+            原来这一格写的是「已练完」—— 那是**死路话术**：词都掌握了、今天确实不到期，
+            但学生明天要听写 Unit 2，此刻最需要的恰恰是整单元过一遍。
+            所以不写"练完了"，改成如实说清这次的范围。
+          -->
+          <text wx:if="{{item.due === 0}}" class="unit-sub t-hint">今天没有到期的 · 整单元过一遍</text>
+        </view>
+        <!--
+          数字必须等于点进去的队列长度（首页不能和复习页打架，这是本项目已立的规矩）：
+          due > 0 → 显示今天到期张数，点进去 scope 'due' 就是这 N 张；
+          due = 0 → 点进去 scope 'all' 是整单元，所以显示该单元词总数「共 N 个」。
+        -->
+        <text class="tag {{item.due > 0 ? 'green' : ''}}">{{item.due > 0 ? item.due + ' 个' : '共 ' + item.count + ' 个'}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 单词拼写入口（2026-09-19 新功能分区）：听写场景的产出型练习 -->
+  <view class="card stripe spell-entry" bindtap="goSpelling">
+    <view class="item-top">
+      <text class="item-prompt">单词拼写</text>
+      <text class="tag yellow">产出练习</text>
+    </view>
+    <view class="t-hint" style="margin-top: 10rpx;">
+      看中文写英文 · 逐字标出错在哪 · 错因自动归类
+    </view>
+  </view>
+
+  <!--
+    问词入口（2026-09-25 底部栏整理）：问词从 tabBar 撤下后，这里是它的主入口
+    （「我的」页菜单里另有收拢入口）。
+    为什么主入口放词库页而不是只收进"我的"：遇到生词马上查是高频动作，
+    绕道"我的"会把两步变四步 —— 高频功能必须一步可达。
+    样式沿用上面「单词拼写」入口卡的同款结构（card stripe + item-top + t-hint）。
+  -->
+  <view class="card stripe ask-entry" bindtap="goAsk">
+    <view class="item-top">
+      <text class="item-prompt">问词</text>
+      <text class="tag">随查随学</text>
+    </view>
+    <view class="t-hint" style="margin-top: 10rpx;">
+      打生词、写句子问它 · 只用课本词回答 · 来源词可点听发音
+    </view>
+  </view>
+
+  <!-- 今日一句：按日期轮换的学习名言（正反馈，不用恐吓式警句） -->
+  <view class="card quote-card" style="margin-top: 24rpx;">
+    <view class="quote-text">{{quote.zh || quote.en}}</view>
+    <view class="quote-src t-hint">—— {{quote.src}}</view>
+  </view>
+
+  <!-- 错题本入口：排在按单元练之后 —— 它是"今天任务"的补充，不该抢总览的戏 -->
   <view wx:if="{{!searching && weakCount > 0}}" class="card stripe red weak-entry" bindtap="goWeakPractice">
     <view class="item-top">
       <text class="item-prompt">错题本</text>
@@ -38,76 +239,31 @@
     </view>
   </view>
 
-  <!-- 总览：一眼看到"我到哪了" -->
-  <view class="card stripe head">
-    <view class="head-top">
-      <view>
-        <view class="t-title">我的单词本</view>
-        <view class="t-hint" style="margin-top: 6rpx;">{{today}}</view>
-      </view>
-      <view class="points">
-        <view class="points-num t-num">{{points}}</view>
-        <view class="t-hint">积分</view>
-      </view>
-    </view>
-
-    <view class="bar" style="margin-top: 28rpx;">
-      <view class="bar-fill" style="transform: scaleX({{overall.percent / 100}});"></view>
-    </view>
-    <view class="stat-grid">
-      <view class="stat">
-        <view class="stat-num hl t-num">{{overall.mastered}}</view>
-        <view class="t-hint">已掌握</view>
-      </view>
-      <view class="stat">
-        <view class="stat-num t-num">{{overall.learning}}</view>
-        <view class="t-hint">复习中</view>
-      </view>
-      <view class="stat">
-        <view class="stat-num t-num">{{overall.fresh}}</view>
-        <view class="t-hint">还没学</view>
-      </view>
-      <view class="stat">
-        <view class="stat-num t-num">{{overall.total}}</view>
-        <view class="t-hint">词库总数</view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 今日任务 -->
-  <view class="card stripe {{dueCount > 0 ? 'yellow' : 'gray'}} due">
-    <view class="due-row">
-      <view>
-        <view class="due-num t-num">{{dueCount}}</view>
-        <view class="t-sub">{{dueCount > 0 ? '个待复习' : '今天已经复习完'}}</view>
-      </view>
-      <button class="btn primary{{dueCount > 0 ? '' : ''}}" style="min-width: 220rpx;" bindtap="goStudy" disabled="{{dueCount === 0}}">
-        {{dueCount > 0 ? '开始复习' : '都复习完了'}}
-      </button>
-    </view>
-    <view wx:if="{{dueCount === 0 && nextDue}}" class="t-hint" style="margin-top: 16rpx;">
-      下一批到期：{{nextDue}}
-    </view>
-  </view>
-
-  <!-- 内容管理入口：自己加词 / 导教材 / 调设置 -->
+  <!--
+    内容管理入口。
+    2026-09-19 重排：原来是三个等宽方块（注释声称"同层级并列"）—— 但对学生，
+    教材导入才是主路径（一次带进整册），手动添加是补充，设置是低频。
+    原型库的分区纪律 + 反 AI 味红线（❌ 三卡等宽阵列）都要求主次分明：
+    教材导入用主视觉（绿底），添加词描边，设置收窄放右侧。
+  -->
+  <view class="section-label" style="margin-top: 32rpx;">词库管理</view>
   <view class="tools">
+    <view class="tool wide primary-tool" bindtap="goCurriculum">
+      <view class="tool-t">教材导入</view>
+      <view class="tool-s">20 册教材 · 按单元批量</view>
+    </view>
     <view class="tool" bindtap="goAdd">
       <view class="tool-t">＋ 添加词</view>
-      <view class="tool-s">手输 / 粘贴 / AI 识别</view>
+      <view class="tool-s">手输 / 粘贴 / AI</view>
     </view>
-    <view class="tool" bindtap="goCurriculum">
-      <view class="tool-t">教材导入</view>
-      <view class="tool-s">按单元批量</view>
-    </view>
-    <view class="tool" bindtap="goSettings">
+    <view class="tool slim" bindtap="goSettings">
       <view class="tool-t">设置</view>
-      <view class="tool-s">每日量 · 朗读</view>
+      <view class="tool-s">每日量</view>
     </view>
   </view>
 
   <!-- 学科列表 -->
-  <view class="section-label" style="margin-top: 32rpx;">按学科</view>
+  <view wx:if="{{subjects.length > 0}}" class="section-label" style="margin-top: 32rpx;">按学科</view>
 
   <view wx:for="{{subjects}}" wx:key="subject" class="subj" data-subject="{{item.subject}}" bindtap="toggleSubject">
     <view class="card stripe {{item.dueToday > 0 ? 'yellow' : ''}} subj-card">
@@ -146,9 +302,21 @@
     </view>
   </block>
 
+  <!--
+    词库空态（2026-09-19 补出路）。
+    原来只写"用上面的「教材导入」…"—— 而空态自己一个按钮都没有，
+    用户得自己往上找那一排入口。全项目只有这一处"告诉你怎么做却不给入口"
+    （card 页空态有「回词库」、朗读页完成态有「去复习」）。
+    两个按钮都指向**已存在**的 handler（goCurriculum / goAdd，见 deck.js），不新增逻辑；
+    文案跟着改掉"往上看"的说法 —— 入口就在眼前，不该再让人抬头找。
+  -->
   <view wx:if="{{subjects.length === 0}}" class="empty">
     <view class="empty-title">词库是空的</view>
-    <view class="empty-sub">用上面的「教材导入」一次带进整册单词，或「添加词」手动录入。</view>
+    <view class="empty-sub">一次带进整册教材单词，或手动录入几个词。</view>
+    <view class="btn-row" style="margin-top: 40rpx;">
+      <button class="btn primary" bindtap="goCurriculum">教材导入</button>
+      <button class="btn ghost" bindtap="goAdd">添加词</button>
+    </view>
   </view>
 
   <view class="foot">

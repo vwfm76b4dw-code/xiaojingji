@@ -1,0 +1,633 @@
+{
+ "book": "外研版小学英语六年级下册（三年级起点）",
+ "grade": "g6",
+ "count": 104,
+ "_source": "https://yyld.51jiaoxi.com/liuxia/wybsq_danci.html（51教习网英语朗读宝·外研版三起同步词表，按 Module 分组）；与新东方在线词书 tag_1838 交叉核对，重合 90% 以上",
+ "_confidence": "high",
+ "words": [
+  {
+   "word": "look",
+   "meaning": "看；瞧；看起来",
+   "unit": "6A Module 1",
+   "mnemonic": "看：睁大眼睛瞧一瞧"
+  },
+  {
+   "word": "cashier",
+   "meaning": "收银员",
+   "unit": "6A Module 1",
+   "mnemonic": "收银员：超市结账扫码的人"
+  },
+  {
+   "word": "cola",
+   "meaning": "可乐",
+   "unit": "6A Module 1",
+   "mnemonic": "可乐：冒气泡的黑色汽水"
+  },
+  {
+   "word": "dollar",
+   "meaning": "元（美国、加拿大等国的货币单位），美元",
+   "unit": "6A Module 1",
+   "mnemonic": "美元：美国的钱币单位"
+  },
+  {
+   "word": "cent",
+   "meaning": "分；分币；美分",
+   "unit": "6A Module 1",
+   "mnemonic": "分（货币）：一美元等于一百分"
+  },
+  {
+   "word": "enjoy",
+   "meaning": "享受……乐趣；喜爱",
+   "unit": "6A Module 1",
+   "mnemonic": "享受：玩得开心乐在其中"
+  },
+  {
+   "word": "careful",
+   "meaning": "小心；谨慎；小心的；仔细的，认真的",
+   "unit": "6A Module 1",
+   "mnemonic": "小心的：端着满满一杯水慢慢走"
+  },
+  {
+   "word": "Be careful",
+   "meaning": "当心!",
+   "unit": "6A Module 1",
+   "mnemonic": "小心：当心脚下有水坑"
+  },
+  {
+   "word": "later",
+   "meaning": "后来，以后",
+   "unit": "6A Module 2",
+   "mnemonic": "稍后：过一会儿再见面"
+  },
+  {
+   "word": "to go",
+   "meaning": "剩余",
+   "unit": "6A Module 2",
+   "mnemonic": "带走（外带）：打包带走吃"
+  },
+  {
+   "word": "duck",
+   "meaning": "鸭子",
+   "unit": "6A Module 2",
+   "mnemonic": "鸭子：嘎嘎叫摇摆走路"
+  },
+  {
+   "word": "pond",
+   "meaning": "水池，池塘",
+   "unit": "6A Module 2",
+   "mnemonic": "池塘：荷叶浮在水面上"
+  },
+  {
+   "word": "cloud",
+   "meaning": "云；云朵",
+   "unit": "6A Module 2",
+   "mnemonic": "云：天上一朵朵棉花糖"
+  },
+  {
+   "word": "dry",
+   "meaning": "干的；干燥的",
+   "unit": "6A Module 2",
+   "mnemonic": "干的：晒过的衣服干干的"
+  },
+  {
+   "word": "like",
+   "meaning": "像……那样；像；喜欢，喜爱",
+   "unit": "6A Module 2",
+   "mnemonic": "喜欢：最爱吃的就是它"
+  },
+  {
+   "word": "look like",
+   "meaning": "看来好像；看起来像",
+   "unit": "6A Module 2",
+   "mnemonic": "看起来像：长得真像妈妈"
+  },
+  {
+   "word": "stay",
+   "meaning": "保持",
+   "unit": "6A Module 2",
+   "mnemonic": "停留：待在原地别动"
+  },
+  {
+   "word": "shine",
+   "meaning": "（太阳）发光，照耀",
+   "unit": "6A Module 3",
+   "mnemonic": "照耀：太阳照亮大地"
+  },
+  {
+   "word": "cry",
+   "meaning": "哭",
+   "unit": "6A Module 3",
+   "mnemonic": "哭：眼泪吧嗒吧嗒掉"
+  },
+  {
+   "word": "everyone",
+   "meaning": "每人；人人；所有人",
+   "unit": "6A Module 3",
+   "mnemonic": "每个人：every（每）+ one（人）→ 全体"
+  },
+  {
+   "word": "just",
+   "meaning": "就，且请",
+   "unit": "6A Module 3",
+   "mnemonic": "刚刚；正好：刚到就开会"
+  },
+  {
+   "word": "cow",
+   "meaning": "母牛；奶牛",
+   "unit": "6A Module 3",
+   "mnemonic": "奶牛：哞哞叫挤牛奶"
+  },
+  {
+   "word": "blow",
+   "meaning": "吹，刮",
+   "unit": "6A Module 3",
+   "mnemonic": "吹：吹蜡烛一口气全灭了"
+  },
+  {
+   "word": "rabbit",
+   "meaning": "兔；野兔；家兔",
+   "unit": "6A Module 3",
+   "mnemonic": "兔子：红眼睛长耳朵蹦蹦跳"
+  },
+  {
+   "word": "fly away",
+   "meaning": "飞走",
+   "unit": "6A Module 3",
+   "mnemonic": "飞走：气球脱手飘远了"
+  },
+  {
+   "word": "balloon",
+   "meaning": "气球；热气球",
+   "unit": "6A Module 4",
+   "mnemonic": "气球：ball（球）+ oon（飘）→ 会飘的球"
+  },
+  {
+   "word": "stairs",
+   "meaning": "（常复）楼梯",
+   "unit": "6A Module 4",
+   "mnemonic": "楼梯：一层一层往上走"
+  },
+  {
+   "word": "mess",
+   "meaning": "肮脏；凌乱；杂乱；不整洁",
+   "unit": "6A Module 4",
+   "mnemonic": "凌乱：玩具撒了一地"
+  },
+  {
+   "word": "time",
+   "meaning": "次，回",
+   "unit": "6A Module 5",
+   "mnemonic": "时间：几点了看时钟"
+  },
+  {
+   "word": "bark",
+   "meaning": "（狗）吠叫",
+   "unit": "6A Module 5",
+   "mnemonic": "狗叫：汪汪声就叫 bark，狗开口了"
+  },
+  {
+   "word": "loudly",
+   "meaning": "大声地",
+   "unit": "6A Module 5",
+   "mnemonic": "大声地：loud 加 ly 喊出来"
+  },
+  {
+   "word": "nothing",
+   "meaning": "没有什么；无关紧要的东西；没有一件东西",
+   "unit": "6A Module 5",
+   "mnemonic": "没有什么：口袋里空空的"
+  },
+  {
+   "word": "play",
+   "meaning": "演奏，弹奏（音乐）",
+   "unit": "6A Module 5",
+   "mnemonic": "玩；踢（球）：下课一起玩游戏"
+  },
+  {
+   "word": "third",
+   "meaning": "第三（个）",
+   "unit": "6A Module 5",
+   "mnemonic": "第三：第一名后两名"
+  },
+  {
+   "word": "home",
+   "meaning": "回家",
+   "unit": "6A Module 6",
+   "mnemonic": "家：放学最想回的地方"
+  },
+  {
+   "word": "got",
+   "meaning": "（get的过去式）得到",
+   "unit": "6A Module 6",
+   "mnemonic": "得到（get 过去式）：已经拿到了"
+  },
+  {
+   "word": "space",
+   "meaning": "太空；空间，空地；（用于特定目的的）处所，场所，空位",
+   "unit": "6A Module 6",
+   "mnemonic": "太空：火箭飞向的宇宙"
+  },
+  {
+   "word": "interested",
+   "meaning": "感兴趣的",
+   "unit": "6A Module 6",
+   "mnemonic": "感兴趣的：眼中有光想探究"
+  },
+  {
+   "word": "spaceship",
+   "meaning": "宇宙飞船",
+   "unit": "6A Module 6",
+   "mnemonic": "宇宙飞船：space（太空）+ ship（船）"
+  },
+  {
+   "word": "finish",
+   "meaning": "完成；结束；做好",
+   "unit": "6A Module 6",
+   "mnemonic": "完成：最后一笔写完收工"
+  },
+  {
+   "word": "decide",
+   "meaning": "决定",
+   "unit": "6A Module 6",
+   "mnemonic": "决定：拿定主意不再改"
+  },
+  {
+   "word": "paper",
+   "meaning": "纸，纸张",
+   "unit": "6A Module 6",
+   "mnemonic": "纸：折纸鹤的白纸"
+  },
+  {
+   "word": "brought",
+   "meaning": "（bring的过去式）带来",
+   "unit": "6A Module 6",
+   "mnemonic": "带来（bring 过去式）：把礼物带过来了"
+  },
+  {
+   "word": "model",
+   "meaning": "模特；模型；模范，榜样",
+   "unit": "6A Module 6",
+   "mnemonic": "模型：飞机模型摆书架"
+  },
+  {
+   "word": "taikonaut",
+   "meaning": "（中国的）太空人，宇航员",
+   "unit": "6A Module 6",
+   "mnemonic": "中国航天员：源自「太空」拼音的中国专属词"
+  },
+  {
+   "word": "first",
+   "meaning": "第一的",
+   "unit": "6A Module 6",
+   "mnemonic": "第一：跑在最前面的那个"
+  },
+  {
+   "word": "national",
+   "meaning": "国家的；国内的",
+   "unit": "6A Module 6",
+   "mnemonic": "国家的：nation（国家）+ al"
+  },
+  {
+   "word": "seed",
+   "meaning": "种子",
+   "unit": "6A Module 6",
+   "mnemonic": "种子：埋进土里会发芽"
+  },
+  {
+   "word": "spent",
+   "meaning": "（spend的过去式）度过",
+   "unit": "6A Module 7",
+   "mnemonic": "度过（spend 过去式）：假期怎么过的"
+  },
+  {
+   "word": "about",
+   "meaning": "大约；左右",
+   "unit": "6A Module 7",
+   "mnemonic": "大约：约数不精确，说 about 十点左右"
+  },
+  {
+   "word": "flew",
+   "meaning": "（fly的过去式）飞，飞行",
+   "unit": "6A Module 7",
+   "mnemonic": "飞（fly 过去式）：小鸟飞过去了"
+  },
+  {
+   "word": "October",
+   "meaning": "十月",
+   "unit": "6A Module 7",
+   "mnemonic": "十月：一年的第十个月"
+  },
+  {
+   "word": "video",
+   "meaning": "录像；录像带",
+   "unit": "6A Module 7",
+   "mnemonic": "视频：屏幕里播放的影像"
+  },
+  {
+   "word": "proud",
+   "meaning": "自豪的；骄傲的",
+   "unit": "6A Module 7",
+   "mnemonic": "自豪的：得了满分心里美"
+  },
+  {
+   "word": "born",
+   "meaning": "出生，诞生",
+   "unit": "6A Module 7",
+   "mnemonic": "出生：be born 出生来到这个世界"
+  },
+  {
+   "word": "as",
+   "meaning": "作为，当作；像，如同，正如",
+   "unit": "6A Module 7",
+   "mnemonic": "像；如同：像猴子一样灵巧"
+  },
+  {
+   "word": "became",
+   "meaning": "（become的过去式）变成",
+   "unit": "6A Module 7",
+   "mnemonic": "变成：become 的过去式，came 同款收尾"
+  },
+  {
+   "word": "letter",
+   "meaning": "字母",
+   "unit": "6A Module 7",
+   "mnemonic": "信：装进信封寄出去"
+  },
+  {
+   "word": "spell",
+   "meaning": "拼写，拼出",
+   "unit": "6A Module 7",
+   "mnemonic": "拼写：一个字母一个字母拼"
+  },
+  {
+   "word": "herself",
+   "meaning": "她自己",
+   "unit": "6A Module 7",
+   "mnemonic": "她自己：she 的反身代词"
+  },
+  {
+   "word": "all over",
+   "meaning": "遍及；到处；各处",
+   "unit": "6A Module 7",
+   "mnemonic": "到处；结束：从头到脚浑身都沾满"
+  },
+  {
+   "word": "live",
+   "meaning": "活着；生长；栖息",
+   "unit": "6A Module 7",
+   "mnemonic": "居住：住在北京这座城市"
+  },
+  {
+   "word": "role model",
+   "meaning": "模范，榜样",
+   "unit": "6A Module 7",
+   "mnemonic": "榜样：值得学习的那个人"
+  },
+  {
+   "word": "someday",
+   "meaning": "有朝一日",
+   "unit": "6A Module 7",
+   "mnemonic": "将来有一天：总会有那么一天"
+  },
+  {
+   "word": "cup",
+   "meaning": "杯子；茶杯，杯；满杯",
+   "unit": "6A Module 8",
+   "mnemonic": "杯子：捧起水杯喝口水"
+  },
+  {
+   "word": "planned",
+   "meaning": "计划",
+   "unit": "6A Module 8",
+   "mnemonic": "计划（plan 过去式）：提前安排好了"
+  },
+  {
+   "word": "baseball",
+   "meaning": "棒球",
+   "unit": "6A Module 8",
+   "mnemonic": "棒球：base（垒）+ ball（球）→ 打垒的球"
+  },
+  {
+   "word": "more",
+   "meaning": "更强烈地",
+   "unit": "6A Module 8",
+   "mnemonic": "更多的：还想再来一份"
+  },
+  {
+   "word": "smile",
+   "meaning": "微笑",
+   "unit": "6A Module 8",
+   "mnemonic": "微笑：嘴角轻轻上扬"
+  },
+  {
+   "word": "mistake",
+   "meaning": "错误，失误；误会，误解",
+   "unit": "6A Module 8",
+   "mnemonic": "错误：写错了擦掉重来"
+  },
+  {
+   "word": "make mistakes",
+   "meaning": "犯错误",
+   "unit": "6A Module 8",
+   "mnemonic": "犯错：把 make mistake 记复数，谁都会错"
+  },
+  {
+   "word": "with",
+   "meaning": "与...有关，关于；具有；和；用",
+   "unit": "6A Module 8",
+   "mnemonic": "和……一起：带着朋友同行"
+  },
+  {
+   "word": "said",
+   "meaning": "（say的过去式）说",
+   "unit": "6A Module 8",
+   "mnemonic": "说（say 过去式）：他说了一句话"
+  },
+  {
+   "word": "raincoat",
+   "meaning": "雨衣",
+   "unit": "6A Module 8",
+   "mnemonic": "雨衣：rain（雨）+ coat（外套）→ 挡雨的衣"
+  },
+  {
+   "word": "wish",
+   "meaning": "愿望，希望；祝，祝愿",
+   "unit": "6A Module 9",
+   "mnemonic": "祝愿：生日许个愿"
+  },
+  {
+   "word": "best wishes",
+   "meaning": "最美好的祝福",
+   "unit": "6A Module 9",
+   "mnemonic": "最美好的祝愿：生日卡上写祝福"
+  },
+  {
+   "word": "primary",
+   "meaning": "主要的；小学教育的，初级教育的；初级的；最基本的，最根本的",
+   "unit": "6A Module 9",
+   "mnemonic": "初等的：primary school 小学"
+  },
+  {
+   "word": "message",
+   "meaning": "（书面或口头的）信息；消息；便条；信；口信",
+   "unit": "6A Module 9",
+   "mnemonic": "消息：手机里收到的一条信息"
+  },
+  {
+   "word": "keep",
+   "meaning": "保留；留着；不退还",
+   "unit": "6A Module 9",
+   "mnemonic": "保持：keep going 别停下"
+  },
+  {
+   "word": "forever",
+   "meaning": "永远；永恒地",
+   "unit": "6A Module 9",
+   "mnemonic": "永远：时间再长也不变"
+  },
+  {
+   "word": "joy",
+   "meaning": "愉快；欢乐，高兴；乐趣；喜悦",
+   "unit": "6A Module 9",
+   "mnemonic": "欢乐：joy 满怀的喜悦"
+  },
+  {
+   "word": "future",
+   "meaning": "未来，将来",
+   "unit": "6A Module 9",
+   "mnemonic": "未来：长大以后的日子"
+  },
+  {
+   "word": "wonderful",
+   "meaning": "极好的；了不起的；奇妙的",
+   "unit": "6A Module 9",
+   "mnemonic": "精彩的：wonder（奇迹）+ ful → 妙极了"
+  },
+  {
+   "word": "happiness",
+   "meaning": "幸福，快乐",
+   "unit": "6A Module 9",
+   "mnemonic": "幸福：happy 的名词，心里甜"
+  },
+  {
+   "word": "what",
+   "meaning": "多么",
+   "unit": "6A Module 9",
+   "mnemonic": "什么：问东西的疑问词"
+  },
+  {
+   "word": "primary school",
+   "meaning": "小学",
+   "unit": "6A Module 9",
+   "mnemonic": "小学：孩子们的第一所学校"
+  },
+  {
+   "word": "middle",
+   "meaning": "中部的；中等的；中间",
+   "unit": "6A Module 10",
+   "mnemonic": "中间：站在队伍正中间"
+  },
+  {
+   "word": "middle school",
+   "meaning": "中学",
+   "unit": "6A Module 10",
+   "mnemonic": "中学：middle（中间）+ school → 初中"
+  },
+  {
+   "word": "speech",
+   "meaning": "演说；讲演；发言",
+   "unit": "6A Module 10",
+   "mnemonic": "演讲：站在台上讲一段"
+  },
+  {
+   "word": "classmate",
+   "meaning": "同班同学",
+   "unit": "6A Module 10",
+   "mnemonic": "同学：class（班）+ mate（伙伴）→ 同班伙伴"
+  },
+  {
+   "word": "leave",
+   "meaning": "离开；剩下",
+   "unit": "6A Module 10",
+   "mnemonic": "离开：背起书包走出校门"
+  },
+  {
+   "word": "September",
+   "meaning": "九月",
+   "unit": "6A Module 10",
+   "mnemonic": "九月：开学的第一个月"
+  },
+  {
+   "word": "excited",
+   "meaning": "兴奋的；激动的",
+   "unit": "6A Module 10",
+   "mnemonic": "兴奋的：明天去游乐园睡不着"
+  },
+  {
+   "word": "geography",
+   "meaning": "地理",
+   "unit": "6A Module 10",
+   "mnemonic": "地理：geo（地球）+ graphy（画）→ 画地球"
+  },
+  {
+   "word": "same",
+   "meaning": "相同的；同样的人，同样的事物",
+   "unit": "6A Module 10",
+   "mnemonic": "相同的：两件东西一模一样"
+  },
+  {
+   "word": "at the same time",
+   "meaning": "同时",
+   "unit": "6A Module 10",
+   "mnemonic": "同时：两人同一步跨出门"
+  },
+  {
+   "word": "spoke",
+   "meaning": "（speak的过去式）说（某种语言）",
+   "unit": "6A Module 10",
+   "mnemonic": "说话（speak 过去式）：已经说过了"
+  },
+  {
+   "word": "keep on",
+   "meaning": "保持；继续",
+   "unit": "6A Module 10",
+   "mnemonic": "继续：一个劲地做下去"
+  },
+  {
+   "word": "practise",
+   "meaning": "练习",
+   "unit": "6A Module 10",
+   "mnemonic": "练习：一遍一遍反复练"
+  },
+  {
+   "word": "sometime",
+   "meaning": "某个时候",
+   "unit": "6A Module 10",
+   "mnemonic": "某个时候：改天再聚"
+  },
+  {
+   "word": "each other",
+   "meaning": "相互；互相，彼此",
+   "unit": "6A Module 10",
+   "mnemonic": "互相：你帮我我帮你"
+  },
+  {
+   "word": "chemistry",
+   "meaning": "化学；化学物质",
+   "unit": "6A Module 10",
+   "mnemonic": "化学：试管里冒泡做实验"
+  },
+  {
+   "word": "physics",
+   "meaning": "物理，物理学",
+   "unit": "6A Module 10",
+   "mnemonic": "物理：研究力与光的学问"
+  },
+  {
+   "word": "little",
+   "meaning": "少数的，极少量的；一点儿，少许",
+   "unit": "6A Module 10",
+   "mnemonic": "小的：小小的手印"
+  }
+ ]
+}

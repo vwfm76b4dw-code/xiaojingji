@@ -1,7 +1,32 @@
 /* 底部操作条固定：结果卡出现时不会把主按钮挤到屏幕外
    （踩过的坑：评测后整页高度从 ~584rpx 涨到 ~1347rpx，
      超过小屏可视区 ~1060rpx，主按钮掉到屏幕外，每张卡都要先滚一下） */
-.page { padding-bottom: 380rpx; }
+.page {
+  padding-bottom: 380rpx;
+  /* 让 .stage 能拿到"进度条以下、底部操作栏以上"的可用高度 */
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * 卡片区：吃掉可用高度，内容在其中垂直居中。
+ *
+ * 2026-09-19 加。原来卡片直接排在文档流顶部：卡片约 300rpx 高，
+ * 而它到固定底部操作栏之间还有约 400px 空着 —— 页面重心全在上方，
+ * 看起来像"页面没做完"。
+ *
+ * 为什么用 flex: 1 而不是给卡片写死 min-height：
+ *   评测后结果卡会插进来，写死的 min-height 会把结果卡顶到屏幕外；
+ *   交给 .stage 分配高度，内容多时它自己长高（flex 项的 min-height: auto
+ *   保证不会被压到内容以下），内容少时才居中 —— 两种状态都不用手工调。
+ * ⚠️ 居中不能靠 .page 的 justify-content: center：那会把顶部进度条也一起往下拽。
+ */
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .bottom-bar {
   position: fixed;
@@ -32,6 +57,28 @@
   line-height: 1.3;
 }
 
+/* 音标（2026-09-30 补）。
+   逐值照抄 card.wxss 的 .phon（全站第三处 .phon，三处必须同源）：
+   ① font-family 用 var(--font-mono) —— app.wxss 已定义该 token
+      （ui-monospace → Menlo → Consolas → Courier New → monospace）。
+      IPA 字符（ˈ ˌ ʃ θ ŋ ɑ ʌ）字形比例特殊，用中文字体渲染会明显变形；
+      card 页当年就栽过这个（见 app.wxss 里 --font-mono 的来历注释）。
+      刻意不写字面量字体栈：写一次就多一处"改一处漏七处"的种子。
+   ② 26rpx 是复习页/卡片页都在用的值。本页 .word 是 72rpx，
+      26rpx 在它下方刚好形成"主 → 注"的层级，再大就和单词抢注意力。
+   ③ .phon-front（居中 + 贴紧单词）也在 study.wxss 有同名同义类，
+      但本页不 import study.wxss，故本地复刻一份 —— 值必须一致。 */
+.phon {
+  font-family: var(--font-mono);
+  font-size: 26rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-hint);
+}
+.phon-front {
+  text-align: center;
+  margin-top: 4rpx;
+}
+
 .answer {
   font-size: 34rpx;
   color: var(--green-d);
@@ -50,8 +97,10 @@
 .hook {
   margin-top: 24rpx;
   padding: 22rpx 24rpx;
-  background: rgba(246, 196, 69, 0.18);
+  background: var(--yellow-wash);
   border-left: 8rpx solid var(--yellow);
+  /* 4rpx 不归入圆角族：配左侧色条的"附注贴条"，小圆角保住方贴条形状；
+     用 --r-md(16) 会变成普通卡片，与上方正文的层级关系被抹平。 */
   border-radius: 4rpx;
   text-align: left;
 }
@@ -60,9 +109,9 @@
 
 /* ------------------------- 结果 ------------------------- */
 .result { margin-bottom: 24rpx; }
-/* 这一页 .t-hint 承载了"听到的是什么"等关键诊断信息，
-   全局的 --ink-3 对比度只有 2.4:1，这里局部提到可读 */
-.t-hint { color: #5C6B78; }
+/* 这里原来有一块局部补丁：.t-hint { color: #5C6B78 }，注释写着"全局 --ink-3 只有 2.4:1"。
+   2026-09-19 已删除 —— 全局 .t-hint 改用 --ink-hint（同一个 #5C6B78，5.1:1），
+   补丁的唯一价值（把这一页提深）已经是全局默认值，留着只是让人以为"只有这页要读清"。 */
 /* 三档用项目统一的 .stripe（10rpx 色条）语义类，不再自写 border-left */
 .stripe.green  { border-left-color: var(--green); }
 .stripe.yellow { border-left-color: var(--yellow); }
@@ -81,6 +130,12 @@
 .result.borderline .res-verdict { color: var(--yellow-ink); }
 .result.fail .res-verdict { color: var(--red); }
 .result.unknown .res-verdict { color: var(--ink-2); }
+/* na = 期望词缺音素数据，评不了（2026-09-30 补）
+   原来这里**没有任何 .na 规则** —— pron-judge 遇到缺音素的词会返回 band='na'，
+   于是 class 变成 "result stripe na"，色条与 verdict 全部落回默认色，
+   界面上看不出"这跟读错不是一回事"。这里按 unknown 的中性色处理：
+   语义上就是"没结论"，不该用红/黄把它渲染成"你错了"。 */
+.result.na .res-verdict { color: var(--ink-2); }
 
 .res-tip {
   font-size: 26rpx;
@@ -113,17 +168,17 @@
   justify-content: center;
   gap: 6rpx;
   flex-shrink: 0;
-  transition: transform 130ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  transition: transform var(--dur-tap) var(--ease-out);
 }
 .round-btn:active { transform: scale(0.94); }
-.round-btn.playing { border-color: var(--green); background: rgba(0, 130, 92, 0.08); }
+.round-btn.playing { border-color: var(--green); background: var(--green-wash); } /* 2026-09-25 收编：原 0,130,92,0.08 裸值 */
 .round-icon-q {
   font-size: 44rpx;
   font-weight: 600;
   color: var(--ink-2);
   line-height: 1;
 }
-.round-label { font-size: 24rpx; color: #5C6B78; }
+.round-label { font-size: 24rpx; color: var(--ink-hint); }
 
 /* ---- 纯 CSS 图标（替代 emoji：emoji 字形随系统变化，且违反项目规范）---- */
 .ico-wrap { width: 46rpx; height: 42rpx; position: relative; }
@@ -149,13 +204,16 @@
 }
 .ico-stop {                   /* 停止方块 */
   width: 32rpx; height: 32rpx;
+  /* 4rpx 不归入圆角族：这是"停止"方块，方角就是它的语义；
+     写 --r-xs(8) 会让 32rpx 的方块看起来偏圆，与"方形=停止"的约定不符。 */
   border-radius: 4rpx;
   background: var(--green);
   margin: 5rpx auto 0;
 }
 .round-btn.playing .ico-sound { color: var(--green); }
 .round-btn.playing .ico-wave {
-  animation: wave-pulse 900ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  /* 900ms 是"循环呼吸"的节奏（不属于交互反馈族，不动）；缓动换成 token 同值 */
+  animation: wave-pulse 900ms var(--ease-enter) infinite;
 }
 @keyframes wave-pulse {
   0%, 100% { opacity: 0.45; transform: scale(0.86); }
@@ -165,16 +223,16 @@
 .mic-btn {
   flex: 1;
   height: 150rpx;
-  border-radius: 12rpx;
+  border-radius: var(--r-sm);
   background: var(--green);
-  color: #FAF6EC;
+  color: var(--on-accent);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8rpx;
-  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1),
-              background-color 120ms linear;
+  transition: transform var(--dur-tap) var(--ease-out),
+              background-color var(--dur-tap) linear;
 }
 .mic-btn:active { transform: scale(0.97); }
 .mic-btn.rec {
@@ -183,11 +241,14 @@
   background: var(--yellow);
   color: var(--yellow-ink);
 }
+/* 评测中禁用：这里**刻意保留 --ink-3**（不是 --ink-hint）——
+   禁用态本来就该"看着点不动"，提深反而像可用 */
 .mic-btn.disabled { background: var(--card-2); color: var(--ink-3); }
 .mic-text { font-size: 36rpx; font-weight: 600; }
 /* 不用 opacity —— 绿底/红底上叠透明度会让对比度掉到 3:1 以下，
-   而这正是录音时唯一告诉学生"现在该松开"的字 */
-.mic-sub { font-size: 24rpx; color: #FFFFFF; }
+   而这正是录音时唯一告诉学生"现在该松开"的字。
+   颜色统一到 --on-accent：原来这里是纯白 #FFFFFF，与同一按钮上的 .mic-text 是两种白。 */
+.mic-sub { font-size: 24rpx; color: var(--on-accent); }
 
 /* ------------------------- 完成态 ------------------------- */
 .done-card { text-align: center; padding: 56rpx 36rpx; }
@@ -215,7 +276,9 @@
   from { opacity: 0; transform: translateY(-12rpx); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.result.rise { animation: result-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+/* 220ms 归到 --dur-state（状态切换族）：它是"评测结果出现"的状态变化，
+   既不是点击反馈（--dur-tap），也不是整页入场（--dur-enter） */
+.result.rise { animation: result-in var(--dur-state) var(--ease-enter) both; }
 
 /* 等待扫描条：一条绿光从左扫过（只动 transform） */
 .result.judging { position: relative; overflow: hidden; }
@@ -223,7 +286,7 @@
   position: absolute;
   top: 0; left: 0; bottom: 0;
   width: 180rpx;
-  background: rgba(0, 130, 92, 0.14);
+  background: var(--green-tint); /* 2026-09-25 收编：原 0,130,92,0.14 裸值，主题化后跟随主色 */
   animation: sweep-move 1100ms linear infinite;
 }
 @keyframes sweep-move {
@@ -231,7 +294,10 @@
   to   { transform: translateX(760rpx); }
 }
 
-/* 录音中的持续反馈：脉冲环（只动 transform/opacity） */
+/* 录音中的持续反馈：脉冲环。
+   2026-09-19 回退：ring-scan（clip-path 四分弧旋转）在开发者工具模拟器里渲染异常
+   （伪元素 clip-path 动画支持不稳，表现为边框闪烁）—— 作者看到的就是"动画有问题"。
+   换回 transform/opacity 双保险的 rec-pulse：所有渲染器行为一致。 */
 .mic-btn { position: relative; }
 @keyframes rec-pulse {
   0%   { opacity: 0.9; transform: scale(1); }
@@ -241,9 +307,9 @@
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  border: 4rpx solid var(--yellow);
-  border-radius: 12rpx;
-  animation: rec-pulse 1200ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  border: 4rpx solid var(--yellow-ink);
+  border-radius: var(--r-sm);
+  animation: rec-pulse 1200ms var(--ease-enter) infinite;
   pointer-events: none;
 }
 
@@ -251,3 +317,55 @@
 @media (prefers-reduced-motion: reduce) {
   .result.rise, .sweep, .mic-btn.rec::after { animation: none; }
 }
+
+/* ================= 2026-09-19 补：看答案出口 / 设置入口 ================= */
+
+/* "实在不会读"的明示出口（revealAnswer 此前是有实现没绑定的死 handler） */
+.reveal-hint {
+  text-align: center;
+  margin-top: 24rpx;
+  padding: 8rpx 0;
+  transition: opacity var(--dur-tap) var(--ease-out);
+}
+.reveal-hint:active { opacity: 0.6; }
+
+/* 服务不可用提示条上的"去设置"动作 */
+.note-go {
+  display: block;
+  margin-top: 8rpx;
+  color: var(--green-d);
+  font-weight: 600;
+}
+
+/* ============ 「为什么不能用？」自检面板（2026-09-25 加） ============ */
+
+/* 入口：一行居中的小字链。放 warn 条正下方 —— 用户看到"现在不能听你读"
+   的下一眼就该看到"为什么"。:active 用透明度反馈（全站触觉惯例），不用渐变 */
+.diag-entry {
+  text-align: center;
+  margin-bottom: 20rpx;
+  padding: 8rpx 0;
+  font-size: 24rpx;
+  color: var(--ink-hint);
+  transition: opacity var(--dur-tap) var(--ease-out);
+}
+.diag-entry:active { opacity: 0.6; }
+
+/* 面板：账本要扫读 —— 行距与分隔比花哨重要。guide 是"可执行的步骤"，
+   用 card-2 底色块承托，让学生/家长一眼看出"照这段做" */
+.diag-panel { margin-bottom: 20rpx; padding: 24rpx; }
+.diag-row { margin-bottom: 24rpx; }
+.diag-row:last-of-type { margin-bottom: 8rpx; }
+.diag-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.diag-name { font-size: 28rpx; font-weight: 600; color: var(--ink); }
+.diag-why { margin-top: 8rpx; line-height: 1.6; }
+.diag-guide {
+  margin-top: 12rpx;
+  padding: 14rpx 18rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+}
+.diag-copy { margin-top: 8rpx; }

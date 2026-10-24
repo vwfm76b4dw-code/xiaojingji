@@ -96,6 +96,8 @@
 .pip {
   flex: 1;
   height: 24rpx;
+  /* 4rpx 不归入圆角族：24rpx 的打卡格是"方格"，小圆角保住方格语义；
+     写 --r-xs(8) 会把它推成圆头，30 格连排看起来像一串珠子而非日历格。 */
   border-radius: 4rpx;
   background: var(--card-2);
   border: 2rpx solid var(--line);
@@ -151,4 +153,86 @@
   flex-wrap: wrap;
   gap: 12rpx;
   margin-top: 20rpx;
+}
+
+
+/* ================= 2026-09-19 补：折叠分组 ================= */
+
+/* 组头：卡片之间的分区杆。点整行收起/展开 */
+.group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36rpx;
+  padding: 20rpx 24rpx;
+  background: var(--card-2);
+  border-radius: var(--r-md);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.group-head:active { transform: scale(0.98); }
+.group-title { font-size: 30rpx; font-weight: 700; color: var(--ink); }
+/* 箭头：收起朝下 / 展开朝上，只动 transform */
+.group-caret {
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid var(--ink-hint);
+  border-bottom: 4rpx solid var(--ink-hint);
+  transform: rotate(-45deg);
+  transition: transform 240ms var(--ease-out);
+}
+.group-caret.open { transform: rotate(45deg); }
+/* 展开内容淡入：不用高度动画（每帧 Layout 是禁区），透明度 + 位移足够 */
+.group-body { animation: group-in 340ms var(--ease-out); }
+@keyframes group-in {
+  from { opacity: 0; transform: translateY(8rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 可点词行：虚线下划线暗示可点 + 按压反馈 */
+.tap-kv { transition: transform var(--dur-tap) var(--ease-out); }
+.tap-kv:active { transform: scale(0.98); }
+.tap-kv .t-sub {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 6rpx;
+  text-decoration-color: var(--line-2);
+}
+.page-usage {
+  margin-top: 20rpx;
+  padding: 14rpx 20rpx;
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+  line-height: 1.7;
+}
+
+/* AI 学习分析卡 */
+.ai-analysis-text {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+.ai-analysis { margin-top: 24rpx; }
+/* AI 生成中的扫描条（与 ask/pronounce 同参数） */
+.sweep {
+  position: relative;
+  height: 8rpx;
+  border-radius: var(--r-xs);
+  background: var(--card-2);
+  overflow: hidden;
+}
+.sweep::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 40%;
+  border-radius: var(--r-xs);
+  background: var(--green);
+  animation: sweep-move 1.1s var(--ease-enter) infinite;
+}
+@keyframes sweep-move {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
 }

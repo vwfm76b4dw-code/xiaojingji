@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "description": "小鲸记单词 · AI 能力中转云函数（Key 只存云开发环境变量，前端不可见）",
   "main": "index.js",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
 }

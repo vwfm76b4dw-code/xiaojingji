@@ -112,7 +112,9 @@ function recognizeOnce(opts) {
       else if (rc === -30003) code = 'NO_FRAME';
       else if (rc === -30004 || rc === -30006 || rc === -30008) code = 'NETWORK';
       else if (rc === -40001) code = 'RATE_LIMIT';
-      console.warn('[voice] 识别失败', err);
+      // 原始 err 必须留档（errno/retcode/errMsg 全在里头）——
+      // 只有一句折算后的 code，真机上出问题就没法查是权限、被占用还是网络
+      console.error('[voice] 识别失败（原始错误）', err);
       finish({ ok: false, code: code, raw: rc });
     };
 
@@ -187,6 +189,117 @@ function wordAudio(word) {
   });
 }
 
+// ---------------------------------------------------------------- 后端选择（诚实状态机）
+
+/**
+ * 单条通道失败的人话原因。
+ *
+ * 为什么集中在这里而不是散在页面里：历史教训（被学生/作者骂过）是"状态只看
+ * provider 就报就绪"——撒谎的根源是**通道失败原因没有结构化**，页面只能瞎猜
+ * 一句通用文案。这里把 每条通道 × 每种失败码 折算成一句可行动的人话，
+ * selectBackend 负责把它们串成完整的"为什么现在是这样"，页面只管渲染。
+ * 文案纪律：对初一学生说人话，但"要作者处理"的原因要如实说"需要作者"，
+ * 不能让学生以为是自己操作的问题。
+ */
+function channelWhy(channel, code) {
+  if (code === 'OK') return '可用';
+  if (channel === 'plugin') {
+    // 个人主体小程序加不了 WechatSI 插件，这是主体资格问题，学生/家长无解
+    if (code === 'PLUGIN_MISSING') return '微信语音插件未接入（需要小程序主体权限）';
+    return '语音插件不可用';
+  }
+  if (channel === 'cloud') {
+    if (code === 'NO_CLOUD') return '云开发未开通，云端识别用不了';
+    if (code === 'NOT_DEPLOYED') return '云端识别函数还没部署（需要作者上传）';
+    if (code === 'NOT_CONFIGURED') return '云端识别密钥还没配好（需要作者配置）';
+    if (code === 'AUTH') return '云端识别鉴权失败（需要作者检查密钥）';
+    if (code === 'QUOTA') return '云端识别额度用完了';
+    return '云端识别暂时连不上';
+  }
+  if (channel === 'local') {
+    // 127.0.0.1 在手机上指向手机自己 —— 这条通道天生只属于开发机
+    if (code === 'OFFLINE' || code === 'CALL_THREW') return '本地识别服务没启动（仅开发电脑可用）';
+    return '本地识别服务不可用';
+  }
+  if (channel === 'acoustic') {
+    if (code === 'NOT_UPLOADED') return '发音判定资源还没上线（等资源发布）';
+    if (code === 'NETWORK') return '联网后才能下载发音判定资源';
+    if (code === 'DOWNLOADING') return '发音判定资源正在下载';
+    return '端上判定不可用';
+  }
+  return '通道不可用';
+}
+
+/**
+ * 后端选择 —— **纯函数**，把各通道的探测结果折算成最终后端 + 完整的失败账本。
+ *
+ * 选择顺序（与 pronounce 页 checkVoice 的探测顺序一致）：
+ *   settings 指定 local（开发期显式选择，压过自动选择）
+ *   → plugin → cloud → local → offline
+ * offline 时若端上声学模板就绪，acousticRescued=true —— 它不需要识别后端
+ * （直接比对波形），所以"四条识别通道全断"不再等于"不能评测"。
+ *
+ * 为什么做成纯函数：选择矩阵是回归最密集的地方（每种通道组合一种行为），
+ * 纯函数才能在 Node 门禁里穷举（verify-voice.js 第一节），挂页面上就只能
+ * 靠真机手点。
+ *
+ * @param {Object} input 各通道探测结果（字段缺失 = 该通道尚未探测/不可用）
+ *   pref          settings.voiceBackend（'local' 为开发期显式选择）
+ *   pluginReady   WechatSI 插件已加载
+ *   cloudReady    wx.cloud 可调用
+ *   cloudCode     云函数 status 的 code（'OK' | NOT_DEPLOYED | NOT_CONFIGURED | ...）
+ *   localReady    本地服务 /api/health 通过
+ *   localCode     本地服务失败码
+ *   acousticReady 端上模板包就绪
+ * @returns {{backend, acousticRescued, rescuedBy, tried}}
+ *   tried: 每条被考虑过的通道 {channel, ok, code, why} —— 失败的也必须出现，
+ *          这是"诚实"的载体：界面能说清"为什么降级到了这一步"。
+ */
+function selectBackend(input) {
+  input = input || {};
+  const tried = [];
+  const note = function (name, ok, code) {
+    tried.push({
+      channel: name,
+      ok: !!ok,
+      code: ok ? 'OK' : (code || 'FAILED'),
+      why: channelWhy(name, ok ? 'OK' : (code || 'FAILED'))
+    });
+  };
+
+  let backend;
+  if (input.pref === 'local') {
+    backend = 'local';
+    note('local', true);
+  } else if (input.pluginReady) {
+    backend = 'plugin';
+    note('plugin', true);
+  } else {
+    note('plugin', false, 'PLUGIN_MISSING');
+    if (input.cloudReady && input.cloudCode === 'OK') {
+      backend = 'cloud';
+      note('cloud', true);
+    } else {
+      note('cloud', false, input.cloudReady ? (input.cloudCode || 'CLOUD_FAIL') : 'NO_CLOUD');
+      if (input.localReady) {
+        backend = 'local';
+        note('local', true);
+      } else {
+        note('local', false, input.localCode || 'OFFLINE');
+        backend = 'offline';
+      }
+    }
+  }
+
+  const acousticRescued = backend === 'offline' && !!input.acousticReady;
+  return {
+    backend: backend,
+    acousticRescued: acousticRescued,
+    rescuedBy: acousticRescued ? 'acoustic' : '',
+    tried: tried
+  };
+}
+
 // ---------------------------------------------------------------- 状态
 
 /** 语音能力自检（供设置页显示） */
@@ -208,20 +321,40 @@ function hintFor(code) {
     case 'NO_SPEECH':
       return '没听到声音，再读一次';
     case 'MIC_ERROR':
-      return '麦克风不可用，检查一下手机权限';
+      // 不说"检查权限"就完了 —— 要给出可执行的动作（页面据 isAuthError 弹"去设置"）
+      return '没能用上麦克风，你可以在设置里允许';
     case 'NETWORK':
       return '网络不太好，稍后再试';
     case 'RATE_LIMIT':
       return '读得太快了，等几秒再试';
     case 'OFFLINE':
       return '语音功能暂时用不了，先看单词也行';
+    case 'NOT_UPLOADED':
+      // 资源没上传是作者侧的事，"稍后再试"是撒谎 —— 等多久都不会自己好
+      return '发音判定资源还没上线，等下次更新后再来';
+    case 'DOWNLOADING':
+      return '发音判定资源正在下载，稍等一下';
+    case 'PREPARING':
+      return '正在准备发音判定，马上就好';
     default:
       return '这次没评上，再读一次试试';
   }
 }
 
+/**
+ * 这个失败是不是"没有麦克风权限"。
+ *
+ * 页面据此给**动作**（弹"为什么需要麦克风 → 去允许"），而不是只弹一句提示 ——
+ * 权限类失败是唯一"学生自己一步就能解决"的失败，其它失败只能重试或降级。
+ * 把错误码的词表留在本文件，页面不硬编码插件错误码。
+ */
+function isAuthError(code) {
+  return code === 'MIC_ERROR';
+}
+
 module.exports = {
   backend, plugin, capability,
+  selectBackend, channelWhy,
   recognizeOnce, stopRecognition,
-  wordAudio, hintFor,
+  wordAudio, hintFor, isAuthError,
 };

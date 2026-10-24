@@ -842,6 +842,33 @@ function ask(question, cards, opts) {
     }
   }
 
+  /**
+   * no_match 补「你是不是要找 X」（2026-09-19 加）。
+   * 原来词表里没有就直接说没有 —— 学生输入的小拼写抖动（extra/eggs）会白跑一趟。
+   * 用现成的编辑距离 + bigram 相似度找最近的 1-2 个词，写进回答**并**塞进 sources：
+   * sources 是页面"练一下"的数据源，建议因此直接可练，不是一句干话。
+   */
+  if (mode === 'no_match' && idx && idx.items) {
+    const t = normWord(parsed.word || '');
+    if (t) {
+      const near = idx.items
+        .filter(function (it) { return it.norm !== t; })
+        .map(function (it) {
+          return { it: it, sim: Math.max(dlSim(t, it.norm), diceSet(ngrams(t, 2), ngrams(it.norm, 2))) };
+        })
+        .sort(function (a, b) { return b.sim - a.sim; })
+        .slice(0, 2)
+        .filter(function (x) { return x.sim > 0.42; });
+      if (near.length) {
+        answer += '\n\n你要找的是不是：';
+        near.forEach(function (x) {
+          answer += '\n· ' + x.it.display + '（' + x.it.meaning + '）';
+          push(x.it, 'phonetic', 0.5);
+        });
+      }
+    }
+  }
+
   return {
     ok: true,
     mode: mode,

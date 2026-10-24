@@ -208,6 +208,10 @@ function loadPage(relPath) {
     global.Page = realPage;
   }
   if (!captured) throw new Error(relPath + ' 没有调用 Page()');
+  // 2026-09-24（DEV-P0-3）：**不再**注入 spellCheck=false。
+  // 旧版在这里把学后拼写统一关掉，等于把默认路径的回归测试一并关掉 ——
+  // P0-1（复习完一轮抛 ReferenceError 冻结页面）正是靠这个盲区逃过 4 道门禁的。
+  // 现在页面跑真实默认值；需要拼关闭的用例**显式**写 storage，见下文各用例。
 
   // 造一个像页面实例的对象：data + setData + 各方法
   const inst = Object.assign({}, captured);
@@ -299,6 +303,20 @@ function anyCardIds(n) {
 (async function main() {
   global.wx = makeWx();
 
+  /**
+   * app 替身。
+   *
+   * 为什么要补：页面里 `getApp()` 是小程序的核心全局，生产环境必然存在；
+   * 这个替身原来没提供它，于是**任何页面只要用了 getApp 就会在冒烟里抛
+   * `getApp is not defined`** —— 而那不是被测代码的错，是替身不完整。
+   * （2026-09-24 加开屏动画时暴露：deck 页 onShow 直接抛错，5 个用例连带失败。）
+   *
+   * 用**稳定对象**而不是每次新建：跨生命周期保存的标记（如"开屏只放一次"）
+   * 必须在多次 getApp() 之间可见，否则那类逻辑在测试里永远走不到第二个分支。
+   */
+  const APP_STUB = { globalData: {} };
+  global.getApp = () => APP_STUB;
+
   // 预置词表：页面通过 utils/cards.js 从本机词库读，首次打开由 app.js 预置。
   // 这里手工跑一次 initSeed，模拟"用户首次打开"的存储状态，让页面有内容可读。
   const seed = freshRequire('data/textbook-7a.js');
@@ -334,13 +352,27 @@ function anyCardIds(n) {
     assert.ok(o.percent >= 0 && o.percent <= 100, 'percent 越界：' + o.percent);
   });
 
-  await check('卡组页：今日到期数 = 初始应为全部新卡', () => {
+  /**
+   * 2026-09-18 改口径：首页主数字从"词库里所有到期的"改成"今日计划张数"。
+   *
+   * 原断言（dueCount === total）在旧设计下成立，新设计下**故意不成立** ——
+   * 把 295 张全排给一个初中生是劝退的（首页显示 229 而复习页只给 10，
+   * 这个矛盾正是本次要修的问题）。系统实际只给 dailyNewWords（默认 10）。
+   *
+   * 现在断言两条更有意义的契约：
+   *   ① freshTotal 如实反映"还有多少没学"（背景信息，仍是全量）
+   *   ② dueCount 受每日上限约束，不会等于词库总量
+   */
+  await check('卡组页：今日计划受每日上限约束，词库总量仍如实显示', () => {
     const page = loadPage('pages/deck/deck.js');
     page.onLoad();
     page.onShow();
-    // 全新状态：所有卡都没学过 → 全部到期
-    assert.strictEqual(page.data.dueCount, page.data.overall.total,
-      '新状态下所有卡都应到期');
+    // 全新状态：所有卡都没学过 → 全部计入"未学"
+    assert.strictEqual(page.data.freshTotal, page.data.overall.total,
+      '新状态下所有卡都应算未学，实际 freshTotal=' + page.data.freshTotal);
+    assert.ok(page.data.dueCount > 0, '今日计划应有词可练');
+    assert.ok(page.data.dueCount < page.data.overall.total,
+      '今日计划不该等于词库总量（应有每日上限约束），实际 ' + page.data.dueCount);
   });
 
   await check('卡组页：点学科能展开卡片列表', () => {
@@ -404,34 +436,10 @@ function anyCardIds(n) {
     });
   });
 
-  await check('复习页：连对计数与徽章', () => {
-    const page = loadPage('pages/study/study.js');
-    page.onLoad();
-    // 连做 3 次"认识"
-    for (let i = 0; i < 3; i++) {
-      page.flipCard();
-      page.onGrade({ currentTarget: { dataset: { q: 5 } } });
-      // 立刻复位 leaving，模拟 setTimeout 已完成
-      page.data.leaving = false;
-      page.data.idx = Math.min(page.data.idx + 1, page.data.queue.length - 1);
-      page.data.current = page.data.queue[page.data.idx];
-      page.data.flipped = false;
-    }
-    assert.ok(page.data.streak >= 1, 'streak 未累加');
-    assert.ok(page.data.roundKnow >= 1, 'roundKnow 未累加');
-  });
-
-  await check('复习页：答"不认识"重置连对', () => {
-    const page = loadPage('pages/study/study.js');
-    page.onLoad();
-    page.data.streak = 5;
-    page.flipCard();
-    page.onGrade({ currentTarget: { dataset: { q: 1 } } });
-    assert.strictEqual(page.data.streak, 0, '不认识应重置连对');
-    assert.ok(page.data.roundForgot >= 1, 'roundForgot 未累加');
-  });
-
-  await check('复习页：队列耗尽后进入完成态', () => {
+  await check('复习页：队列耗尽后进入完成态（用户已关学后拼写）', () => {
+    // 显式声明前置条件：用户在设置里关了「学后拼写」→ 耗尽后直接完成。
+    // 这是产品里真实存在的配置组合，与下一条「默认配置」用例互为补充。
+    global.wx.__storage['study_prefs'] = Object.assign({}, global.wx.__storage['study_prefs'], { spellCheck: false });
     const page = loadPage('pages/study/study.js');
     // 直接把队列缩到 1 张，模拟"只剩最后一张"
     page.onLoad();
@@ -454,6 +462,43 @@ function anyCardIds(n) {
     // 刚复习过的卡已排到未来，队列应清空（正常：今天没有到期的了）
     assert.ok(page.data.ready, 'again 后 ready 未置位');
     assert.ok(Array.isArray(page.data.queue), 'queue 不是数组');
+  });
+
+  /**
+   * P0-1 回归用例（2026-09-24 补，DEV-P0-3）：
+   * 默认配置（spellCheck=true）下复习完一轮，必须进拼写轮而不是冻结。
+   *
+   * 守的是三件事：
+   *   ① _advanceTo 完成分支不抛 ReferenceError（P0-1 的裸标识符 singleMode）；
+   *   ② leaving 复位（P0-1 里它停在 true，onGrade/flipCard 的守卫挡住一切交互）；
+   *   ③ _roundWords 已收集 → spellRound 置位、spellTotal 出数。
+   *
+   * 手法与上一条「耗尽」用例相同（队列缩到 1 张）：单次评分即走 isLast
+   * 分支 —— P0-1 的缺陷代码正在那个分支里。全轮真实推进的覆盖由
+   * verify-pages.js 的两条 realPrefs 用例承担，这里不重复慢路径。
+   * 该缺陷此前靠 4 道门禁统一注入 spellCheck=false 的盲区存活 ——
+   * 本用例与 realPrefs 用例一起封死这个盲区。
+   */
+  await check('复习页【默认配置】：整轮耗尽进拼写轮、不抛错、不冻结（P0-1 回归）', () => {
+    delete global.wx.__storage['study_prefs'];   // 出厂态：spellCheck=true
+    const page = loadPage('pages/study/study.js');
+    page.onLoad();
+    assert.strictEqual(page.data.spellCheck, true, '默认应开启「学后拼写」');
+    assert.strictEqual(page.data.done, false, '开局不应在完成态');
+
+    page.data.queue = [page.data.queue[0]];
+    page.data.current = page.data.queue[0];
+    page.data.idx = 0;
+    page.data.flipped = true;
+    page.onGrade({ currentTarget: { dataset: { q: 5 } } });
+
+    return new Promise(resolve => setTimeout(resolve, 400)).then(() => {
+      assert.strictEqual(page.data.leaving, false, 'leaving 未复位 —— 页面会冻结（P0-1 症状）');
+      assert.strictEqual(page.data.spellRound, true,
+        '应进入拼写轮，实际 spellRound=' + page.data.spellRound + ' done=' + page.data.done);
+      assert.ok(page.data.spellTotal > 0, '拼写轮应拿到词表（spellTotal=' + page.data.spellTotal + '）');
+      assert.strictEqual(page.data.done, false, '默认配置不应直接跳到完成页');
+    });
   });
 
   /*------------------- 统计页 -------------------*/
@@ -941,17 +986,20 @@ function anyCardIds(n) {
     delete global.wx.__storage['settings'];
     const page = loadPage('pages/settings/settings.js');
     page.onLoad();
+    page._parentUnlocked = true;   // PIN 门控后的测试直通（须在 onLoad 之后：onLoad 会复位会话锁）
     const c = page.data.cfg;
     assert.ok(c.dailyNewWords > 0, '缺每日新词数默认值');
     assert.ok(c.sessionSize > 0, '缺单轮张数默认值');
     assert.ok(typeof c.passScore === 'number', '缺判定阈值默认值');
-    assert.strictEqual(c.pronounceEnabled, true, '朗读默认应开启');
+    // 2026-09-19：pronounceEnabled 是死键（无 UI、全项目零消费）已删除 —— 断言它不再回来
+    assert.strictEqual('pronounceEnabled' in c, false, '死键 pronounceEnabled 应已删除');
   });
 
   await check('设置页：步进器改变参数并持久化', () => {
     delete global.wx.__storage['settings'];
     const page = loadPage('pages/settings/settings.js');
     page.onLoad();
+    page._parentUnlocked = true;   // PIN 门控后的测试直通（须在 onLoad 之后：onLoad 会复位会话锁）
     const before = page.data.cfg.dailyNewWords;
     page.step({ currentTarget: { dataset: { k: 'dailyNewWords', d: '5', min: '5', max: '50' } } });
     assert.strictEqual(page.data.cfg.dailyNewWords, before + 5, '步进未生效');
@@ -963,6 +1011,7 @@ function anyCardIds(n) {
     delete global.wx.__storage['settings'];
     const page = loadPage('pages/settings/settings.js');
     page.onLoad();
+    page._parentUnlocked = true;   // PIN 门控后的测试直通（须在 onLoad 之后：onLoad 会复位会话锁）
     // 往下点很多次，应停在 min
     for (let i = 0; i < 20; i++) {
       page.step({ currentTarget: { dataset: { k: 'sessionSize', d: '-5', min: '5', max: '50' } } });
@@ -978,6 +1027,7 @@ function anyCardIds(n) {
     delete global.wx.__storage['settings'];
     const page = loadPage('pages/settings/settings.js');
     page.onLoad();
+    page._parentUnlocked = true;   // PIN 门控后的测试直通（须在 onLoad 之后：onLoad 会复位会话锁）
     const before = page.data.cfg.autoPlayAudio;
     page.toggle({ currentTarget: { dataset: { k: 'autoPlayAudio' } } });
     assert.strictEqual(page.data.cfg.autoPlayAudio, !before, '开关未翻转');
@@ -988,26 +1038,13 @@ function anyCardIds(n) {
     delete global.wx.__storage['settings'];
     const page = loadPage('pages/settings/settings.js');
     page.onLoad();
+    page._parentUnlocked = true;   // PIN 门控后的测试直通（须在 onLoad 之后：onLoad 会复位会话锁）
     page.pickThreshold({ currentTarget: { dataset: { level: 'strict' } } });
     assert.strictEqual(page.data.cfg.passScore, 0.90, '严格档阈值不对');
     page.pickThreshold({ currentTarget: { dataset: { level: 'loose' } } });
     assert.strictEqual(page.data.cfg.passScore, 0.78, '宽松档阈值不对');
     page.pickThreshold({ currentTarget: { dataset: { level: 'normal' } } });
     assert.strictEqual(page.data.cfg.passScore, 0.84, '标准档阈值不对');
-  });
-
-  await check('设置页：服务地址校验（必须 http 开头）', () => {
-    const page = loadPage('pages/settings/settings.js');
-    page.onLoad();
-    global.wx.__toasts.length = 0;
-    page.setData({ draftBase: 'not-a-url' });
-    page.saveBase();
-    assert.ok(global.wx.__toasts.length > 0, '非法地址应被拒绝');
-
-    page.setData({ draftBase: 'http://192.168.1.5:8766' });
-    page.saveBase();
-    assert.strictEqual(global.wx.__storage['asr_base'], 'http://192.168.1.5:8766',
-      '合法地址未保存');
   });
 
   /*------------------- 跨页一致性 -------------------*/

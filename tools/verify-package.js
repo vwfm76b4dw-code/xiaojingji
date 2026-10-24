@@ -68,6 +68,44 @@ check('包根存在且含 app.json', function () {
 
 const app = readJson(path.join(ROOT, 'app.json'));
 
+/**
+ * 主包页面 + 全部分包页面，统一成「相对包根的页面路径」。
+ *
+ * 为什么要合并：2026-09-24 教材模块（293 KB）搬进分包后，只遍历 app.pages 的
+ * 检查会把分包页面**整片漏掉** —— 四件套、WXML↔JS 事件契约、跳转目标三处
+ * 同时失去覆盖。这类漏检不会报错，只会让"全绿"变得没有意义。
+ */
+const SUBPACKAGES = app.subPackages || app.subpackages || [];
+const SUBPAGE_PATHS = SUBPACKAGES.reduce(function (acc, sp) {
+  const root = String(sp.root || '').replace(/\/$/, '');
+  return acc.concat((sp.pages || []).map(function (p) { return root + '/' + p; }));
+}, []);
+const allPages = app.pages.concat(SUBPAGE_PATHS);
+
+/*=========================== 1.5 分包配置 ===========================*/
+
+check('分包配置合法（root 存在、pages 非空、不与主包或彼此嵌套）', function () {
+  const bad = [];
+  const roots = SUBPACKAGES.map(function (sp) { return String(sp.root || '').replace(/\/$/, ''); });
+  SUBPACKAGES.forEach(function (sp, i) {
+    const root = roots[i];
+    if (!root) { bad.push('第 ' + i + ' 个分包缺 root'); return; }
+    if (!fs.existsSync(path.join(ROOT, root))) { bad.push(root + ' 目录不存在'); return; }
+    if (!Array.isArray(sp.pages) || sp.pages.length === 0) bad.push(root + ' 的 pages 为空');
+    roots.forEach(function (other, j) {
+      if (i !== j && (other === root || other.indexOf(root + '/') === 0)) {
+        bad.push(root + ' 与 ' + other + ' 嵌套（微信禁止）');
+      }
+    });
+  });
+  if (bad.length) throw new Error(bad.join(' | '));
+});
+
+check('分包页面不与主包页面重名', function () {
+  const dup = SUBPAGE_PATHS.filter(function (p) { return app.pages.indexOf(p) !== -1; });
+  if (dup.length) throw new Error('重名：' + dup.join(', '));
+});
+
 /*=========================== 2. app.json 结构 ===========================*/
 
 check('app.json 可解析且 pages 非空', function () {
@@ -76,7 +114,7 @@ check('app.json 可解析且 pages 非空', function () {
 
 check('每个页面都有 .js / .wxml / .json / .wxss 四件套', function () {
   const missing = [];
-  app.pages.forEach(function (p) {
+  allPages.forEach(function (p) {
     ['js', 'wxml', 'json', 'wxss'].forEach(function (ext) {
       const f = path.join(ROOT, p + '.' + ext);
       if (!fs.existsSync(f)) missing.push(p + '.' + ext);
@@ -85,12 +123,12 @@ check('每个页面都有 .js / .wxml / .json / .wxss 四件套', function () {
   if (missing.length) throw new Error('缺文件：' + missing.join(', '));
 });
 
-check('tabBar 的每个页面都已在 pages 中注册', function () {
+check('tabBar 的每个页面都已在 pages 中注册（tabBar 页面必须在主包内）', function () {
   if (!app.tabBar || !Array.isArray(app.tabBar.list)) return;
   const bad = app.tabBar.list
     .map(function (t) { return t.pagePath; })
     .filter(function (p) { return app.pages.indexOf(p) === -1; });
-  if (bad.length) throw new Error('tabBar 指向未注册页：' + bad.join(', '));
+  if (bad.length) throw new Error('tabBar 指向未注册页（或指向分包，微信不允许）：' + bad.join(', '));
 });
 
 check('tabBar 条目数在 2..5 之间（微信硬限制）', function () {
@@ -151,15 +189,17 @@ check('所有 require 的相对路径都能解析', function () {
   if (n === 0) throw new Error('没扫到任何 require，路径逻辑可能不对');
 });
 
-check('所有页面跳转目标都已注册', function () {
+check('所有页面跳转目标都已注册（含分包页面）', function () {
   const bad = [];
+  const registered = {};
+  allPages.forEach(function (p) { registered['/' + p] = true; });
   allFiles.filter(function (f) { return f.endsWith('.js'); }).forEach(function (f) {
     const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
-    const re = /url:\s*'(\/pages\/[^'"?]+)/g;
+    // 只认以 / 开头的站内路径；https:// 不以 / 开头，天然排除
+    const re = /url:\s*'(\/[^'"?]+)/g;
     let m;
     while ((m = re.exec(src))) {
-      const p = m[1].replace(/^\//, '');
-      if (app.pages.indexOf(p) === -1) bad.push(f + ' → ' + p);
+      if (!registered[m[1]]) bad.push(f + ' → ' + m[1]);
     }
   });
   if (bad.length) throw new Error('跳到未注册页：' + bad.join(' | '));
@@ -178,7 +218,7 @@ function wxmlHandlers(wxml) {
 
 check('WXML 绑定的事件在对应页面 JS 里都有实现（改名漏改是合并事故高发点）', function () {
   const bad = [];
-  app.pages.forEach(function (p) {
+  allPages.forEach(function (p) {
     const wx = path.join(ROOT, p + '.wxml');
     if (!fs.existsSync(wx)) return;
     const wxml = fs.readFileSync(wx, 'utf8');
@@ -292,10 +332,20 @@ check('WXML 用到的样式类都有定义（缺类名 = 元素没有布局，�
 
   const missing = [];
   let checked = 0;
-  app.pages.forEach(function (p) {
+  allPages.forEach(function (p) {
     const wxFile = path.join(ROOT, p + '.wxml');
     if (!fs.existsSync(wxFile)) return;
-    const wxml = fs.readFileSync(wxFile, 'utf8');
+    /**
+     * ⚠️ 必须**先剥掉 WXML 注释**再找标签。
+     *
+     * 2026-09-25 修：原实现直接 match(/<canvas[^>]*>/g)，而 deck.wxml 有一段
+     * 说明性注释里写了「小程序的 <canvas> 是原生组件」—— 注释里的假标签被当成
+     * 真画布，报"canvas 无 class 也无内联高度"，而真正的画布（第 31 行）明明有 class。
+     *
+     * 这类**门禁自身的假阳性**比漏报更麻烦：它会让后来的人去改本来没问题的代码。
+     * 凡是"扫源码找结构"的检查，都必须先去掉注释再扫。
+     */
+    const wxml = fs.readFileSync(wxFile, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
     const wxssFile = path.join(ROOT, p + '.wxss');
     const localCls = fs.existsSync(wxssFile)
       ? classSet(fs.readFileSync(wxssFile, 'utf8')) : new Set();
@@ -322,10 +372,20 @@ check('WXML 用到的样式类都有定义（缺类名 = 元素没有布局，�
 
 check('每个 canvas 都有显式尺寸（尺寸为 0 时绘图会静默跳过）', function () {
   const bad = [];
-  app.pages.forEach(function (p) {
+  allPages.forEach(function (p) {
     const wxFile = path.join(ROOT, p + '.wxml');
     if (!fs.existsSync(wxFile)) return;
-    const wxml = fs.readFileSync(wxFile, 'utf8');
+    /**
+     * ⚠️ 必须**先剥掉 WXML 注释**再找标签。
+     *
+     * 2026-09-25 修：原实现直接 match(/<canvas[^>]*>/g)，而 deck.wxml 的说明性注释里
+     * 写了「小程序的 <canvas> 是原生组件」—— 注释里的假标签被当成真画布，
+     * 报出「canvas 无 class 也无内联高度」，而真正的画布（第 31 行）明明有 class。
+     *
+     * 这类**门禁自身的假阳性**比漏报更麻烦：它会让后来的人去改本来没问题的代码。
+     * 凡是「扫源码找结构」的检查，都必须先去掉注释再扫。
+     */
+    const wxml = fs.readFileSync(wxFile, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
     const wxssFile = path.join(ROOT, p + '.wxss');
     const wxss = fs.existsSync(wxssFile) ? fs.readFileSync(wxssFile, 'utf8') : '';
 
@@ -495,32 +555,96 @@ check('全包禁用 toISOString（UTC 偏移会错一天）', function () {
 
 /*=========================== 8. 体积 ===========================*/
 
+/**
+ * 应用 project.config.json 的 packOptions.ignore，得到**真实会进包**的文件清单。
+ *
+ * 为什么必须这么做：微信打包时会按 packOptions.ignore 剔除文件，
+ * 而真机上传与 gzip 实测都按剔除后算。若这里不剔除，门禁报的体积会大于真实进包量 ——
+ * 2026-09-18 就因此误报过一次"主包 2107KB 超限"（那些 .json 是构建源码、根本不进包）。
+ *
+ * 支持 folder / file（官方还支持 suffix/prefix，本项目未使用）。
+ */
+function appliedPackIgnore(files) {
+  const cfg = readJson(path.join(ROOT, 'project.config.json'));
+  const rules = ((cfg.packOptions || {}).ignore) || [];
+  if (!rules.length) return files;
+  return files.filter(function (f) {
+    return !rules.some(function (r) {
+      const v = String(r.value || '');
+      if (!v) return false;
+      if (r.type === 'folder') return f === v || f.indexOf(v + '/') === 0;
+      return f === v;
+    });
+  });
+}
+
+/** 真实进包文件（已应用 packOptions.ignore） */
+const packedFiles = appliedPackIgnore(allFiles);
+const excludedCount = allFiles.length - packedFiles.length;
+
+/**
+ * 分包根目录前缀。分包内的文件**不计入主包**——这正是分包存在的意义。
+ *
+ * 2026-09-24 加：教材模块（293 KB）搬进 pack-curriculum 后，若仍把所有文件
+ * 算进主包，门禁会一直报"主包 2066 KB 超限"，而真实上传是过得了的 ——
+ * 那种假红会让人逐渐无视这道门，比没有门更糟。
+ */
+const SUBPACKAGE_ROOTS = SUBPACKAGES.map(function (sp) {
+  return String(sp.root || '').replace(/\/$/, '') + '/';
+});
+function inSubpackage(f) {
+  return SUBPACKAGE_ROOTS.some(function (r) { return f.indexOf(r) === 0; });
+}
+/** 主包文件：剔除云函数（不打进包）与分包内容 */
+const mainFiles = packedFiles.filter(function (f) {
+  return !f.startsWith('cloudfunctions/') && !inSubpackage(f);
+});
+
 check('主包体积不超 2MB（硬限制，超了无法上传）', function () {
   let total = 0;
-  allFiles.forEach(function (f) {
-    if (f.startsWith('cloudfunctions/')) return;      // 云函数不打进主包
-    total += fs.statSync(path.join(ROOT, f)).size;
-  });
+  mainFiles.forEach(function (f) { total += fs.statSync(path.join(ROOT, f)).size; });
   const kb = Math.round(total / 1024);
   /**
    * ⚠️ 这里统计的是**未压缩**大小，而小程序上传时文本会被 gzip。
-   * 所以这个数字会明显大于真实上传包（实测：原始 1921KB → 上传约 1298KB）。
+   * 所以这个数字会明显大于真实上传包。
    * 保留未压缩口径是因为它是"最坏情况上界"—— 不压缩都能过，压缩后必然过。
    * 真实值由 verify-ondevice.js 的"主包体积"用例给出（含 gzip 实测）。
+   *
+   * 2026-09-18：改为按 packOptions.ignore 剔除后计算（与真实打包一致），
+   * 并标出剔除了多少文件，避免"数字对不上"的困惑。
+   * 2026-09-24：再剔除分包内容（主包/分包各算各的）。
    */
-  console.log('      （未压缩 ' + kb + ' KB / 2048 KB，占 ' + Math.round(total * 100 / MAIN_LIMIT) +
-    '%；上传时文本会 gzip，实测约 1298 KB）');
+  console.log('      （主包 ' + mainFiles.length + ' 个文件 / 分包 ' +
+    (packedFiles.length - mainFiles.length) + ' 个；共进包 ' + packedFiles.length + '/' +
+    allFiles.length + ' 个，已按 packOptions.ignore 剔除 ' + excludedCount + ' 个；' +
+    '主包未压缩 ' + kb + ' KB / 2048 KB，占 ' + Math.round(total * 100 / MAIN_LIMIT) + '%）');
   if (total > MAIN_LIMIT) throw new Error('主包未压缩 ' + kb + ' KB 超过 2048 KB');
+});
+
+check('每个分包体积不超 2MB（微信对单个分包同样是硬限制）', function () {
+  const bad = [];
+  SUBPACKAGES.forEach(function (sp, i) {
+    const prefix = SUBPACKAGE_ROOTS[i];
+    let total = 0;
+    let n = 0;
+    packedFiles.forEach(function (f) {
+      if (f.indexOf(prefix) === 0) { total += fs.statSync(path.join(ROOT, f)).size; n++; }
+    });
+    const kb = Math.round(total / 1024);
+    console.log('      ' + prefix.replace(/\/$/, '') + '：' + n + ' 个文件，未压缩 ' + kb + ' KB');
+    if (total > MAIN_LIMIT) bad.push(prefix + ' ' + kb + ' KB');
+  });
+  if (bad.length) throw new Error('分包超限：' + bad.join(', '));
 });
 
 check('整包体积不超 20MB', function () {
   let total = 0;
-  allFiles.forEach(function (f) { total += fs.statSync(path.join(ROOT, f)).size; });
+  packedFiles.forEach(function (f) { total += fs.statSync(path.join(ROOT, f)).size; });
   if (total > TOTAL_LIMIT) throw new Error('整包超过 20MB');
 });
 
 check('单文件不超 500KB（大文件会拖慢首屏）', function () {
-  const big = allFiles
+  const big = packedFiles
     .map(function (f) { return { f: f, sz: fs.statSync(path.join(ROOT, f)).size }; })
     .filter(function (x) { return x.sz > 500 * 1024; });
   if (big.length) throw new Error(big.map(function (x) { return x.f + ' ' + Math.round(x.sz / 1024) + 'KB'; }).join(', '));

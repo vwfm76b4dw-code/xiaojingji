@@ -1,14 +1,14 @@
-.page {
-  padding: 32rpx;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+/* 本页原来自己重抄了一遍 .page（padding 32rpx + min-height 100vh + border-box）。
+   2026-09-19 删除：它与 app.wxss 的全局 .page 逐条相同，唯一的效果是——
+   `padding` 简写把全局那条的 `env(safe-area-inset-bottom)` 冲掉了，
+   于是"非 tabBar 页在刘海屏上要避开 home indicator"这件事在本页静默失效。
+   本页是**没有 tabBar** 的页面，正需要那一项，所以让全局规则生效即可。 */
 
 /* 分段切换：绿色选中态 */
 .seg {
   display: flex;
   border: 2rpx solid var(--line);
-  border-radius: 16rpx;
+  border-radius: var(--r-md);
   background: var(--card);
   margin-bottom: 32rpx;
 }
@@ -19,12 +19,16 @@
   font-size: 28rpx;
   padding: 20rpx 0;
   color: var(--ink-2);
+  /* 14rpx 不归入圆角族：外框 .seg 是 16rpx 且带 2rpx 边框，
+     16 - 2 = 14 才能与外框同心；写成 --r-md(16) 会让选中块的圆角顶出外框 */
   border-radius: 14rpx;
 }
 
 .seg-item.on {
   background: var(--green);
-  color: #FAF6EC;
+  /* 与 .btn.primary / .mic-btn 同一支 token：原来这里是裸值 #FAF6EC，
+     全站"绿底上的字"共用一个来源，改主色时才不会漏掉某一块 */
+  color: var(--on-accent);
   font-weight: 600;
 }
 
@@ -52,9 +56,9 @@
   font-size: 24rpx;
   color: var(--green);
   border: 2rpx solid var(--green);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 6rpx 18rpx;
-  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  transition: transform var(--dur-tap) var(--ease-out);
 }
 
 .mini-btn:active { transform: scale(0.94); }
@@ -67,7 +71,7 @@
 .input {
   background: var(--paper);
   border: 2rpx solid var(--line);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 20rpx 24rpx;
   font-size: 30rpx;
 }
@@ -77,7 +81,7 @@
   min-height: 280rpx;
   background: var(--paper);
   border: 2rpx solid var(--line);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 20rpx 24rpx;
   font-size: 30rpx;
   box-sizing: border-box;
@@ -100,7 +104,8 @@
   height: 4rpx;
   background: var(--green);
   transform-origin: left center;
-  animation: ai-scan 1100ms cubic-bezier(0.32, 0.94, 0.60, 1) infinite;
+  /* 1100ms 是"扫描"的循环周期（不属于交互反馈族，不动）；缓动换 token 同值 */
+  animation: ai-scan 1100ms var(--ease-out) infinite;
 }
 
 @keyframes ai-scan {
@@ -109,13 +114,20 @@
   100% { transform: scaleX(1); opacity: 0; }
 }
 
+/* 前庭障碍降级：本页原来**一条都没有**（全局那条只关 app.wxss 里自己的动画类）。
+   这条扫描是 infinite 循环 —— 循环动画是眩晕风险最高的一类，必须能被关掉。
+   （另两处页面级动画已有降级：ask.wxss、pronounce.wxss。） */
+@media (prefers-reduced-motion: reduce) {
+  .ai-bar { animation: none; }
+}
+
 /* 提示条：默认中性，warn 用警示红只在"需要你换个做法"时才出现 */
 .ai-note {
   margin-top: 28rpx;
   padding: 24rpx;
   background: var(--paper);
   border: 2rpx solid var(--line);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 
 .ai-note.warn { border-left: 8rpx solid var(--red); }
@@ -149,7 +161,7 @@
 
 .ai-list {
   border: 2rpx solid var(--line);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   overflow: hidden;
 }
 
@@ -182,10 +194,10 @@
   font-size: 24rpx;
   color: var(--red);
   border: 2rpx solid var(--red);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 6rpx 16rpx;
   margin-left: 16rpx;
-  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  transition: transform var(--dur-tap) var(--ease-out);
 }
 
 .ai-del:active { transform: scale(0.94); }
@@ -195,7 +207,7 @@
 .book-entry {
   margin-top: 32rpx;
   border-left: 10rpx solid var(--yellow);
-  transition: transform 120ms cubic-bezier(0.32, 0.94, 0.60, 1);
+  transition: transform var(--dur-tap) var(--ease-out);
 }
 
 .book-entry:active { transform: scale(0.98); }
@@ -210,4 +222,35 @@
   font-size: 24rpx;
   color: var(--ink-2);
   margin-top: 8rpx;
+}
+
+/*----------------------- 小鲸键盘（单词字段） -----------------------*/
+
+/* 显示行复用 .input 的底/边/字号 —— 它是"字段"而非按钮，视觉必须与 meaning 等
+   系统输入字段同族，学生不会意识到两行输入用的是两套键盘 */
+.kb-field { display: flex; align-items: center; min-height: 88rpx; box-sizing: border-box; }
+
+.kb-field-on { border-color: var(--green); }   /* 展开态与全局 focus 语言一致 */
+
+.kb-val { font-size: 30rpx; color: var(--ink); }
+
+.kb-ph { font-size: 30rpx; color: var(--ink-2); opacity: 0.6; }
+
+/* 识别中：右侧常驻状态字，不用 toast —— toast 会打断"按住说完正等着出词"的流 */
+.kb-voice-hint { margin-left: auto; font-size: 24rpx; color: var(--green-d); }
+
+/* 停靠层：遮罩吃掉其余点击（点空白收起，与收系统键盘的直觉一致）；
+   z-index 90/91 高于本页所有卡片，低于全局弹层 */
+.kb-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 90;
+}
+
+.kb-dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 91;
+  /* 键盘本体无 tabBar 遮挡，但要避开 home indicator（本页注释顶部的同一教训） */
+  padding-bottom: env(safe-area-inset-bottom);
 }

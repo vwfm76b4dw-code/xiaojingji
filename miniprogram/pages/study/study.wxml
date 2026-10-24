@@ -1,9 +1,9 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
   <!-- 筛选栏：说明"这一轮在练哪些卡"+ 可切换 -->
   <view class="filter-bar">
     <view class="filter-current" bindtap="toggleFilter">
       <text class="fc-scope">{{scope === 'due' ? '今日待复习' : (scope === 'weak' ? '错题重练' : '全部单词')}}</text>
-      <text class="fc-sub">{{subject === 'all' ? '全部学科' : subject}} · {{dueCountNow}} 个</text>
+      <text class="fc-sub">{{unit === 'all' ? '' : unit + ' · '}}{{dueCountNow}} 个</text>
       <text class="fc-caret">{{filterOpen ? '收起' : '筛选'}}</text>
     </view>
 
@@ -22,17 +22,78 @@
         </view>
       </view>
 
-      <view class="fp-label">学科</view>
+      <!--
+        方向（2026-09-19 新增）：听写模式。
+        听写考的是"听中文写英文"，正向卡（看英文想中文）练不到这个方向。
+        只换呈现方向，队列与判分不变。
+      -->
+      <!-- 学后拼写开关：打完分先拼这个词再走（多邻国式，默认开） -->
+      <view class="fp-label">学后拼写</view>
       <view class="fp-chips">
-        <view class="chip {{subject === 'all' ? 'on' : ''}}" data-subject="all" bindtap="pickSubject">
-          全部
+        <view class="chip {{spellCheck ? 'on' : ''}}" bindtap="toggleSpellCheck">开（推荐）</view>
+        <view class="chip {{!spellCheck ? 'on' : ''}}" bindtap="toggleSpellCheck">关</view>
+      </view>
+
+      <!--
+        自动发音（2026-09-25 用户反馈「背这个单词需要同步朗读」）：
+        新词正面 + 翻到答案面自动读。默认开 —— 这是学习输入（形-音-义同步），
+        不是装饰音效；嫌吵关一次即可。落盘走 settings（autoSpeak），立即生效。
+      -->
+      <view class="fp-label">自动发音</view>
+      <view class="fp-chips">
+        <view class="chip {{autoSpeak ? 'on' : ''}}" bindtap="toggleAutoSpeak">开（推荐）</view>
+        <view class="chip {{!autoSpeak ? 'on' : ''}}" bindtap="toggleAutoSpeak">关</view>
+      </view>
+
+      <view class="fp-label">方向</view>
+      <view class="fp-chips">
+        <view class="chip {{direction === 'forward' ? 'on' : ''}}" data-dir="forward" bindtap="setDirection">
+          英 → 中
         </view>
-        <view wx:for="{{subjects}}" wx:key="subject"
-              class="chip {{subject === item.subject ? 'on' : ''}}"
-              data-subject="{{item.subject}}" bindtap="pickSubject">
-          {{item.subject}} ({{item.count}})
+        <view class="chip {{direction === 'reverse' ? 'on' : ''}}" data-dir="reverse" bindtap="setDirection">
+          中 → 英（听写）
         </view>
       </view>
+
+      <!--
+        单元筛选（2026-09-18 新增）。
+        放在学科之前 —— 因为这才是学生真正的入口："明天听写 Unit 2，我只背这 43 个词"。
+        只在确实有多个单元时才显示（只有一个单元时筛选是装饰品）。
+      -->
+      <block wx:if="{{units.length > 1}}">
+        <view class="fp-label">单元</view>
+        <!-- grid：单元名长短不一，等宽两列才不会让右边界参差（见 study.wxss 的 .fp-chips.grid） -->
+        <view class="fp-chips grid">
+          <view class="chip {{unit === 'all' ? 'on' : ''}}" data-unit="all" bindtap="pickUnit">
+            全部（{{units.length}} 个单元）
+          </view>
+          <view wx:for="{{units}}" wx:key="unit"
+                class="chip {{unit === item.unit ? 'on' : ''}}"
+                data-unit="{{item.unit}}" bindtap="pickUnit">
+            {{item.unit}} ({{item.learned}}/{{item.count}})
+          </view>
+        </view>
+      </block>
+
+      <!--
+        学科：只在有多个学科时才显示。
+        原来无论几个学科都渲染这块 UI，而全库 subject 只有一个取值"英语" ——
+        学生点了没有任何变化，是典型的"看着有其实没用"。
+      -->
+      <block wx:if="{{subjects.length > 1}}">
+        <view class="fp-label">学科</view>
+        <!-- 与单元同一口径：学科名 + 计数，同样等宽两列 -->
+        <view class="fp-chips grid">
+          <view class="chip {{subject === 'all' ? 'on' : ''}}" data-subject="all" bindtap="pickSubject">
+            全部
+          </view>
+          <view wx:for="{{subjects}}" wx:key="subject"
+                class="chip {{subject === item.subject ? 'on' : ''}}"
+                data-subject="{{item.subject}}" bindtap="pickSubject">
+            {{item.subject}} ({{item.count}})
+          </view>
+        </view>
+      </block>
     </view>
   </view>
 
@@ -43,118 +104,415 @@
     </view>
     <view class="topbar-row">
       <text class="t-hint t-num">{{reviewed}}/{{total}}</text>
-      <text wx:if="{{streak >= 2}}" class="tag yellow pop">连对 ×{{streak}}</text>
     </view>
   </view>
 
   <!-- 复习中 -->
   <block wx:if="{{!done && current}}">
-    <view class="flip-wrap">
-      <view class="flip-inner {{flipped ? 'flipped' : ''}} {{leaving ? 'slide-out' : ''}} {{entering ? 'slide-in' : ''}} {{shaking ? 'shake' : ''}}">
-        <!-- 正面：只给问题，强制主动回忆 -->
-        <view class="face front card stripe" bindtap="flipCard">
-          <view class="face-head">
-            <text class="tag green">{{current.subject}}</text>
-            <text class="tag">难度 {{current.difficulty}}</text>
-          </view>
-          <view class="prompt">{{current.prompt}}</view>
-          <view class="face-foot t-hint">点一下看答案</view>
-        </view>
+    <view class="stage">
+      <!--
+        ⚠️ 抖动（shake）**不在这两层，只在下面的 .grade**。想挪回来之前请先读完这段。
 
-        <!-- 背面：答案 + 记忆钩子（本项目的核心价值） -->
-        <view class="face back flip-back card stripe green">
-          <view class="face-head">
-            <text class="t-hint">答案</text>
-          </view>
-          <view class="answer">{{current.answer}}</view>
+        · 不能挂 .flip-wrap（本元素）：它已经要挂 slide-out / slide-in。
+          三个类都写 `animation` **简写**、同权重（0-1-0），于是靠"谁在样式表里靠后"决胜 ——
+          app.wxss 里 .slide-out / .slide-in 声明在 .shake 之后，抖动会被整条覆盖，
+          **一帧都播不出来**（这就是抖动此前"写了却从没出现过"的原因之一）。
+        · 不能挂 .flip-inner（下一层）：CSS 层叠里**动画声明的优先级高于普通声明**
+          （Author normal < Animation），动画里的 transform 会把
+          .flip-inner.flipped 的 `transform: rotateY(180deg)` 整个顶掉 ——
+          卡片当场翻回正面，学生看到背面的答案突然变成只有单词的正面。
+          这是上一轮刚修好的真 bug，别再碰（详见 study.wxss 的 .flip-wrap 注释）。
+        · 挂 .grade：它是 .flip-inner 的**兄弟节点**，既不在 .flip-inner 的
+          preserve-3d 子树里，也没有别的动画与它抢 `animation` —— 3D 风险可证为零。
 
-          <view wx:if="{{current.detail}}" class="detail">{{current.detail}}</view>
-
-          <!-- 记忆钩子：用黄色强调，这是"怎么记"而不是"记什么" -->
-          <!-- 记忆钩子：默认给一句话版（完整版中位 72 字，翻卡时会被跳过） -->
-          <view wx:if="{{showHook && (current.shortHook || current.hook)}}" class="hook">
-            <view class="hook-label">记忆钩子</view>
-            <view class="hook-text">{{current.shortHook || current.hook}}</view>
-            <!-- 有短版才提供展开：短版就是全部内容时展开没意义 -->
-            <view wx:if="{{current.shortHook}}" class="hook-more"
-                  catchtap="toggleHookDetail">
-              {{hookOpen ? '收起' : '为什么这么记？'}}
+        为什么"抖按钮"而不是"抖卡片"：抖动的语义是「你刚做的这个操作有问题」，
+        而按钮正是他刚点的东西；抖卡片反而容易被读成「卡片本身出错了」。
+        这是刻意的选择，不是妥协 —— 别以"忠于原设计"为由把它挪回卡片上，
+        那会同时把翻转搞坏（见上面第二条）。
+      -->
+      <block wx:if="{{!spellPending}}">
+      <view class="flip-wrap {{leaving ? 'slide-out' : ''}} {{entering ? 'slide-in' : ''}}">
+        <view class="flip-inner {{flipped ? 'flipped' : ''}}">
+          <!--
+            正面。分三种：
+            · 新词（isNew，正向）：正面**直接给释义与记忆钩子** —— 这是"学"而不是"考"。
+              对从没见过的词要求"先自己回想"是做不到的，学生只能蒙。
+            · 旧词（正向）：只给单词，强制主动回忆（SM-2 该用的地方）。
+            · 听写（reverse）：给中文释义，想出英文再翻面核对 —— 考"听中文写英文"的方向。
+          -->
+          <view class="face front card stripe {{current.isNew && !current.reverse ? 'yellow' : ''}}" bindtap="flipCard">
+            <view class="face-head">
+              <text wx:if="{{current.reverse}}" class="tag">听写</text>
+              <text wx:elif="{{current.isNew}}" class="tag yellow">第一次见</text>
+              <text wx:else class="tag">复习</text>
+              <!-- 「再看一遍」的词从本轮尾部回来时亮标签 ——
+                   用户反馈「怎么就直接划过去了」：划走是设计（隔几个词再考），
+                   但承诺必须可见，否则学生以为这个词丢了。 -->
+              <text wx:if="{{current.retryBack}}" class="tag">本轮再来</text>
             </view>
-            <view wx:if="{{hookOpen}}" class="hook-detail">{{current.hook}}</view>
+
+            <!-- 2026-09-19 排版：新词的"词→义→钩子"是一组，整体居中；
+                 不再让 .prompt 的 flex:1 把词孤零零居中、义挤到底部 -->
+            <block wx:if="{{current.isNew && !current.reverse}}">
+              <view class="front-center">
+                <view class="prompt-row">
+                  <!-- 音节分色：sylParts 为 null 时（中文/单音节/脏数据）直接渲染原词 -->
+                  <view class="prompt">
+                    <block wx:if="{{sylParts}}"><text wx:for="{{sylParts}}" wx:key="index" class="syl {{item.c}}">{{item.t}}</text></block>
+                    <block wx:else>{{current.prompt}}</block>
+                  </view>
+                  <view class="play-chip {{playingWord === current.id ? 'on' : ''}}" catchtap="playWord"
+                        aria-role="button" aria-label="听 {{current.prompt}} 的发音">
+                    {{playingWord === current.id ? '■' : '▶'}}
+                  </view>
+                </view>
+                <!-- 音标紧跟单词：先看形与音，再看义。放在释义之前 ——
+                     这是怎么读的答案，属于单词本身，不属于释义那一层。 -->
+                <view wx:if="{{current.phon}}" class="phon phon-front">/{{current.phon}}/</view>
+                <view class="new-answer">{{current.answer}}</view>
+                <!-- 记忆技巧：自带 hook → 一句话短版 → mnemonic.tipFor 兜底，全无则不渲染 -->
+                <view wx:if="{{showHook && (current.shortHook || current.hook || current.tipText)}}" class="hook">
+                  <view class="hook-label">记忆钩子</view>
+                  <view class="hook-text">{{current.shortHook || current.hook || current.tipText}}</view>
+                </view>
+              </view>
+              <view class="face-foot t-hint">记住它，再点下面</view>
+            </block>
+
+            <block wx:else>
+              <!-- 旧词/听写：单一提示居中（词 或 中文释义）；词旁可听发音 -->
+              <view class="prompt-row">
+                <view class="prompt">
+                    <block wx:if="{{!current.reverse && sylParts}}"><text wx:for="{{sylParts}}" wx:key="index" class="syl {{item.c}}">{{item.t}}</text></block>
+                    <block wx:else>{{current.reverse ? current.answer : current.prompt}}</block>
+                  </view>
+                <view class="play-chip {{playingWord === current.id ? 'on' : ''}}" catchtap="playWord"
+                      aria-role="button" aria-label="听发音">
+                  {{playingWord === current.id ? '■' : '▶'}}
+                </view>
+              </view>
+              <!-- 音标只在**非反向**时显示：听写模式（reverse）正面给的是中文，
+                   此时亮出英文音标等于把答案念出来了。 -->
+              <view wx:if="{{!current.reverse && current.phon}}" class="phon phon-front">/{{current.phon}}/</view>
+              <view wx:if="{{current.reverse}}" class="face-foot t-hint">想出英文单词 —— 点一下核对</view>
+              <view wx:else class="face-foot t-hint">先自己回想 —— 点一下看答案</view>
+            </block>
           </view>
 
-          <view class="src t-hint">来源：{{current.source}}</view>
+          <!-- 背面：答案 + 记忆钩子（本项目的核心价值） -->
+          <view class="face back flip-back card stripe green">
+            <view class="face-head">
+              <text class="t-hint">答案</text>
+            </view>
+            <!-- 2026-09-19 排版：答案独占一行（长释义与 chip 同行会把"地 区"拆断），
+                 发音 chip 独立一行放答案下方 -->
+            <view class="answer">
+              <block wx:if="{{current.reverse && sylParts}}"><text wx:for="{{sylParts}}" wx:key="index" class="syl {{item.c}}">{{item.t}}</text></block>
+              <block wx:else>{{current.reverse ? current.prompt : current.answer}}</block>
+            </view>
+            <view wx:if="{{current.phon}}" class="phon t-hint">/{{current.phon}}/</view>
+            <view class="back-actions">
+              <view class="play-chip {{playingWord === current.id ? 'on' : ''}}"
+                    catchtap="playWord" aria-role="button"
+                    aria-label="朗读 {{current.prompt}}">
+                {{playingWord === current.id ? '■ 停止' : '▶ 发音'}}
+              </view>
+            </view>
+
+            <view wx:if="{{current.detail}}" class="detail">{{current.detail}}</view>
+
+            <!-- 记忆钩子：用黄色强调，这是"怎么记"而不是"记什么" -->
+            <!-- 记忆钩子：默认给一句话版（完整版中位 72 字，翻卡时会被跳过） -->
+            <!-- 记忆技巧链（契约 §2.5）：自带 hook → shortHook → tipFor 兜底，全无则整块不渲染 -->
+            <view wx:if="{{showHook && (current.shortHook || current.hook || current.tipText)}}" class="hook">
+              <view class="hook-label">记忆钩子</view>
+              <view class="hook-text">{{current.shortHook || current.hook || current.tipText}}</view>
+              <!-- 有短版才提供展开：短版就是全部内容时展开没意义（tipFor 兜底没有完整版） -->
+              <view wx:if="{{current.shortHook}}" class="hook-more"
+                    catchtap="toggleHookDetail">
+                {{hookOpen ? '收起' : '为什么这么记？'}}
+              </view>
+              <view wx:if="{{hookOpen}}" class="hook-detail">{{current.hook}}</view>
+            </view>
+
+            <!-- 来源行（2026-09-25 修「所有卡都是同一个来源」）：srcText 由
+                 sourceLabel 规则生成（unit 优先、学段常量不显示、全无则整行不渲染），
+                 空串时这里不渲染 —— 一行对每张卡都一样的字不是出处，是噪音。 -->
+            <view wx:if="{{current.srcText}}" class="src t-hint">来源：{{current.srcText}}</view>
+          </view>
         </view>
+      </view>
+
+      <!--
+        评分按钮。两档/三档随卡片类型切换，且**把后果写在按钮上**。
+        为什么要显示"下次 N 天"：原来三个按钮的后果对学生不可见，只能凭感觉点；
+        而学生最需要知道的恰恰是"我选了这个，什么时候再见它"。
+
+        抖动（答错反馈）挂在这一层 —— 理由见上面 .flip-wrap 前的那段注释：
+        兄弟节点，不碰 3D 子树，也不与换卡动画抢 `animation`。
+      -->
+      <view class="grade {{shaking ? 'shake' : ''}}">
+        <!-- 新词：两个按钮（学习阶段） -->
+        <block wx:if="{{current.isNew}}">
+          <view class="grade-hint t-hint">
+            {{flipped ? '刚才记住了吗？' : (current.reverse ? '想出英文，再翻面核对' : '先记住它，再选')}}
+          </view>
+          <view class="btn-row">
+            <button class="btn ghost grade-btn vague" data-q="3" bindtap="onGrade" disabled="{{!flipped}}">
+              再看一遍
+            </button>
+            <button class="btn primary grade-btn" data-q="5" bindtap="onGrade" disabled="{{!flipped}}">
+              记住了{{current.nextKnow ? ' · ' + current.nextKnow + ' 天后' : ''}}
+            </button>
+          </view>
+        </block>
+
+        <!-- 旧词：三个按钮（复习阶段） -->
+        <block wx:else>
+          <view class="grade-hint t-hint">
+            {{flipped ? '刚才回想得怎么样？' : (current.reverse ? '想出英文，再翻面核对' : '先自己回想，再翻面')}}
+          </view>
+          <view class="btn-row">
+            <button class="btn danger grade-btn" data-q="1" bindtap="onGrade" disabled="{{!flipped}}">
+              不认识
+            </button>
+            <button class="btn ghost grade-btn vague" data-q="3" bindtap="onGrade" disabled="{{!flipped}}">
+              模糊{{current.nextVague ? ' · ' + current.nextVague + ' 天' : ''}}
+            </button>
+            <button class="btn primary grade-btn" data-q="5" bindtap="onGrade" disabled="{{!flipped}}">
+              认识{{current.nextKnow ? ' · ' + current.nextKnow + ' 天' : ''}}
+            </button>
+          </view>
+        </block>
+      </view>
+      </block>
+
+      <!--
+        结果条（替代原居中 toast）：评分后果常驻一行，不与卡片重叠。
+        组件来自 prototype-ui ⑦（result-strip）—— toast 会悬浮在换进来的下一张卡的
+        单词上，正是作者点名的"遮挡下一个单词"。soft 版 = 答错当轮重排的温和反馈。
+      -->
+      <view wx:if="{{lastResult}}" class="result-strip {{lastResult.soft ? 'soft' : ''}}">
+        <text class="rs-label">上一张</text>
+        <text class="rs-word">{{lastResult.word}}</text>
+        <text class="rs-arrow">→</text>
+        <text class="rs-text">{{lastResult.text}}</text>
       </view>
     </view>
+  </block>
 
-    <!-- 评分按钮：未翻面时锁定（半透明 + 无效） -->
-    <view class="grade">
-      <view class="grade-hint t-hint">
-        {{flipped ? '刚才回想得怎么样？' : '先自己回想，再翻面'}}
+  <!--
+    拼写轮（2026-09-19 重构）：整轮识别过完 → 最后统一拼一遍。
+    为什么放最后：刚看完就拼是瞬时记忆，测不出记没记住；隔一轮再拼是真回忆。
+    两种题型随机交替：中译英=逐字母点填（点一个填一个，可点槽退回）；
+    英译中=四选一释义。全部客观判分并计入拼写错误分析。
+  -->
+  <block wx:if="{{spellRound}}">
+    <view class="page-pad">
+      <view class="topbar">
+        <view class="bar">
+          <view class="bar-fill" style="transform: scaleX({{spellTotal ? spellIdx / spellTotal : 0}});"></view>
+        </view>
+        <view class="topbar-row">
+          <text class="t-hint t-num">拼写轮 {{spellIdx + 1}}/{{spellTotal}}</text>
+          <text class="t-hint">拼对 {{spellOkCount}} · 拼错 {{spellBadCount}}</text>
+        </view>
       </view>
-      <view class="btn-row">
-        <button class="btn danger grade-btn" data-q="1" bindtap="onGrade" disabled="{{!flipped}}">不认识</button>
-        <button class="btn ghost grade-btn vague" data-q="3" bindtap="onGrade" disabled="{{!flipped}}">模糊</button>
-        <button class="btn primary grade-btn" data-q="5" bindtap="onGrade" disabled="{{!flipped}}">认识</button>
+
+      <view class="card stripe yellow spell-round-card">
+        <view class="face-head">
+          <text class="tag yellow">{{spellMode === 'spell' ? '中译英 · 点字母拼写' : '英译中 · 选对释义'}}</text>
+          <!-- 重学段标签：判错词从队尾回来时亮出 ——「再学一遍」是承诺，不是丢失 -->
+          <text wx:if="{{spellRetry}}" class="tag">重学</text>
+        </view>
+
+        <block wx:if="{{spellMode === 'spell'}}">
+          <view class="spell-prompt">{{spellWord.answer}}</view>
+          <view wx:if="{{spellWord.phon}}" class="phon t-hint">/{{spellWord.phon}}/</view>
+
+          <!-- 字母槽：点一个填一个；点已填的槽退回。
+               空格固定槽（2026-09-25 修「带空格的单词没法拼」）：原来空格槽渲染成
+               不可见的空文本节点，go straight on 在屏上挤成 gostraighton，
+               学生根本看不出词界；现在 gap 槽渲染为一段无字空隙（样式见 .sp-slot.gap），
+               拼读节奏在视觉上成立。 -->
+          <view class="sp-slot-row">
+            <block wx:for="{{spellSlots}}" wx:key="index">
+              <text wx:if="{{item.fixed}}" class="sp-slot fixed {{item.ch === ' ' ? 'gap' : ''}}">{{item.ch === ' ' ? '' : item.ch}}</text>
+              <text wx:else
+                    class="sp-slot {{item.state}} {{item.state === 'filled' ? 'can-undo' : ''}}"
+                    data-i="{{index}}" bindtap="onSlotTap">{{item.ch}}</text>
+            </block>
+          </view>
+
+          <view wx:if="{{spellWord.srcText}}" class="t-hint" style="margin-top: 8rpx;">来源：{{spellWord.srcText}}</view>
+
+          <!-- 字母库：点一个填一个 -->
+          <view class="sp-bank">
+            <block wx:for="{{spellBank}}" wx:key="index">
+              <text wx:if="{{!item.used}}" class="sp-bank-ch" data-i="{{index}}" bindtap="onBankTap">{{item.ch}}</text>
+            </block>
+          </view>
+
+          <!--
+            显式验证（2026-09-25 用户点名「加入验证完再验证」）：字母落满**不自动判分**，
+            点「验证」才判 —— 判后的逐格红绿与错因停留到手动点「下一张」，没有任何
+            自动推进定时器。未填满就点验证走 verifySpell 的防呆分支（抖动 + 提示）。
+          -->
+          <view wx:if="{{!spellVerdict}}" class="spell-verify {{spellShaking ? 'shake' : ''}}">
+            <button class="btn primary big" bindtap="verifySpell"
+                    aria-role="button" aria-label="验证拼写">验证</button>
+          </view>
+
+          <block wx:if="{{spellVerdict}}">
+            <view class="sp-result {{spellVerdict.peek ? 'peek' : (spellVerdict.ok ? 'ok' : '')}}">
+              <!-- peek（2026-09-25 跳过亮答案）：与判对/判错同一行位、第三种颜色 ——
+                   文案不说"拼对了/拼错了"，因为跳过没有判决 -->
+              <view class="sp-verdict">{{spellVerdict.peek ? '已跳过 · 这是正确答案' : (spellVerdict.ok ? '拼对了' : '拼错了 · ' + spellVerdict.errType)}}</view>
+              <view class="sp-nodes">
+                <text wx:for="{{spellVerdict.nodes}}" wx:key="index"
+                      class="sp-ch {{item.state}}">{{item.ch}}</text>
+              </view>
+              <view class="t-hint">{{spellVerdict.hint}}</view>
+            </view>
+          </block>
+        </block>
+
+        <block wx:else>
+          <view class="spell-prompt">{{spellWord.prompt}}</view>
+          <view wx:if="{{spellWord.phon}}" class="phon t-hint">/{{spellWord.phon}}/</view>
+          <view class="play-line">
+            <view class="play-chip {{playingWord === spellWord.id ? 'on' : ''}}" bindtap="playWord"
+                  aria-role="button" aria-label="听发音">{{playingWord === spellWord.id ? '■' : '▶'}}</view>
+          </view>
+          <view class="spell-choices">
+            <view wx:for="{{spellChoices}}" wx:key="*this"
+                  class="chip spell-choice {{spellVerdict ? (item === spellWord.answer ? 'on' : (item === spellVerdict.chosen ? 'bad-choice' : '')) : ''}}"
+                  data-a="{{item}}" bindtap="spellChoicePick">{{item}}</view>
+          </view>
+          <block wx:if="{{spellVerdict}}">
+            <view class="sp-result {{spellVerdict.peek ? 'peek' : (spellVerdict.ok ? 'ok' : '')}}">
+              <view class="sp-verdict">{{spellVerdict.peek ? '已跳过 · 这是正确答案' : (spellVerdict.ok ? '选对了' : '选错了')}}</view>
+            </view>
+          </block>
+        </block>
+
+        <button wx:if="{{spellVerdict}}" class="btn primary big" bindtap="spellNext">
+          {{spellIdx + 1 >= spellTotal ? '看本轮小结' : '下一个'}}
+        </button>
+        <view wx:if="{{!spellVerdict}}" class="t-hint" style="margin-top: 12rpx; text-align: center;">
+          想不出来的词，点"跳过"直接看答案
+        </view>
+        <view wx:if="{{!spellVerdict}}" class="btn-row" style="margin-top: 8rpx;">
+          <button class="btn ghost small" bindtap="spellSkipWord">这个词跳过</button>
+          <button class="btn ghost small" bindtap="skipSpellRound">跳过拼写轮</button>
+        </view>
       </view>
     </view>
   </block>
 
   <!-- 完成态 -->
   <block wx:if="{{done}}">
-    <view class="card stripe green done-card pop">
-      <view class="done-title">
-        {{total > 0 ? '这一轮完成了' : (scope === 'weak' ? '错题本已清空' : '今日已完成')}}
-      </view>
-      <view class="done-num t-num">{{reviewed || 0}}</view>
-      <view class="t-sub">
-        {{total > 0 ? '个单词复习完毕' : '这个范围暂时没有要复习的词'}}
-      </view>
-
-      <view wx:if="{{total > 0}}" class="done-stats">
-        <view class="ds">
-          <text class="ds-num t-num" style="color: var(--green);">{{roundKnow}}</text>
-          <text class="t-hint">认识</text>
+    <view class="stage">
+      <view class="card stripe green done-card pop">
+        <view class="done-title">
+          {{total > 0 ? '这一轮完成了' : (scope === 'weak' ? '错题本已清空' : '今日已完成')}}
         </view>
-        <view class="ds">
-          <text class="ds-num t-num" style="color: var(--yellow-ink);">{{roundVague}}</text>
-          <text class="t-hint">模糊</text>
+        <view class="done-num t-num">{{reviewed || 0}}</view>
+        <view class="t-sub">
+          {{total > 0 ? '个单词复习完毕' : '这个范围暂时没有要复习的词'}}
         </view>
-        <view class="ds">
-          <text class="ds-num t-num" style="color: var(--red);">{{roundForgot}}</text>
-          <text class="t-hint">不认识</text>
+
+        <view wx:if="{{total > 0}}" class="done-stats">
+          <view class="ds">
+            <text class="ds-num t-num" style="color: var(--green);">{{roundKnow}}</text>
+            <text class="t-hint">认识</text>
+          </view>
+          <view class="ds">
+            <text class="ds-num t-num" style="color: var(--yellow-ink);">{{roundVague}}</text>
+            <text class="t-hint">模糊</text>
+          </view>
+          <view class="ds">
+            <text class="ds-num t-num" style="color: var(--red);">{{roundForgot}}</text>
+            <text class="t-hint">不认识</text>
+          </view>
         </view>
-        <view class="ds">
-          <text class="ds-num t-num" style="color: var(--green);">{{bestStreak}}</text>
-          <text class="t-hint">最高连对</text>
+
+        <view class="done-note t-hint">
+          每条记录都已保存，下次复习时间由算法安排——复习会发生在你快忘没忘的时候。
+        </view>
+
+        <!-- 完成页的一句话：取自文案库、按日期轮换。放在最后 ——
+             先给数字（他做了多少），再给一句人话（这件事意味着什么）。 -->
+        <view wx:if="{{doneSay}}" class="done-say">{{doneSay}}</view>
+      </view>
+
+      <!-- 完成后的下一步：给可执行的动作，而不是只显示"完成" -->
+      <view class="next-actions">
+        <!--
+          被「学习量」上限挡住的词。
+          2026-09-18 改文案：原写"今天还有 N 个词在排队……明天会自动接上"——
+          这句是**不实**的：上限是"每轮"而不是"每日"，点「再来一轮」现在就能继续。
+          说成"明天才接上"会让学生以为今天已经做完，白等一天。
+        -->
+        <view wx:if="{{hiddenNew > 0 || hiddenReview > 0}}" class="note">
+          词库里还有 {{hiddenNew + hiddenReview}} 个词没练（{{hiddenReview}} 个复习 + {{hiddenNew}} 个新词）。
+          今天的量已经做完了 —— 想继续可以再练一轮。
+          <!--
+            「解锁再练一组」入口（2026-09-24 加）。
+            为什么放在这里而不是只放成长看板里：**被上限挡住的这一刻**，
+            正是学生最想继续的时候 —— 让他跳去另一个页面才能买，等于把转化点推远了。
+            这里是它唯一自然的出现位置。
+          -->
+          <view class="note-act" bindtap="buyExtraBatch" aria-role="button"
+                aria-label="花 {{extraBatchPrice}} 积分解锁再练一组">
+            {{extraBoughtToday ? '今天已解锁过' : '解锁再练一组（' + extraBatchPrice + ' 积分）'}}
+          </view>
+        </view>
+
+        <!--
+          「还有 N 个词待复习 → 去练」—— 把范围切到 due。
+
+          2026-09-19 修死链：原来只有 `hiddenNew === 0 && hiddenReview === 0 && totalDue > 0`，
+          漏了最关键的一条 —— **当前 scope 已经是 'due' 时这一行是死的**：
+          它的动作是 pickScope('due')，而 pickScope 第一行就是 `if (s === this.data.scope) return;`，
+          于是点下去什么都不发生。而 hidden* 只在"学习量上限真的挡了词"时才不为零，
+          上限又只在 scope='due' 时施加 —— 也就是说这个条件**从来没挡住过**真正会出死链的场景
+          （选了单元时不限流、或到期数小于上限时，hidden 都是 0，死链照样露出来）。
+
+          所以补上 scope 这一条：只有当这个动作**真的能改变什么**时才显示它。
+          一个点了没反应的入口比没有这个入口更伤信任 —— 学生会以为界面卡住了，
+          然后不再相信页面上任何可点的地方。
+
+          （totalDue 是"现在切到 due 会给我多少张"：按当前 subject/unit 取到期卡，
+           再走与 buildQueue **同一个**限流判据（见 study.js 的 countDueInScope() /
+           shouldApplyLimits()）。所以"显示的数字"与"切过去后的队列长度"必然相等 ——
+           包括 scope='all' + 不限单元这种会被每日上限截短的情形。）
+        -->
+        <view wx:if="{{scope !== 'due' && totalDue > 0}}" class="note info" bindtap="pickScope" data-scope="due">
+          还有 {{totalDue}} 个词待复习 → 去练
+        </view>
+        <view wx:if="{{weakCount > 0}}" class="note warn" bindtap="practiceWeak">
+          错题本里攒了 {{weakCount}} 个 → 专项重练
         </view>
       </view>
 
-      <view class="done-note t-hint">
-        每条记录都已保存，下次复习时间由算法安排——复习会发生在你快忘没忘的时候。
-      </view>
-    </view>
-
-    <!-- 完成后的下一步：给可执行的动作，而不是只显示"完成" -->
-    <view class="next-actions">
-      <!-- 被「学习量」上限挡住的词：如实说清楚，否则学生会以为词库只有这么多 -->
-      <view wx:if="{{hiddenNew > 0 || hiddenReview > 0}}" class="note">
-        今天还有 {{hiddenNew + hiddenReview}} 个词在排队（{{hiddenReview}} 个复习 + {{hiddenNew}} 个新词）。
-        明天会自动接上 —— 这是「设置 → 学习量」里定的节奏。
+      <!--
+        「再来一轮」：again() 方法早就写好了，但 wxml 里一直没有入口（死方法）。
+        补上它 —— 学生想多背几个词时，最自然的动作就是"再来一轮"。
+        三个按钮等宽，靠颜色区分主次（primary = 继续练，ghost = 离开）。
+      -->
+      <!-- 拼写入口：产出型练习的第二落点（首页之外） -->
+      <!-- 当日一句：坚持的正反馈放在收获的时刻 -->
+      <view wx:if="{{quote}}" class="t-hint" style="margin-top: 28rpx; text-align: center; line-height: 1.8;">
+        {{quote.zh || quote.en}} —— {{quote.src}}
       </view>
 
-      <view wx:if="{{hiddenNew === 0 && hiddenReview === 0 && totalDue > 0}}" class="note info" bindtap="pickScope" data-scope="due">
-        还有 {{totalDue}} 个词待复习 → 去练
+      <view class="btn-row" style="margin-top: 24rpx; flex-wrap: wrap; gap: 16rpx;">
+        <button class="btn ghost" bindtap="goDeck">回词库</button>
+        <button class="btn ghost" bindtap="goSpelling">拼单词</button>
+        <button class="btn primary" bindtap="again">再来一轮</button>
+        <button class="btn ghost" bindtap="goStats">看统计</button>
       </view>
-      <view wx:if="{{weakCount > 0}}" class="note warn" bindtap="practiceWeak">
-        错题本里攒了 {{weakCount}} 个 → 专项重练
-      </view>
-    </view>
-
-    <view class="btn-row" style="margin-top: 32rpx;">
-      <button class="btn ghost" bindtap="goDeck">回词库</button>
-      <button class="btn primary" bindtap="goStats">看统计</button>
     </view>
   </block>
 

@@ -1,0 +1,100 @@
+<view class="page {{themeClass}} page-fade">
+
+  <!--
+    资料卡。三种况都各有可读内容（utils/friend.js「永不抛错」契约在 UI 侧的镜像）：
+      · 已注册      → 头像 + 昵称 + 好友号（点一下复制）
+      · 未注册      → 引导按钮进好友页（注册入口在那里，那里还有给家长的说明文案）
+      · 云不可用    → 缓存名片 + 提示行；没缓存时引导按钮仍可点，进好友页看同一套降级
+  -->
+  <view class="card stripe rise-soft">
+    <view class="profile-row">
+      <image wx:if="{{avatarSrc}}" class="avatar" src="{{avatarSrc}}" mode="aspectFill"
+             binderror="onAvatarError" aria-role="img" aria-label="头像"></image>
+      <view wx:else class="avatar avatar-blank" aria-role="img" aria-label="默认头像">
+        <text class="avatar-blank-txt">鲸</text>
+      </view>
+      <view class="profile-main">
+        <view class="nick">{{nickname || '小鲸同学'}}</view>
+        <!-- 好友号是对外唯一标识（openid 前端永远拿不到），复制它去加好友 -->
+        <view wx:if="{{friendId}}" class="fid" bindtap="copyFriendId"
+              aria-role="button" aria-label="复制好友号 {{friendId}}">
+          <text class="t-mono">好友号 {{friendId}}</text>
+          <text class="fid-copy">复制</text>
+        </view>
+        <view wx:if="{{cloudDown}}" class="t-hint cloud-hint">云服务暂不可用 · 显示的是本机名片</view>
+      </view>
+    </view>
+
+    <block wx:if="{{!hasProfile}}">
+      <view class="t-hint guide-txt">完善资料后，可以加好友、比积分、养一只小鲸。</view>
+      <button class="btn primary guide-btn" bindtap="goFriends">完善资料，解锁好友与宠物</button>
+    </block>
+  </view>
+
+  <!--
+    数据概览条：三个数字与成长看板/战报完全同口径（同一个模块推导，见 profile.js）。
+    为什么放资料卡正下方：进"我的"第一眼回答"我学到哪了"，菜单只是入口。
+    三格等分 + 竖分隔线，与成长看板 hero-row 同构 —— 数字长相一致，才像同一套账。
+  -->
+  <view class="card overview rise-soft" style="--rise-delay: 60ms;">
+    <view class="ov-cell">
+      <view class="ov-n t-num">{{mastered}}</view>
+      <view class="ov-l">累计掌握</view>
+    </view>
+    <view class="ov-div"></view>
+    <view class="ov-cell">
+      <view class="ov-n t-num">{{streakDays}}</view>
+      <view class="ov-l">连胜天数</view>
+    </view>
+    <view class="ov-div"></view>
+    <view class="ov-cell">
+      <view class="ov-n t-num">{{points}}</view>
+      <view class="ov-l">积分</view>
+    </view>
+  </view>
+
+  <!--
+    菜单列表：底部栏撤下的页面与低频入口都收拢在这里。
+    行式列表（名字左、去向右），不用等宽卡片云 —— 与 deck.wxml 的分区纪律一致。
+    顺序即用户视角的"社交 → 数据 → 学习 → 系统"。
+  -->
+  <view class="section-label" style="margin-top: 32rpx;">更多</view>
+  <view class="card menu rise-soft" style="--rise-delay: 120ms;">
+    <view class="menu-row" bindtap="goFriends" aria-role="button" aria-label="好友与小鲸">
+      <text class="menu-name">好友与小鲸</text>
+      <text class="menu-go">加好友 · 周榜 ›</text>
+    </view>
+    <!--
+      「小鲸宠物」入口已下线（2026-09-30，用户决定："宠物先暂时砍掉，下个大版本更新再搞"）。
+      只摘入口、保留 profile.js 的 goPet() 函数本体与 pack-social/pages/pet/* 全部代码，
+      下个大版本把这一行加回来即可接上。
+
+      删这一行不会留下视觉空洞：菜单分隔线由 .menu-row 的 border-bottom 画、
+      末行由 :last-child 取消，所以"少一项"只是少一条线，不需要补任何占位。
+    -->
+    <view class="menu-row" bindtap="goStats" aria-role="button" aria-label="统计">
+      <text class="menu-name">统计</text>
+      <text class="menu-go">学习数据 ›</text>
+    </view>
+    <view class="menu-row" bindtap="goAsk" aria-role="button" aria-label="问词">
+      <text class="menu-name">问词</text>
+      <text class="menu-go">查生词 ›</text>
+    </view>
+    <view class="menu-row" bindtap="goGrowth" aria-role="button" aria-label="成长看板">
+      <text class="menu-name">成长看板</text>
+      <text class="menu-go">连胜 · 护身符 ›</text>
+    </view>
+    <view class="menu-row" bindtap="goSettings" aria-role="button" aria-label="设置">
+      <text class="menu-name">设置</text>
+      <text class="menu-go">每日量 · 榜单开关 ›</text>
+    </view>
+    <!-- 分享战报：open-type="share" 只有 button 能触发（平台限制），view 模拟不出来。
+         样式重置成与其余行一致（见 wxss 的 .menu-share）。 -->
+    <button class="menu-row menu-share" open-type="share" aria-role="button" aria-label="分享战报">
+      <text class="menu-name">分享战报</text>
+      <text class="menu-go">发给同学比一比 ›</text>
+    </button>
+  </view>
+
+  <view class="foot-note">学习数据只存本机 · 参加排行榜/好友功能才会上传对应项目</view>
+</view>

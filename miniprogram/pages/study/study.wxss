@@ -1,3 +1,58 @@
+/**
+ * 页面纵向布局：顶部固定、中部吃掉剩余高度、底部由内容自己排。
+ *
+ * 为什么 .page 要变成 flex 列容器：只有父级是 flex 容器，子级才能用 flex: 1
+ * 拿到"剩下多少高度"这个信息 —— 而"垂直居中"本质上就是"在剩余高度里居中"。
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  /**
+   * 28rpx —— 复习页**自己的居中口径**，与 .topbar 的 margin-bottom 同值。
+   *
+   * 为什么不是"跟全站一致"的 32rpx（app.wxss 的 .page 底部呼吸值）：
+   * 本页的内容块（卡片 + 评分按钮）由 .stage 在
+   * [进度条底 + .topbar 的 margin-bottom, 视口底 - 这里的 padding-bottom] 里居中，
+   * 上下两个内缩量**相等**时，这组的几何中心才与"进度条以下 → tabBar 以上"的
+   * 可视中心重合。28rpx 上下对称，32rpx 会让整组比可视中心高 2rpx。
+   *
+   * 历史：这里原先是"覆盖全局 .page 的 128rpx 底部留白"（那条全局值是错的，
+   * 见 app.wxss 的实测记录）。全局改成 32rpx 后，这一条不再是补丁，
+   * 而是一条**真的页面级约束**，所以保留 —— 顺带保证上一轮调平好的居中
+   * （实测上余量 == 下余量）逐像素不变。
+   *
+   * 这里刻意不叠加 env(safe-area-inset-bottom)：本页是 tabBar 页，
+   * webview 底边 = tabBar 顶边，home indicator 的区域在 tabBar 上，不在页面里。
+   *
+   * 只写 padding-bottom 一项，不写 padding 简写 —— 简写会把 app.wxss 的
+   * 32rpx 左右/上内边距一起重置（app.wxss 里专门写过这条告诫）。
+   */
+  padding-bottom: 28rpx;
+}
+
+/**
+ * 卡片 + 评分区的整体容器：吃掉可用高度，内容在其中垂直居中。
+ *
+ * 2026-09-19 加，与朗读页（pronounce.wxss 的 .stage）同一套做法 —— 两页都是
+ * "卡片 + 底部操作"的结构，一个居中一个顶对齐就是没对齐。
+ *
+ * 可用高度 = 进度条以下 → tabBar 以上（本页没有固定底部操作栏：评分按钮跟着
+ * 卡片走，所以它必须一起参与居中，否则卡片居中、按钮留在下面，中间裂一道）。
+ * 筛选栏 / 进度条在 .stage 之外，保持在顶部不动。
+ *
+ * 为什么用 flex: 1 而不是给卡片写死 min-height：卡片高度随内容变（正面短、背面长、
+ * 钩子展开后更长），写死高度就会在内容短的那一面撑出空白 —— 这正是上一轮刚修掉的问题。
+ * 整体居中后，卡片上下边缘对称伸缩，位置感是稳定的，不会跳。
+ *
+ * 为什么居中不能写在 .page 上：那会把筛选栏和进度条也一起往下拽（见朗读页同款注释）。
+ */
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .topbar { margin-bottom: 28rpx; }
 
 /* ------------------------- 筛选栏 ------------------------- */
@@ -11,10 +66,10 @@
   padding: 20rpx 24rpx;
   background: var(--card);
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .fc-scope { font-size: 30rpx; font-weight: 600; color: var(--ink); }
-.fc-sub { font-size: 24rpx; color: var(--ink-3); flex: 1; }
+.fc-sub { font-size: 24rpx; color: var(--ink-hint); flex: 1; }
 .fc-caret { font-size: 24rpx; color: var(--green); }
 
 .filter-panel {
@@ -22,15 +77,45 @@
   padding: 24rpx;
   background: var(--card);
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
 }
 .fp-label {
   font-size: 24rpx;
-  color: var(--ink-3);
+  /* 分组小标题（"范围""单元""学科"）是要读的字，不是装饰 —— 用 --ink-hint */
+  color: var(--ink-hint);
   margin-bottom: 12rpx;
 }
 .fp-label + .fp-chips { margin-bottom: 24rpx; }
 .fp-chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
+
+/**
+ * 单元 / 学科筛选：等宽两列网格。
+ *
+ * 为什么不能继续用 flex + 内容宽度：这两组 chip 的文字长短差别很大
+ * （「全部（7 个单元）」 vs 「7A Unit 2 (12/43)」），第一个 chip 更宽，
+ * 就把第二列的起点推歪 —— 下面每一行的右边界都参差不齐，看着就是"错位"。
+ * 等宽两列让左右两条竖线对齐，"这是一份可以竖着扫读的清单"才成立。
+ *
+ * 为什么「范围」那三个 chip 不用它：那三个词宽度接近，本身不会错位，
+ * 而且它们是一组"三选一"的互斥选项（视觉上像分段控件），
+ * 硬做成等宽网格反而会把「全部」拉成一大块，主次失衡。
+ *
+ * 注意：等宽只作用在容器上，.chip.on 的选中态（边框/底色）不受影响。
+ */
+.fp-chips.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14rpx;
+}
+/* grid 里 .chip 是 inline-block，宽度由内容决定 → 撑不满自己的格子。
+   改成 block + border-box 让它填满（宽度由 grid 列宽给定）。 */
+.fp-chips.grid .chip {
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+  /* 单元名偏长时（"7A Unit 10"）宁可换行，也不要撑破格子 */
+  word-break: break-word;
+}
 
 .next-actions { margin-top: 28rpx; }
 .next-actions .note { margin-bottom: 16rpx; }
@@ -42,33 +127,108 @@
   margin-top: 12rpx;
 }
 
-/* 翻卡容器：固定高度，避免正反面高度不同导致跳动 */
+/**
+ * 翻卡容器高度：**贴合内容**，不再撑满视口。
+ *
+ * 2026-09-18 曾从写死的 760rpx 改成 calc(100vh - 560rpx) + min-height 620rpx。
+ * 那一步解决了"小屏上评分按钮被顶出屏幕"，但引入了另一个更显眼的问题：
+ * 它是"先给一块固定画布、再把内容摆进去"的思路 —— **内容短的那一面就被撑出一片空白**。
+ * 实测（真机截图量像素，卡面高度 354px→199px）：背面（答案 + 记忆钩子 + 来源）
+ * 内容只占约 400rpx，卡片却按视口算到 1000rpx 上下，而 .src 的 margin-top: auto
+ * 又把「来源」顶到卡片最底部 —— 于是「记忆钩子」与「来源」之间裂开 178px，
+ * 看起来就是"卡片没做完"。
+ *
+ * 2026-09-19 的口径：
+ *   · 高度由**内容**决定（两个面在同一格 grid 里取较高者，见 .flip-inner）；
+ *   · 正面仍有一块稳定的回想区 —— 靠 .front .prompt 的 flex: 1 在可用高度里居中；
+ *   · 上限交给 .face 的 max-height + overflow-y: auto：长记忆钩子展开后内部滚动，
+ *     而不是把卡片撑到把评分按钮顶出屏幕（这是原来 min/max-height 想管的事）。
+ */
+/**
+ * 翻卡外框：透视 + **换卡动画（slide-out / slide-in）的宿主**。
+ *
+ * ⚠️ 为什么换卡动画挂在这一层，而不是 .flip-inner：
+ *   CSS 层叠里**动画声明的优先级高于普通声明**（Cascade L4 的层叠顺序：
+ *   Author normal < Animation）。.flip-inner.flipped 的 `transform: rotateY(180deg)`
+ *   是普通声明 —— 只要 .flip-inner 同时挂着任何一个动 transform 的动画，
+ *   rotateY 就被整个顶掉。而评分只允许在翻面之后（study.js onGrade：
+ *   `if (!this.data.flipped) return`），于是**每次点评分，卡片都会先"翻回正面"
+ *   再滑走**（slide-out 180ms；点「不认识」时更长）——
+ *   学生看到的就是"样式乱"：背面的答案突然变成只有单词的正面。
+ *   换到这一层后 .flip-wrap 自己没有别的 transform，两者互不覆盖。
+ *
+ * 实测（Chromium/Edge 无头，2026-09-19，见交付报告）：
+ *   .flip-inner.flipped + .shake       → transform=matrix(1,0,0,1,0,0)      ← rotateY 被顶掉
+ *   .flip-wrap.shake   > .flip-inner.flipped → matrix3d(-1,0,0,0,...)        ← 翻转保留
+ *
+ * ⚠️ 答错抖动（.shake）**不在这一层，也不在 .flip-inner**，在下面的 `.grade`（评分按钮区）。
+ *   两条独立的理由，都不是审美偏好：
+ *   ① 同一元素上 `animation` 简写会互相覆盖。onGrade 在同一个 tick 里同时
+ *      setData({shaking:true}) 与 setData({leaving:true})，若抖动也挂 .flip-wrap，
+ *      三个类同权重（0-1-0）都写 `animation`，靠声明顺序决胜 ——
+ *      app.wxss 里 .slide-out / .slide-in 在 .shake 之后，抖动被整条覆盖，
+ *      一帧都播不出来（这就是它"写了却从没出现过"的原因）。
+ *   ② .flip-inner 上是上一轮修好的 rotateY 事故（见本段开头），碰不得。
+ *   挂到 .grade 后：它是 .flip-inner 的**兄弟节点**，不在 preserve-3d 子树里，
+ *   也没有别的动画与它抢 `animation` —— 3D 风险可证为零。
+ *   语义上也更对：抖的是"你刚点的那个操作"，按钮才是他刚点的东西。
+ *
+ *   本轮实测回归判据（Chromium 无头，见交付报告）：
+ *     .grade.shake 生效期间，.flip-inner.flipped 的 rotateY 必须**仍在**（matrix3d 含 -1）。
+ */
 .flip-wrap {
   perspective: 1200rpx;
-  height: 760rpx;
 }
+/**
+ * 两个面叠在**同一格** grid 里。
+ *
+ * 这是"3D 翻卡 + 高度贴合内容"的标准做法：行高自动取两个面的较高者，
+ * 于是翻转前后容器高度**不变** —— 不能用"翻转时切换谁参与布局"来贴合内容，
+ * 那样高度会瞬间跳一截（高度不能做过渡，只有 transform/opacity 能），
+ * 卡片下缘和评分按钮会当着学生的面跳一下。
+ *
+ * 为什么不用原来的"两个面都 position: absolute"：绝对定位的子元素不参与父级高度计算，
+ * 容器高度只能靠外部写死 —— 这正是上面那片空白的来源。
+ */
 .flip-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  display: grid;
   transform-style: preserve-3d;
 }
 
 .face {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 100%;
+  /* 两个面叠在同一格（见 .flip-inner 的 grid）。
+     不再写 height: 100% —— 父级高度现在由内容决定，"100%"没有可解析的基准，
+     写了只会被当成 auto；用 grid 的默认 stretch 铺满整格即可。 */
+  grid-area: 1 / 1;
   box-sizing: border-box;
   padding: 36rpx;
   background: var(--card);
   display: flex;
   flex-direction: column;
+  /* 上限 900rpx：长记忆钩子展开后卡片不再长高，改为内部滚动 ——
+     否则卡片会把下面的评分按钮顶出屏幕（小屏上要滚一下才能点，这是踩过的坑）。
+     overflow-y 同时兜住内容溢出圆角边框外的问题（看起来就是"错位"）。 */
+  max-height: 900rpx;
+  overflow-y: auto;
   /* 3D 翻转要求两个面都显式给出 transform，否则部分渲染器会两面叠显 */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-/* 正面：0 度；背面：180 度。两面都在 .flip-inner 里绝对定位 */
+/**
+ * 覆盖 app.wxss 里"背面绝对定位"的旧写法。
+ *
+ * 选择器要与 app.wxss 的 .flip-inner > .face.back 同权重（0-3-0）才压得住，
+ * 而本页样式在 app.wxss 之后加载 —— 所以照抄一遍选择器，只改定位方式。
+ * 不覆盖的话背面会被 absolute 摘出文档流，grid 的行高就只剩正面，
+ * 背面长内容会被裁掉。
+ */
+.flip-inner > .face.back {
+  position: relative;
+  top: auto; left: auto; right: auto;
+}
+
+/* 正面：0 度；背面：180 度。两面叠在同一格里，靠 rotateY 区分正反 */
 .front { transform: rotateY(0deg); }
 
 .face-head {
@@ -91,6 +251,25 @@
   line-height: 1.5;
   word-break: break-word;
 }
+
+/**
+ * 新词正面：直接给出释义（学习阶段，不是考试）。
+ *
+ * 与 .prompt 的区别：新词的词大字在上、释义紧随其下，形成"词 → 义"的阅读顺序；
+ * flex:1 要收掉（否则释义被推到卡片底部，与词离得太远，不成一组）。
+ */
+.front .new-answer {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  text-align: center;
+  line-height: 1.5;
+  word-break: break-word;
+  margin-top: 8rpx;
+}
+
+/* 新词正面的钩子：和词义贴在一起，是"怎么记"的一部分 */
+.front .hook { margin-top: 20rpx; }
 
 .face-foot { text-align: center; }
 
@@ -117,8 +296,10 @@
 .hook {
   margin-top: 24rpx;
   padding: 22rpx 24rpx;
-  background: rgba(246, 196, 69, 0.18);
+  background: var(--yellow-wash);
   border-left: 8rpx solid var(--yellow);
+  /* 4rpx 不归入圆角族：配左侧色条的"记忆钩子贴条"，小圆角保住方贴条形状，
+     与卡片本体的 --r-md 拉开层级（它不是一张卡，是卡内的一条附注）。 */
   border-radius: 4rpx;
 }
 .hook-label {
@@ -133,9 +314,24 @@
   line-height: 1.7;
 }
 
-.src { margin-top: auto; padding-top: 20rpx; }
+/* 来源行：跟在记忆钩子后面，不再用 margin-top: auto 顶到卡片底部。
+   原来 auto 的作用是"把来源做成页脚"，但只有在卡片有富余高度时它才生效 ——
+   也就是只在"背面内容偏短"时生效，正好把富余高度变成钩子与来源之间的一道裂口。
+   现在卡片高度贴合内容，富余本来就接近 0，改成固定间距后两种情况都一致。 */
+.src { margin-top: 28rpx; padding-top: 20rpx; }
 
-/* 评分区 */
+/**
+ * 评分区 —— 同时是**答错抖动（.shake）的宿主**。
+ *
+ * 为什么抖动落在这里，而不是卡片上（.flip-wrap / .flip-inner）：
+ * 见上面 .flip-wrap 注释里的两条理由（同元素 `animation` 简写互相覆盖 →
+ * 抖动一帧都播不出来；挂 .flip-inner 会顶掉 .flipped 的 rotateY → 卡片翻回正面）。
+ * 一句话：这里是唯一"既不与换卡动画抢 `animation`、又不在 3D 子树里"的位置。
+ *
+ * 时长口径：`.shake` 的动画时长必须 **≥** study.js onGrade 里移除该类的
+ * `setTimeout(..., 340)`（现在是相等：340ms）。改任何一边都要同步改另一边，
+ * 否则抖动会在动画没播完时被摘掉（上一版就是 360ms 动画 + 340ms 摘类 = 截断在 94%）。
+ */
 .grade { margin-top: 40rpx; }
 .grade-hint { text-align: center; margin-bottom: 20rpx; }
 .grade-btn { font-size: 30rpx; }
@@ -180,3 +376,320 @@
   line-height: 1.75;
   color: var(--ink-2);
 }
+
+/* ================= 2026-09-19 补：结果条 / 背面发音 ================= */
+
+/**
+ * 结果条 —— 评分后果常驻一行（组件来自 prototype-ui ⑦）。
+ * 替代的 wx.showToast(icon:none) 居中悬浮 1100ms，正好压在换进来的
+ * 下一张卡的单词上（作者点名"遮挡下一个单词"）。
+ * 视觉参数照抄 prototype-ui/style.css .result-strip（rpx = px × 2）。
+ */
+.result-strip {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  font-size: 24rpx;
+  color: var(--ink-2);
+  padding: 16rpx 20rpx;
+  background: var(--green-wash); /* 2026-09-25 收编：原 0,130,92,0.08 裸值，主题化后跟随主色 */
+  border-left: 6rpx solid var(--green);
+  border-radius: var(--r-sm);
+  animation: strip-in 240ms var(--ease-out);
+}
+.result-strip .rs-label { color: var(--ink-hint); flex-shrink: 0; }
+.result-strip .rs-word {
+  color: var(--green-d);
+  font-weight: 700;
+  max-width: 240rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.result-strip .rs-arrow { color: var(--ink-3); flex-shrink: 0; }
+.result-strip .rs-text { min-width: 0; }
+/* 温和版：当轮重排不是惩罚，红条只做提示不做审判（原型"失败安全化"） */
+.result-strip.soft { background: var(--red-wash); border-left-color: var(--red); }
+.result-strip.soft .rs-word { color: var(--red); }
+@keyframes strip-in {
+  from { opacity: 0; transform: translateY(8rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/**
+ * 背面答案行：单词 + 发音 chip。发音是"听"的入口 —— 复习主流程此前听不到单词。
+ */
+.back-actions {
+  display: flex;
+  margin-top: 16rpx;
+}
+/* 新词正面：词/义/钩子成组整体居中（.prompt 在这里不让它撑满，见 wxml 注释） */
+.front-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.front-center .prompt { flex: 0 0 auto; }
+.play-chip {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  line-height: 1;
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--card-2);
+  color: var(--green-d);
+  transition: transform var(--dur-tap) var(--ease-out), background var(--dur-tap) var(--ease-out);
+}
+/* 2026-09-25 主题化收编：原 0,130,92 系裸值换 token（0.12/0.16 两档都归 --green-tint） */
+.play-chip:active { transform: scale(0.94); background: var(--green-tint); }
+.play-chip.on { background: var(--green-tint); }
+
+/* ================= 学后拼写（多邻国式） ================= */
+.spellcheck-card { margin-top: 20rpx; }
+.spell-prompt {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-top: 8rpx;
+  word-break: break-word;
+}
+.play-line { margin-top: 16rpx; }
+.spell-input {
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  border: 2rpx solid var(--line-2);
+  border-radius: var(--r-md);
+  font-size: 38rpx;
+  letter-spacing: 2rpx;
+  background: var(--card);
+  color: var(--ink);
+}
+.ph { color: var(--ink-3); }
+.sp-result { margin-top: 24rpx; padding: 20rpx; border-radius: var(--r-md); background: var(--red-wash); }
+.sp-result.ok { background: var(--green-wash); } /* 2026-09-25 收编：原 0,130,92,0.08 裸值 */
+.sp-verdict { font-size: 30rpx; font-weight: 700; color: var(--ink); }
+.sp-nodes { display: flex; flex-wrap: wrap; gap: 6rpx; margin: 16rpx 0; }
+.sp-ch {
+  font-size: 36rpx;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1.4;
+  min-width: 40rpx;
+  text-align: center;
+  padding: 2rpx 4rpx;
+  border-radius: var(--r-xs);
+}
+.sp-ch.ok { color: var(--ink); }
+.sp-ch.wrong { color: var(--red); background: var(--red-tint); }
+.sp-ch.missing { color: var(--red); background: var(--red-tint); }
+.spell-choices {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.spell-choice {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20rpx 24rpx;
+  text-align: left;
+  line-height: 1.5;
+}
+.spell-choice.bad-choice {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-wash);
+}
+
+/* ================= 拼写轮（逐字母点填 / 四选一） ================= */
+.page-pad { padding: 0 8rpx; }
+.spell-round-card { margin-top: 20rpx; }
+.phon {
+  font-family: var(--font-mono);
+  font-size: 24rpx;
+  letter-spacing: 1rpx;
+  margin-top: 6rpx;
+}
+.spell-prompt {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-top: 8rpx;
+  word-break: break-word;
+}
+.sp-slot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-top: 24rpx;
+}
+.sp-slot {
+  min-width: 52rpx;
+  height: 68rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  border-radius: var(--r-xs);
+  box-sizing: border-box;
+}
+.sp-slot.fixed { border-bottom: 4rpx solid var(--line-2); color: var(--ink-3); }
+/* 空格固定槽（2026-09-25 修「带空格的词拼不了」的视觉层）：渲染为一段无字空隙。
+   为什么不画成「␣」这类可见符号：学生要练的是"词间有界"的拼写节奏，
+   空隙给出词界；可见符号反而暗示"这里有个要拼的字符"。 */
+.sp-slot.fixed.gap { border-bottom: none; min-width: 24rpx; }
+.sp-slot.empty { border: 2rpx dashed var(--line-2); color: var(--ink-3); background: var(--card-2); }
+.sp-slot.filled { border: 2rpx solid var(--green); color: var(--ink); }
+.sp-slot.can-undo:active { transform: scale(0.92); }
+.sp-slot.ok { border: 2rpx solid var(--green); color: var(--green-d); }
+.sp-slot.bad { border: 2rpx solid var(--red); color: var(--red); background: var(--red-wash); }
+/* 跳过亮答案（2026-09-25）：peek 是"揭晓"态，绿/红都不能用 ——
+   绿=判对、红=判错已经是逐格标色的强语义，把"看答案"塞进其中一档，
+   学生会把"跳过不计分"误读成"被判了分"。取 .tag.yellow 同一档黄
+   （yellow-ink 字 + 0.18 淡底，与卡内 .hook 贴条同值），虚线边框表达
+   "这是给你看的，不是你拼出来的"。 */
+.sp-slot.peek { border: 2rpx dashed var(--yellow); color: var(--yellow-ink); background: var(--yellow-wash); }
+.sp-result.peek { background: var(--yellow-wash); }   /* 判分行同档黄：不是红底"拼错了"，也不是绿底"拼对了" */
+.sp-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 28rpx;
+  padding: 20rpx;
+  border-radius: var(--r-md);
+  background: var(--card-2);
+}
+.sp-bank-ch {
+  min-width: 64rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 2rpx solid var(--line);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.sp-bank-ch:active { transform: scale(0.9); }
+/* 显式验证（2026-09-25）：验证按钮独立成行；防呆抖动挂这一层 ——
+   与识别轮 .grade 同一哲学（抖"刚点的操作"，不抖卡片，不进 3D 子树）。 */
+.spell-verify { margin-top: 24rpx; }
+.spell-choices {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.spell-choice {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20rpx 24rpx;
+  text-align: left;
+  line-height: 1.5;
+}
+.spell-choice.bad-choice {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-wash);
+}
+
+/* 正面词+发音并排 */
+.prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  width: 100%;
+}
+.prompt-row .prompt { flex: 1; min-width: 0; }
+
+/* ---------------- 「解锁再练一组」入口（在 .note 里的行内动作） ----------------
+ * 为什么做成行内文字而不是按钮：它出现在"今天已经练完"的收尾处，
+ * 此时放一个抢眼的主按钮会把"完成"这件事的成就感冲淡。
+ * 做得克制、可点、有下划线暗示可点，就够了。
+ * 用 --green-d 而不是 --green：在 .note 的浅灰底上，主色的对比度不够。
+ */
+.note-act {
+  display: inline-block;
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: var(--green-d);
+  text-decoration: underline;
+  text-underline-offset: 4rpx;
+}
+
+/* ---------------- 完成页的一句话 ----------------
+ * 放在数字与说明之后：先给"我做了多少"，再给"这件事意味着什么"。
+ * 用主色而不是 --ink-hint：它是这一屏的情绪落点，不该跟辅助说明同一层级。
+ */
+.done-say {
+  margin-top: 22rpx;
+  text-align: center;
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: var(--green-d);
+}
+
+/* ---------------- 音节分色 ----------------
+ * 目的：让长词的**节奏**看得见（con-gra-tu-la-tions 比一串字母好记太多）。
+ *
+ * 三条颜色都取自既有 token，不引新色；亮度依次递减但都够深，
+ * 保证在纸底（--card）与绿色条纹底（.stripe.green）上都清晰。
+ *
+ * ⚠️ 关键：**不能只靠颜色传达"音节边界"**。
+ * 色盲用户看不出颜色差异时，这条信息就完全丢了 —— 所以每一段右侧留 3rpx 间隙。
+ * 3rpx 是刻意的：看得见断点，但小到不会被读成"词里有空格"。
+ */
+.syl { display: inline-block; margin-right: 3rpx; }
+
+.syl-0 { color: var(--ink); }
+.syl-1 { color: var(--green-d); }
+.syl-2 { color: var(--yellow-ink); }
+
+/* ---------------- 音标（2026-09-25 修） ----------------
+ * ## 修了什么
+ * 原来写的是 `font-family: var(--font-mono)`，但 **app.wxss 里根本没有这个变量**
+ * （全站只定义了颜色/圆角/动效 token，没有字体族 token）。
+ * 于是 font-family 解析失败、回退到继承值 —— 音标是用**中文字体**渲染的。
+ * 中文字体里的 IPA 字符（ˈ ˌ ʃ θ ð ŋ 等）字形与字宽都不对，
+ * 看着就是"比例不正常"：重音符太小、ʃ/θ 又宽又扁。
+ *
+ * 这里直接写字体栈而不去 app.wxss 加变量：app.wxss 正在被并发编辑，避免冲突。
+ * 字体栈与全局 .t-mono 保持一致，将来若提取成 token 应两处一起改。
+ *
+ * ## 为什么音标要比正文小
+ * 它是"怎么读"的注记，不是要背的内容。26rpx 在 52rpx 的单词下方
+ * 刚好形成"主 → 注"的层级；再大就会和释义抢注意力。
+ */
+.phon {
+  font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  font-size: 26rpx;
+  letter-spacing: 1rpx;
+  margin-top: 6rpx;
+}
+
+/* 正面音标：紧贴单词下方，居中 */
+.phon-front {
+  text-align: center;
+  margin-top: 4rpx;
+}
+
+/* ---------------- 音节分色的排版修正（2026-09-25） ----------------
+ * 原来每段都有 margin-right: 3rpx，包括**最后一段** ——
+ * 单词在 .prompt 里是 justify-content: center 居中的，
+ * 末尾多出 3rpx 会让整词**向左偏**，而且切分越细偏得越多（5 段偏 15rpx）。
+ * 修掉最后一段的 margin，让"词宽"回到真实值。
+ *
+ * 3rpx 的间隙保留：它是给色盲用户看的断点（只靠颜色传达音节边界会丢信息）。
+ */
+.syl { display: inline-block; }
+.syl:not(:last-child) { margin-right: 3rpx; }

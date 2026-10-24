@@ -35,6 +35,24 @@ function isAvailable() {
 }
 
 /**
+ * 把 wx.cloud 的 fail 回调翻译成一个稳定的 code。
+ *
+ * ## 为什么要分类而不是一律 CALL_FAILED
+ * "云函数没部署"和"网络抖了一下"对用户是两件完全不同的事：
+ * 前者重试一万次也不会好，必须告诉人去开发者工具里右键部署；
+ * 后者过几秒就能好。一律报 CALL_FAILED 等于把"重试无解"说成"再等等"，
+ * 那是撒谎。stats 页的 aiFailHintFor 正是靠这两个码分流出不同指引的。
+ *
+ * 未识别的 errMsg 一律归 CALL_FAILED（保守：不认识的形态不硬编故事）。
+ */
+function classifyFail(errMsg) {
+  const m = String(errMsg == null ? '' : errMsg);
+  if (/not\s*found|FUNCTION_NOT_FOUND|function not found/i.test(m)) return 'NOT_DEPLOYED';
+  if (/timeout|timed\s*out/i.test(m)) return 'TIMEOUT';
+  return 'CALL_FAILED';
+}
+
+/**
  * 统一出口：把云函数调用包成"绝不抛错"的一步。
  * 云函数本身约定返回 { ok, data } | { ok, code, msg }；网络层异常也在这里收口。
  *
@@ -56,11 +74,11 @@ function invoke(action, payload) {
         success: function (res) {
           const r = (res && res.result) || {};
           if (r.ok && r.data) resolve({ ok: true, data: r.data });
-          else resolve({ ok: false, code: r.code || 'UNKNOWN' });
+          else resolve({ ok: false, code: r.code || 'UNKNOWN', msg: r.msg || '' });
         },
-        fail: function () {
-          // 不把 errMsg 往上传：界面只需知道"这次没成"，不需要网络细节
-          resolve({ ok: false, code: 'CALL_FAILED' });
+        fail: function (err) {
+          // errMsg 只在**本层**用于分流，不往界面传：界面要的是"能不能重试"
+          resolve({ ok: false, code: classifyFail(err && err.errMsg) });
         }
       });
     } catch (e) {
@@ -143,4 +161,72 @@ function genField(action, key, word, meaning) {
   });
 }
 
-module.exports = { isAvailable, parseBatch, genExample, genMnemonic, PRESET_MAP };
+/**
+ * 词义问答（问词页的云端增强）：把端上检索到的课本词条交给模型组织语言。
+ *
+ * ## 为什么单独一个出口而不是让页面直调 wx.cloud.callFunction
+ * 直调有两个真实事故（本项目都发生过）：
+ *   ① **aiBusy 复位靠 complete 回调**——一旦云开发未开通导致**同步抛异常**，
+ *      complete 永远不会执行，扫描条永久停留、按钮永久 disabled；
+ *   ② 异常直接穿透到页面 = 界面出现裸报错，违反项目红线。
+ * 走本模块后：异常在 invoke() 里折算成 {ok:false}，页面只需 try/finally 复位。
+ *
+ * materials 传 null/空数组是**合法**的 —— 云端会走"超纲词"模式回答，
+ * 不要在这里挡掉（那正是 2026-09-19 修掉的"问 bicycle 没反应"）。
+ *
+ * 返回 { ok, answer, code, msg }；answer 已截断到 400 字。
+ */
+function askWord(question, materials) {
+  const q = String(question == null ? '' : question).trim();
+  if (!q) {
+    return Promise.resolve({ ok: false, code: 'EMPTY_QUESTION', answer: '', msg: '先写个问题吧' });
+  }
+  return invoke('askWord', {
+    question: q,
+    materials: Array.isArray(materials) ? materials : []
+  }).then(function (r) {
+    if (!r.ok) {
+      return { ok: false, code: r.code, answer: '', msg: aiCore.degradeHint('askWord', r.code) };
+    }
+    let ans = '';
+    try {
+      ans = aiCore.cleanText(r.data && r.data.answer, 400);
+    } catch (e) {
+      // 清文本这一步理论上不会抛（纯函数），但网关不许异常穿透，兜住
+      console.warn('[ai] 问答结果处理异常，已降级', e);
+    }
+    if (!ans) {
+      return { ok: false, code: 'EMPTY', answer: '', msg: aiCore.degradeHint('askWord', 'EMPTY') };
+    }
+    return { ok: true, code: 'OK', answer: ans, msg: '' };
+  });
+}
+
+/**
+ * 学习分析（统计页）：把页面聚合好的指标交给模型，产出个性化建议。
+ * 与 askWord 同构，单独开一个出口而不是让 stats 页自己拼 payload。
+ * 返回 { ok, analysis, code, msg }（字段名与云函数 data.answer 对齐叫 analysis，
+ * 避免调用方与"answer"混用后张冠李戴）。
+ */
+function analysis(stats) {
+  if (!stats || typeof stats !== 'object') {
+    return Promise.resolve({ ok: false, code: 'NO_STATS', analysis: '', msg: '还没有可分析的学习数据' });
+  }
+  return invoke('analysis', { stats: stats }).then(function (r) {
+    if (!r.ok) {
+      return { ok: false, code: r.code, analysis: '', msg: aiCore.degradeHint('analysis', r.code) };
+    }
+    let txt = '';
+    try {
+      txt = aiCore.cleanText(r.data && r.data.answer, 400);
+    } catch (e) {
+      console.warn('[ai] 分析结果处理异常，已降级', e);
+    }
+    if (!txt) {
+      return { ok: false, code: 'EMPTY', analysis: '', msg: aiCore.degradeHint('analysis', 'EMPTY') };
+    }
+    return { ok: true, code: 'OK', analysis: txt, msg: '' };
+  });
+}
+
+module.exports = { isAvailable, parseBatch, genExample, genMnemonic, askWord, analysis, PRESET_MAP };

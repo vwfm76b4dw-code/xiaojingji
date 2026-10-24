@@ -35,8 +35,10 @@
 .hook {
   margin-top: 28rpx;
   padding: 24rpx;
-  background: rgba(246, 196, 69, 0.18);
+  background: var(--yellow-wash);
   border-left: 8rpx solid var(--yellow);
+  /* 4rpx 不归入圆角族：这是配左侧色条的"附注贴条"，小圆角保住方贴条形状；
+     用 --r-md(16) 会把它变成一张普通卡片，丢掉"贴在正文旁"的语义。 */
   border-radius: 4rpx;
 }
 .hook-label {
@@ -79,3 +81,56 @@
   padding-top: 32rpx;
   border-top: 2rpx solid var(--line);
 }
+
+
+/* ================= 2026-09-19 补：发音按钮（与 study 页同参数） ================= */
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.answer-row .prompt { flex: 1; min-width: 0; }
+.play-chip {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  line-height: 1;
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--card-2);
+  color: var(--green-d);
+  transition: transform var(--dur-tap) var(--ease-out), background var(--dur-tap) var(--ease-out);
+}
+/* 2026-09-25 主题化收编：原 0,130,92 系裸值换 token（0.12/0.16 两档都归 --green-tint），
+ * 换主题后按压/选中底色跟随主强调色，不再锁死纸白套的绿 */
+.play-chip:active { transform: scale(0.94); background: var(--green-tint); }
+.play-chip.on { background: var(--green-tint); }
+
+/* ---------------- 音标 + 音节分色（2026-09-25） ----------------
+ * ## 为什么把单词从 44rpx 提到 52rpx
+ * 同一个"单词"，复习页是 52rpx、这里 44rpx —— 而这两个页面里
+ * 单词都是**绝对主角**（一个让你回想、一个让你看详情）。
+ * 主角在不同页面大小不同，就是"比例不正常"的来源。统一到 52rpx。
+ *
+ * 释义保持 36rpx（比复习页背面的 42rpx 小一档）：详情页还要放音标、
+ * 详情、钩子、来源，密度更高，释义让一档是合理的层级安排。
+ */
+.prompt { font-size: 52rpx; }
+
+/* 音标：字体栈与复习页一致。
+   app.wxss 没有字体族 token，原来 var(--font-mono) 解析失败 →
+   音标用中文字体渲染，IPA 字形（ˈ ˌ ʃ θ ŋ）比例不对。
+   这里不去 app.wxss 加变量：那边正在被并发编辑。 */
+.phon {
+  font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  font-size: 26rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-hint);
+  margin-top: 8rpx;
+}
+
+/* 音节分色：三色与复习页一致；最后一段不留间隙（否则整词左偏） */
+.syl { display: inline-block; }
+.syl:not(:last-child) { margin-right: 3rpx; }
+.syl-0 { color: var(--ink); }
+.syl-1 { color: var(--green-d); }
+.syl-2 { color: var(--yellow-ink); }

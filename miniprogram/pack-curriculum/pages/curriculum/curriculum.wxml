@@ -1,0 +1,80 @@
+<view class="page">
+  <!-- 第一级：选一册教材 -->
+  <block wx:if="{{stage === 'books'}}">
+    <view class="card stripe head">
+      <view class="head-title">选择教材</view>
+      <view class="head-sub">共 {{books.length}} 册 · 按学段分组</view>
+    </view>
+
+    <view class="book-list">
+      <block wx:for="{{bookGroups}}" wx:for-item="group" wx:key="label">
+        <view class="group-label">{{group.label}}</view>
+        <view class="book" wx:for="{{group.books}}" wx:key="id" data-id="{{item.id}}" bindtap="openBook">
+          <view class="book-main">
+            <view class="book-name-row">
+              <text class="book-name">{{item.name}}</text>
+              <text wx:if="{{item.isNew}}" class="book-new">新</text>
+            </view>
+            <text class="book-count">{{item.count}} 词</text>
+          </view>
+          <view class="book-arrow"></view>
+        </view>
+      </block>
+    </view>
+
+    <view class="hint">点开一册，再挑要学的单元</view>
+    <view class="hint">导入的单词存在你的手机上，不想要了可以随时删掉</view>
+
+    <!-- 教材管理：已导入的册一目了然，可重命名 / 整册移除 -->
+    <block wx:if="{{managed.length > 0}}">
+      <view class="section-label" style="margin-top: 32rpx;">已导入的教材（可改名 / 整册移除）</view>
+      <view class="book managed" wx:for="{{managed}}" wx:key="origName">
+        <view class="book-main">
+          <text class="book-name">{{item.name}}{{item.retired ? '（已下架）' : ''}}</text>
+          <text class="book-count">已导入 {{item.count}} 词</text>
+        </view>
+        <view class="tool" style="flex: none; padding: 10rpx 20rpx; margin-right: 12rpx;" data-orig="{{item.origName}}" catchtap="renameBook">改名</view>
+        <view class="tool" style="flex: none; padding: 10rpx 20rpx;" data-orig="{{item.origName}}" catchtap="deleteBook">移除</view>
+      </view>
+      <view class="hint" wx:if="{{hasRetired}}">标「已下架」的教材不再提供导入，仅保留删除入口</view>
+      <view class="hint">移除只删这一册的词；学习进度里已记住的部分不受影响</view>
+    </block>
+  </block>
+
+  <!-- 第二级：挑要导入的单元 -->
+  <block wx:else>
+    <view class="card stripe head">
+      <view class="head-title">{{book}}</view>
+      <view class="head-sub">共 {{total}} 个词 · 按单元选择要导入的范围</view>
+    </view>
+
+    <view class="toolbar">
+      <view class="tool back" bindtap="backToBooks">换一册</view>
+      <view class="tool {{allPicked ? 'dim' : ''}}" bindtap="selectAll">全选</view>
+      <view class="tool {{nonePicked ? 'dim' : ''}}" bindtap="clearAll">清空</view>
+    </view>
+
+    <view class="unit-list">
+      <view
+        class="unit {{item.picked ? 'on' : ''}}"
+        wx:for="{{units}}"
+        wx:key="name"
+        data-i="{{index}}"
+        bindtap="toggleUnit"
+      >
+        <view class="unit-box"><view class="unit-dot"></view></view>
+        <view class="unit-main">
+          <text class="unit-name">{{item.name}}</text>
+          <text class="unit-count">{{item.count}} 词</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn primary big" bindtap="doImport" disabled="{{nonePicked}}">
+      {{nonePicked ? '先勾选要导入的单元' : '导入选中的 ' + pickedCount + ' 个词'}}
+    </button>
+
+    <view class="hint">导入后立即进入今日复习队列；已经在你词库里的词不会重复添加</view>
+    <view class="hint">释义带词性前缀，如「n. 教科书, 教材, 课本」</view>
+  </block>
+</view>

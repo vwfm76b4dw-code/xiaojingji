@@ -1,0 +1,224 @@
+/* 本页原来自己重抄了一遍 .page（padding 32rpx + min-height 100vh + border-box）。
+   2026-09-19 删除：理由与 add.wxss 同 —— 它与全局 .page 逐条相同，
+   只会用 `padding` 简写把全局的 `env(safe-area-inset-bottom)` 冲掉；
+   而本页是没有 tabBar 的页面，正需要那一项。 */
+
+/* 头部：色条来自全局 .stripe（与 deck 页 "card stripe head" 同一写法），
+   这里只管与下方列表的间距 */
+.head { margin-bottom: 24rpx; }
+
+.head-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  line-height: 1.4;
+}
+
+.head-sub {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  margin-top: 12rpx;
+}
+
+/* -------------------- 第一级：册次列表 -------------------- */
+
+.book-list {
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--card);
+}
+
+.book {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 24rpx;
+  border-bottom: 2rpx solid var(--line);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+
+.book:last-child { border-bottom: none; }
+
+.book:active { transform: scale(0.99); }
+
+.book-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+/* 分组小节标题：一册列表里插一组"路标"。颜色用次级文字色 —— 它是结构标签，
+   不是可点目标，抢过书名行就是本末倒置 */
+.group-label {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  padding: 20rpx 24rpx 8rpx;
+  border-bottom: 2rpx solid var(--line);
+  background: var(--paper);
+}
+
+/* 书名 + 「新」角标一行：角标要跟书名同基线，所以包一层 row */
+.book-name-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 12rpx;
+}
+
+.book-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* 2024 新版角标：淡绿底 + 深绿字（跟主题 token 走，切主题不穿帮）。
+   不用红/橙 —— 「新」是信息不是警告 */
+.book-new {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  font-weight: 600;
+  color: var(--green-d);
+  background: var(--green-tint);
+  border-radius: var(--r-xs);
+  padding: 2rpx 10rpx;
+  line-height: 1.4;
+}
+
+.book-count {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/* 纯 CSS 折角箭头，不用字符/emoji 当图标。
+   这里的 --ink-3 是**画形状**（箭头的两条边），不是文字 —— 刻意保留：
+   箭头本就该是"淡淡的指示"，跟提示文字一起变深会抢单元名。 */
+.book-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 3rpx solid var(--ink-3);
+  border-right: 3rpx solid var(--ink-3);
+  transform: rotate(45deg);
+  margin-left: 20rpx;
+  flex-shrink: 0;
+}
+
+/* -------------------- 第二级：单元列表 -------------------- */
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24rpx;
+  margin: 4rpx 0 16rpx;
+}
+
+.tool {
+  font-size: 26rpx;
+  color: var(--green);
+  border: 2rpx solid var(--green);
+  border-radius: var(--r-xs);
+  padding: 8rpx 28rpx;
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+
+.tool:active { transform: scale(0.94); }
+
+/* 当前状态下点了也不会有变化，压暗提示"这条已经是终态了" */
+.tool.dim {
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+/* 回第一级换册：放最左，与右侧的选词动作拉开距离 */
+.tool.back { margin-right: auto; }
+
+.unit-list {
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--card);
+  margin-bottom: 32rpx;
+}
+
+.unit {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 24rpx;
+  border-bottom: 2rpx solid var(--line);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+
+.unit:last-child { border-bottom: none; }
+
+.unit:active { transform: scale(0.99); }
+
+.unit-box {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-xs);
+  background: var(--paper);
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 选中标记用实心方块，不用字符/emoji 当图标 */
+.unit-dot {
+  display: none;
+  width: 16rpx;
+  height: 16rpx;
+  /* 4rpx 不归入圆角族：16rpx 的勾选点是"方点"，4rpx 保留方角；
+     写 --r-xs(8) 正好是它的一半 = 正圆，会变成另一套控件语言（圆点）。 */
+  border-radius: 4rpx;
+  background: var(--paper);
+  margin: 8rpx auto 0;
+}
+
+.unit.on { background: var(--green-wash); }
+.unit.on .unit-box { background: var(--green); border-color: var(--green); }
+.unit.on .unit-dot { display: block; }
+
+.unit-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.unit-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.unit.on .unit-name { color: var(--green-d); }
+
+.unit-count {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/**
+ * 页脚说明（"点开一册…" / "导入后立即进入今日复习队列…"）。
+ *
+ * 2026-09-19 从居中改为左对齐：这一页从册名、单元行、计数到主按钮**全是左对齐**，
+ * 只有这两行说明居中 —— 在左对齐的版面上，居中的段落会被读成"另一种层级的东西"
+ * （像弹窗/广告语），而它其实是紧接着上方动作的补充说明，该跟正文同一条左基准线。
+ * 只有一处例外是刻意的：主按钮本身是通栏的，与它左对齐/居中无关。
+ */
+.hint {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  text-align: left;
+  margin-top: 16rpx;
+}
+
+/* 教材管理行 */
+.book.managed { border-style: dashed; }

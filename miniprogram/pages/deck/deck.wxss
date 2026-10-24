@@ -1,7 +1,28 @@
 .head { margin-bottom: 24rpx; }
 .head-top { display: flex; align-items: flex-start; justify-content: space-between; }
-.points { text-align: right; }
-.points-num { font-size: 48rpx; font-weight: 700; color: var(--green); line-height: 1.1; }
+/* 积分印章（原型 .stamp）：校徽黄斜贴纸，"挣来的"而非"统计出的" */
+.stamp-points {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14rpx 22rpx;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  border-radius: var(--r-sm);
+  transform: rotate(-6deg);
+  box-shadow: 6rpx 6rpx 0 rgba(46, 74, 98, 0.15);
+}
+.stamp-points .stamp-n {
+  font-size: 34rpx;
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: var(--font-mono);
+}
+.stamp-points .stamp-l {
+  font-size: 18rpx;
+  font-weight: 700;
+  margin-top: 2rpx;
+}
 
 .head-stats {
   display: flex;
@@ -16,6 +37,13 @@
 .due-num { font-size: 72rpx; font-weight: 700; color: var(--ink); line-height: 1.05; }
 
 .note { margin-bottom: 16rpx; }
+
+/* 启动资源准备小条：信息全但体量小 —— 一行状态文字 + 一根复用全局 .bar 的进度条。
+   不加任何过渡动画：进度每秒 setData 一次本身就在"动"，再叠 transition 是装饰。 */
+.prep-bar { margin-bottom: 16rpx; padding: 20rpx 24rpx; }
+.prep-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.prep-text { font-size: 24rpx; color: var(--ink-hint); }
+.prep-x { font-size: 24rpx; color: var(--ink-3); flex-shrink: 0; }
 
 /* 学科卡片 */
 .subj { margin-bottom: 20rpx; }
@@ -32,6 +60,8 @@
 .seg-bar {
   display: flex;
   height: 14rpx;
+  /* 2rpx 不归入圆角族：这条 14rpx 高的是"分段量尺"，不是"进度胶囊"，
+     只留一点圆让分段边界干脆；跟 .bar 的 7rpx 胶囊端是刻意的两种形状。 */
   border-radius: 2rpx;
   overflow: hidden;
   background: var(--card-2);
@@ -86,14 +116,55 @@
   flex: 1;
   background: var(--card);
   border: 2rpx solid var(--line-2);
-  border-radius: 8rpx;
+  border-radius: var(--r-xs);
   padding: 20rpx 24rpx;
   font-size: 28rpx;
 }
-.ph { color: var(--ink-3); }
+/* 搜索占位符是"能搜什么"的说明 —— 属承载文字，用 --ink-hint */
+.ph { color: var(--ink-hint); }
 
 /* 错题本入口 */
 .weak-entry { margin-bottom: 24rpx; }
+
+/* ------------------------- 按单元练 ------------------------- */
+/* 为什么用竖排整行而不是筛选面板那样的 chip 云：
+   首页宽度固定，而单元名长短不一（"7A Starter" vs "7A Unit 2"），
+   chip 会自动换行成参差不齐的几行，看起来就是"错位"。
+   整行列表让每行的名字左对齐、数字右对齐，长短名字都不会互相挤压。 */
+.unit-card { padding: 28rpx; }
+.unit-hint { margin-bottom: 8rpx; }
+
+.unit-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 22rpx 0;
+  /* 每行都画上分隔线（含第一行）：它同时充当"用途说明"与列表之间的分隔，
+     比用 :first-child 去掉第一条更稳 —— 伪类在小程序 WXSS 里的支持面不统一。 */
+  border-top: 2rpx solid var(--line);
+  transition: transform var(--dur-tap) var(--ease-out);
+}
+.unit-row:active { transform: scale(0.97); }   /* 0.98→0.97：全站按压幅度统一 */
+
+/* min-width: 0 是让 flex 子项**真的能收缩**的关键：
+   不加它，长单元名会把右侧的计数标签挤出卡片 —— 这就是"错位"的常见成因。 */
+.unit-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  /* 极窄屏（320pt）上让"已学 N/M"换到第二行，而不是被裁掉半截 */
+  flex-wrap: wrap;
+  column-gap: 16rpx;
+}
+.unit-name { font-size: 30rpx; font-weight: 600; color: var(--ink); }
+.unit-prog { font-size: 24rpx; color: var(--ink-hint); }
+/* due=0 的单元补的那句"整单元过一遍"。
+   flex-basis: 100% 让它独占一行（unit-main 是 flex-wrap 容器）——
+   与「已学 N/M」挤在同一行时，窄屏上两者会互相挤压换行，看起来就是"错位"。 */
+.unit-sub { flex-basis: 100%; }
+/* 计数标签不允许被压缩：它比单元名更不该被挤变形 */
+.unit-row .tag { flex: none; }
 
 /* 内容管理入口：三个等宽方块。这里用等宽是刻意的——
    "添加/导入/设置"是同层级的并列动作，不存在主次，做成大小不一反而误导。 */
@@ -101,6 +172,7 @@
   display: flex;
   gap: 16rpx;
   margin-top: 24rpx;
+  align-items: stretch;
 }
 .tool {
   flex: 1;
@@ -111,28 +183,94 @@
   text-align: center;
   transition: transform var(--dur-tap) var(--ease-out);
 }
-.tool:active { transform: scale(0.96); }
+/* 2026-09-19：三卡等宽 → 主次分明（原型分区纪律 / 反 AI 味红线）。
+   教材导入是学生主路径 → 主视觉 + 最宽；设置低频 → 收窄。 */
+.tool.wide { flex: 1.6; }
+.tool.slim { flex: 0.7; }
+.tool.primary-tool {
+  background: var(--green);
+  border-color: var(--green);
+}
+.tool.primary-tool .tool-t { color: var(--on-accent); }
+.tool.primary-tool .tool-s { color: var(--on-accent); opacity: 0.75; }
+.tool:active { transform: scale(0.97); }   /* 0.96→0.97：全站按压幅度统一 */
 .tool-t { font-size: 28rpx; color: var(--green-d); font-weight: 600; }
 .tool-s { font-size: 22rpx; color: var(--ink-2); margin-top: 6rpx; }
 
 /* 四组统计数据：2×2 网格
    原来挤在一行（"已掌握 0 复习中 1 未学 294 共 295"），
    在窄屏上会换行且数字与标签粘连，读起来像一串数字。 */
-.stat-grid {
+/* 2026-09-19：等宽四格 → 不等宽条带（原型 stat-strip）：已掌握是 hero 格 */
+.stat-strip {
   display: flex;
-  flex-wrap: wrap;
   margin-top: 24rpx;
   padding-top: 24rpx;
   border-top: 2rpx solid var(--line);
 }
-.stat {
-  width: 25%;
-  text-align: center;
+.stat-cell {
+  flex: 1;
+  padding: 0 12rpx;
+  border-right: 2rpx solid var(--line);
 }
-.stat-num {
+.stat-cell:last-child { border-right: none; padding-right: 0; }
+.stat-cell .n { font-size: 36rpx; font-weight: 600; line-height: 1.2; }
+.stat-cell.hero { flex: 1.4; }
+.stat-cell.hero .n { font-size: 46rpx; color: var(--green-d); }
+.stat-cell .l { font-size: 20rpx; color: var(--ink-hint); margin-top: 4rpx; }
+
+
+/* 搜索行里的常驻设置入口（用户点名"要有设置按钮"） */
+.settings-chip { color: var(--ink-2); }
+
+/* 单词拼写入口卡（新功能分区） */
+.spell-entry { margin-top: 24rpx; }
+
+/* 问词入口卡（2026-09-25 底部栏整理）：与拼写入口卡同款间距，卡内样式全部
+   复用全局基类（card stripe / item-top / tag / t-hint），无页内私有结构。 */
+.ask-entry { margin-top: 24rpx; }
+
+/* 今日一句 */
+.quote-card { margin-top: 24rpx; }
+.quote-text {
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.quote-src { margin-top: 8rpx; text-align: right; }
+
+/* ---------------- 连胜条（成长看板入口） ----------------
+ * 放在首页头部、积分印章正下方：连胜必须在第一屏就能看见，
+ * 藏进二级页等于没有。整条可点，进入成长看板。
+ * 视觉刻意做得比"今日任务卡"轻 —— 它是身份提示，不是待办事项。
+ */
+.streak-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+  margin-top: 24rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.streak-n {
   font-size: 40rpx;
   font-weight: 600;
-  color: var(--ink);
-  line-height: 1.2;
+  color: var(--green);
 }
-.stat-num.hl { color: var(--green); }
+
+.streak-l {
+  font-size: 25rpx;
+  color: var(--ink-hint);
+}
+
+/* 累计天数推到最右：它是"我一直在学"的凭证，和连胜并列但不抢主次 */
+.streak-total {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: var(--ink-hint);
+}
+
+.streak-go {
+  font-size: 24rpx;
+  color: var(--green-d);
+}

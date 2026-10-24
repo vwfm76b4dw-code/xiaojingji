@@ -22,6 +22,15 @@
 // 连续间隔达到 21 天视为已掌握（参照间隔重复软件的成熟卡惯例）
 const MASTERED_INTERVAL = 21;
 
+/**
+ * 没有单元归属的词，在「按单元筛选」里归到这个名字下。
+ *
+ * 两种情况会落到这里：教材导入的 19 册旧版词书（源数据没有 unit 字段）、
+ * 以及学生手动录入/粘贴的词（本来就没有单元概念）。
+ * 与导入页 unitNameOf() 的口径保持一致 —— 学生看到的"未分组"是一个真实可选项。
+ */
+const UNGROUPED_UNIT = '未分组';
+
 /** 把状态源统一成"逐条遍历"的形式，屏蔽两套入参差异 */
 function eachState(src, fn) {
   if (Array.isArray(src)) {
@@ -359,9 +368,68 @@ function applyDailyLimits(picked, states, limits) {
 /*======================== 复习范围筛选 ========================*/
 
 /**
+ * Fisher-Yates 洗牌（不走 sort(() => Math.random()-0.5) —— 那种写法在 V8 里
+ * 有系统性偏差，且门禁无法确定性复现）。
+ *
+ * ## 为什么复习队列要"先排序、后洗牌"
+ * SM-2 的到期排序（pickCards 的 byPriority）喂给学生的永远是"最该复习的在前"，
+ * 但同一天到期的卡如果按间隔严格排（突然的"今天到期的全是 21 天间隔的词"）,
+ * 学生会感到**顺序可预测**——背答案而不背词（用户原话「这个单词顺序是不是得随机打乱一下？」）。
+ * 所以每日到期队列在「同到期日」这一档内要洗牌：
+ *   ① 第一层按 nextReview 升序（时间优先级，错的先出）；
+ *   ② 同一 nextReview 内做 Fisher-Yates（次序随机，防模式记忆）；
+ *   ③ 新卡（无 state）永远排在最前 —— 新词要建立第一印象，不能被洗到中间去。
+ *
+ * 这与拼写轮的洗牌是两个层面：拼写轮洗的是**整轮词**的呈现顺序（_startSpellRound 的 slice().shuffled），
+ * 这里洗的是**识别队列**的呈现顺序。两个都做，学生才不会觉得"怎么天天从同一批词开始"。
+ *
+ * @param {Array} arr 候选数组（不修改原数组）
+ * @param {Function} [rng] 随机源（默认 Math.random）；测试可注入 mulberry32 确定性复现
+ */
+function shuffleInPlace(arr, rng) {
+  const rand = rng || Math.random;
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+/**
+ * 把同一到期日的卡洗牌（新卡除外 —— 它们永远在最前）。
+ *
+ * 为什么这样设计：SM-2 的到期日天然把队列切成"过期 / 今天到期 / 明天到期"几段，
+ * 每段内部的相对次序对学生没有学习意义，是该被打散的；但段与段之间不能洗
+ * （把明天到期的洗到今天到期的前面就是真的乱来了）。
+ *
+ * 实现：按 nextReview 分组，同组内 shuffle，按组拼接。新卡组（无 state）独立放在最前。
+ */
+function shuffleByDueDate(picked, states, rng) {
+  if (!picked || picked.length <= 1) return picked;
+  states = states || {};
+  const fresh = [];
+  const dueGroups = Object.create(null);   // nextReview -> [card]
+  picked.forEach(function (c) {
+    const st = states[c.id];
+    if (!st) { fresh.push(c); return; }
+    const d = st.nextReview || '';
+    if (!Object.prototype.hasOwnProperty.call(dueGroups, d)) dueGroups[d] = [];
+    dueGroups[d].push(c);
+  });
+  const dates = Object.keys(dueGroups).sort();           // 'YYYY-MM-DD' 字典序 = 日期序
+  const out = fresh.slice();
+  dates.forEach(function (d) {
+    const group = dueGroups[d];
+    shuffleInPlace(group, rng);
+    group.forEach(function (c) { out.push(c); });
+  });
+  return out;
+}
+
+/**
  * 按条件挑出要复习的卡 —— 复习页的入口筛选。
  *
- * @param opts { subject: 'all'|学科名, scope: 'due'|'all'|'weak' }
+ * @param opts { subject: 'all'|学科名, unit: 'all'|单元名, scope: 'due'|'all'|'weak' }
  *   due  —— 到期（含从未学过的新卡），默认的"今日任务"
  *   all  —— 该范围内全部卡片（想整体过一遍时用）
  *   weak —— 只练答错过或标过"模糊"的卡
@@ -371,11 +439,26 @@ function pickCards(cards, states, today, opts, weakIdList) {
   opts = opts || {};
   states = states || {};
   const subject = opts.subject || 'all';
+  const unit = opts.unit || 'all';
   const scope = opts.scope || 'due';
 
   let pool = cards || [];
   if (subject !== 'all') {
     pool = pool.filter(function (c) { return (c.subject || '未分类') === subject; });
+  }
+
+  /**
+   * 单元筛选（2026-09-18 加）。
+   *
+   * 真实场景：学生明天要听写 Unit 2，想只练那一单元的 43 个词。
+   * 没有这个筛选，他只能在 295 个词里碰运气。
+   *
+   * 没有 unit 的词（旧版 19 册教材、手动录入的词）用 UNGROUPED 归类，
+   * 与 unitNameOf 在导入页的口径一致 —— 学生看到的"未分组"是一个真实可选项，
+   * 而不是一个筛不出来的空洞。
+   */
+  if (unit !== 'all') {
+    pool = pool.filter(function (c) { return (c.unit || UNGROUPED_UNIT) === unit; });
   }
 
   /** 统一的"该先复习的排前面"排序 */
@@ -421,11 +504,130 @@ function subjectsOf(cards) {
     .sort(function (a, b) { return b.count - a.count; });
 }
 
+/**
+ * 列出所有单元（含卡片数与已学数），供「按单元学习」筛选器用。
+ *
+ * 排序：Starter 在前，然后按单元号自然序（Unit 1 → Unit 2 → … → Unit 10），
+ * **不能用字典序** —— 那会把 Unit 10 排在 Unit 2 前面（"10" < "2"）。
+ * 真实课本里单元数可能到 10+，这个坑一定会踩到。
+ *
+ * @param cards  全部卡片
+ * @param states 学习状态（用于算"这一单元学了多少"，让学生知道进度）
+ */
+function unitsOf(cards, states) {
+  states = states || {};
+  const map = {};
+  (cards || []).forEach(function (c) {
+    const u = c.unit || UNGROUPED_UNIT;
+    if (!map[u]) map[u] = { unit: u, count: 0, learned: 0 };
+    map[u].count += 1;
+    if (states[c.id]) map[u].learned += 1;
+  });
+
+/**
+ * 从单元名里抽出数字用于排序：Starter → -1，Unit 3 → 3，抽不出 → 999。
+ *
+ * ⚠️ 必须取**最后一个**数字，不能取第一个。真实单元名是 `7A Unit 3` 这种带年级前缀的，
+ * `/(\d+)/` 会先命中年级里的 "7"：`7A Unit 10` 与 `7A Unit 2` 双双退化成 rank 7，
+ * 平局后落到下面的 `a.unit < b.unit` 字典序兜底 —— 于是 Unit 10 又排到了 Unit 2 前面，
+ * 正是本函数上方注释明令避免的那件事。（当前教材只到 Unit 6，所以一直没暴露。）
+ * `/(\d+)(?!.*\d)/` 命中"后面不再有数字"的那一段，即单元号本身。
+ */
+const unitRank = function (name) {
+  if (/starter/i.test(name)) return -1;
+  const m = String(name).match(/(\d+)(?!.*\d)/);
+  return m ? Number(m[1]) : 999;
+};
+
+  return Object.keys(map).map(function (k) { return map[k]; })
+    .sort(function (a, b) {
+      const ra = unitRank(a.unit), rb = unitRank(b.unit);
+      if (ra !== rb) return ra - rb;
+      return a.unit < b.unit ? -1 : 1;
+    });
+}
+
+/*======================== 今日队列（首页 / 复习页共用） ========================*/
+
+/**
+ * 「这个范围该不该过每日上限」—— **全项目唯一的判据**。
+ *
+ * ## 为什么必须只有一份
+ * 这条规则原来在 study.js 的 buildQueue / refreshCounts / countDueInScope 三处
+ * 各写了一遍，首页 deck.refresh 又写了第四遍（而且写错了，见下）。三处散写时
+ * 已经出现过真实分叉：refreshCounts 的条件比 buildQueue 少一个 `!singleMode`，
+ * 只因当时不可达才没暴露。判断"某处的条件是不是和别处一样"靠人眼比对是防不住的，
+ * 只能靠"根本没有第二处"。
+ *
+ * ## 首页那一遍错在哪（2026-09-19 修）
+ * deck.refresh 只按**全库**算到期数，完全不看 prefs.unit。于是学生上次选了
+ * 「7A Starter」时：首页显示 38（全库+限流），点「开始」进去是 33（该单元、不限流）——
+ * 数字与动作打架，正是本项目反复踩过的那一类。首页那个数字既然叫"今天要练的"，
+ * 就该是**他当前范围内**今天要练多少。
+ *
+ * ## 三个因子各自的理由
+ * · scope === 'due'：学生主动选「全部单词」是想整体过一遍，那时再卡上限会显得莫名其妙。
+ *   设置项叫"每日学习量"，管的是**今天该给多少**，不是"最多能看多少"。
+ * · unit === 'all'：学生说"我明天听写 Unit 2"，系统只给他 43 个里的 10 个，
+ *   就是把他明确的意图打了折。单元规模本身可控（当前每单元 33~49 词）。
+ * · !singleMode：单卡模式（卡详情页「练这一张」）的队列被固定成那一张，
+ *   与"今天该给多少张"无关。
+ *
+ * @param opts { scope, unit, singleMode }
+ *   ⚠️ 必须传**要判断的那个范围**，而不是"当前页面范围"。例如回答
+ *   "切到 due 会给我多少张"时要传 scope:'due'，哪怕页面此刻在 'all'。
+ */
+function shouldApplyDailyLimits(opts) {
+  opts = opts || {};
+  const scope = opts.scope || 'due';
+  const unit = opts.unit || 'all';
+  return !opts.singleMode && scope === 'due' && unit === 'all';
+}
+
+/**
+ * 今日队列 = pickCards + 上面的判据 + applyDailyLimits 的**唯一实现**。
+ *
+ * 存在的意义是让"首页显示的数字"与"点进去拿到的队列"走同一条计算路径，
+ * 而不是靠两个页面各自记得写一样（那种"记得"必然在某次改动后分叉）。
+ * 调用方：
+ *   · deck.refresh()          —— 首页「今天要练的」那个数字
+ *   · study.countDueInScope() —— 复习页完成页「还有 N 个词待复习」
+ * 两边都只取 .queue.length，于是三个数字天然相等。
+ *
+ * 不过限流时返回与 applyDailyLimits **同形状**的结果（queue 原样、hidden* 为 0），
+ * 调用方因此不必再写一遍 `limited ? limited.x : 0` —— 少一处能写错的地方。
+ *
+ * @param opts 同 pickCards / shouldApplyDailyLimits
+ * @param limits { dailyNewWords, dailyReviewMax }
+ * @returns { queue, hiddenNew, hiddenReview }（限流时还带 totalNew / totalReview）
+ */
+function dailyQueue(cards, states, today, opts, weakIdList, limits, rng) {
+  const picked = pickCards(cards, states, today, opts, weakIdList);
+  let out;
+  if (!shouldApplyDailyLimits(opts)) {
+    out = { queue: picked, hiddenNew: 0, hiddenReview: 0 };
+  } else {
+    out = applyDailyLimits(picked, states, limits);
+  }
+  /* 「今天要练的」是到期队列，到期日的同档内次序对学生没有任何学习价值，
+   * 不打乱会被背模式（见 shuffleByDueDate 的注释）。
+   * 洗牌放在限流之后：拿到的是学生**真的会见到的那 N 张**，洗它们才有意义。 */
+  if ((opts && opts.scope || 'due') === 'due') {
+    out.queue = shuffleByDueDate(out.queue, states, rng);
+  }
+  return out;
+}
+
 module.exports = {
   MASTERED_INTERVAL,
+  UNGROUPED_UNIT,
   // 词条视角
   dueWords, nextDueDate, masteredCount, intervalCurve, pointsOf, selfCheck,
   // 卡片/状态视角
   dueCards, freshCount, progressBySubject, overallProgress, pickCards, subjectsOf,
-  applyDailyLimits
+  unitsOf,
+  applyDailyLimits,
+  shuffleInPlace, shuffleByDueDate,
+  // 今日队列（首页 / 复习页共用，保证"显示的数字 === 点进去的队列"）
+  shouldApplyDailyLimits, dailyQueue
 };

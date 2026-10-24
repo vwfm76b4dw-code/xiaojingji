@@ -377,7 +377,8 @@
     },
     {
       "word": "beside",
-      "meaning": "不中（目标）；不对（题）；与…无关"
+      "meaning": "prep. 在……旁边；在……附近",
+      "_cleaned": "释义串到了 besides（除……之外、不包括）"
     },
     {
       "word": "in front of",
@@ -413,7 +414,8 @@
     },
     {
       "word": "plane",
-      "meaning": "水平"
+      "meaning": "n. 飞机；平面",
+      "_cleaned": "释义串到了 level（水平）；同册 wy2s_qy/wy4s 均为「飞机」"
     },
     {
       "word": "car",
@@ -1217,7 +1219,8 @@
     },
     {
       "word": "next to",
-      "meaning": "几乎"
+      "meaning": "prep. 在……近旁；紧邻；靠近",
+      "_cleaned": "释义串到了 almost（几乎）"
     },
     {
       "word": "under",

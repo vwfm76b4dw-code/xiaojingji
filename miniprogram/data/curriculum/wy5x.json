@@ -1,0 +1,885 @@
+{
+ "book": "外研版小学英语五年级下册（三年级起点）",
+ "grade": "g5",
+ "count": 146,
+ "_source": "https://yyld.51jiaoxi.com/wuxia/wybsq_danci.html（51教习网英语朗读宝·外研版三起同步词表，按 Module 分组）；与新东方在线词书 tag_1830 交叉核对，重合 90% 以上",
+ "_confidence": "high",
+ "words": [
+  {
+   "word": "still",
+   "meaning": "仍然；依旧；还是",
+   "unit": "5A Module 1",
+   "mnemonic": "仍然：到现在还是这样"
+  },
+  {
+   "word": "programme",
+   "meaning": "节目",
+   "unit": "5A Module 1",
+   "mnemonic": "节目：电视上正在播的栏目"
+  },
+  {
+   "word": "lady",
+   "meaning": "女士；夫人；小姐",
+   "unit": "5A Module 1",
+   "mnemonic": "女士：有礼貌的称呼"
+  },
+  {
+   "word": "life",
+   "meaning": "生命；人命；性命；生活",
+   "unit": "5A Module 1",
+   "mnemonic": "生活；生命：一天天过下的日子"
+  },
+  {
+   "word": "different",
+   "meaning": "不同的",
+   "unit": "5A Module 1",
+   "mnemonic": "不同的：differ（不同）+ ent → 各不一样"
+  },
+  {
+   "word": "ago",
+   "meaning": "以前",
+   "unit": "5A Module 1",
+   "mnemonic": "以前：long ago 很久以前，事情已经过去"
+  },
+  {
+   "word": "interviewer",
+   "meaning": "采访者；面试官",
+   "unit": "5A Module 1",
+   "mnemonic": "采访者：拿着话筒提问的人"
+  },
+  {
+   "word": "enough",
+   "meaning": "足够地;充分地;充足地",
+   "unit": "5A Module 1",
+   "mnemonic": "足够的：吃饱了，够了不再添"
+  },
+  {
+   "word": "television",
+   "meaning": "电视机;电视节目;电视",
+   "unit": "5A Module 1",
+   "mnemonic": "电视：tele（远）+ vision（看）"
+  },
+  {
+   "word": "grandchildren",
+   "meaning": "(外)孙子;(外)孙女",
+   "unit": "5A Module 1",
+   "mnemonic": "孙辈：grand（隔代）+ children"
+  },
+  {
+   "word": "change",
+   "meaning": "改变；变化；使不同；零钱",
+   "unit": "5A Module 1",
+   "mnemonic": "改变；变化：毛毛虫变蝴蝶"
+  },
+  {
+   "word": "night",
+   "meaning": "夜晚，夜间",
+   "unit": "5A Module 1",
+   "mnemonic": "夜晚：月亮星星出来了"
+  },
+  {
+   "word": "work",
+   "meaning": "工作；运转；工作，劳动",
+   "unit": "5A Module 1",
+   "mnemonic": "工作：认真干活出成果"
+  },
+  {
+   "word": "field",
+   "meaning": "田地；田野；牧场",
+   "unit": "5A Module 1",
+   "mnemonic": "田地：金黄麦子一大片"
+  },
+  {
+   "word": "fire",
+   "meaning": "火；火灾，失火",
+   "unit": "5A Module 1",
+   "mnemonic": "火：跳动的火苗要远离"
+  },
+  {
+   "word": "or",
+   "meaning": "还是；或者；否则",
+   "unit": "5A Module 1",
+   "mnemonic": "或者：二选一用 or 连"
+  },
+  {
+   "word": "radio",
+   "meaning": "无线电广播；收音机；电台节目",
+   "unit": "5A Module 1",
+   "mnemonic": "收音机：拧开开关听广播"
+  },
+  {
+   "word": "telephone",
+   "meaning": "电话；电话机",
+   "unit": "5A Module 1",
+   "mnemonic": "电话：tele（远）+ phone（声音）"
+  },
+  {
+   "word": "couldn't",
+   "meaning": "不能",
+   "unit": "5A Module 1",
+   "mnemonic": "不能（can't 过去式）：昨天没能去成"
+  },
+  {
+   "word": "write",
+   "meaning": "写；写作",
+   "unit": "5A Module 1",
+   "mnemonic": "写：拿笔在本上写字"
+  },
+  {
+   "word": "hope",
+   "meaning": "希望，期望",
+   "unit": "5A Module 1",
+   "mnemonic": "希望：盼着好事发生"
+  },
+  {
+   "word": "learnt",
+   "meaning": "（learn的过去式）学习",
+   "unit": "5A Module 2",
+   "mnemonic": "学会（learn 过去式）：已经学会了"
+  },
+  {
+   "word": "taught",
+   "meaning": "（teach的过去式）教，讲授",
+   "unit": "5A Module 2",
+   "mnemonic": "教（teach 过去式）：老师教过我们"
+  },
+  {
+   "word": "language",
+   "meaning": "语言",
+   "unit": "5A Module 2",
+   "mnemonic": "语言：说出口交流的话"
+  },
+  {
+   "word": "wrote",
+   "meaning": "（write的过去式）写",
+   "unit": "5A Module 2",
+   "mnemonic": "写（write 过去式）：信写完了"
+  },
+  {
+   "word": "dancer",
+   "meaning": "跳舞者;舞蹈演员",
+   "unit": "5A Module 2",
+   "mnemonic": "舞蹈演员：danc（跳舞）+ er（人）"
+  },
+  {
+   "word": "foreign",
+   "meaning": "外国的;涉外的;外交的",
+   "unit": "5A Module 2",
+   "mnemonic": "外国的：fore（外）+ ign → 别的国家的"
+  },
+  {
+   "word": "studied",
+   "meaning": "学习;攻读",
+   "unit": "5A Module 2",
+   "mnemonic": "学习（study 过去式）：认真学过了"
+  },
+  {
+   "word": "hard",
+   "meaning": "努力地；费力地",
+   "unit": "5A Module 2",
+   "mnemonic": "困难的；努力地：难题要认真啃"
+  },
+  {
+   "word": "hamburger",
+   "meaning": "汉堡包",
+   "unit": "5A Module 3",
+   "mnemonic": "汉堡：两层面包夹肉饼"
+  },
+  {
+   "word": "English",
+   "meaning": "英语（的)",
+   "unit": "5A Module 3",
+   "mnemonic": "英语：England 英格兰的语言"
+  },
+  {
+   "word": "breakfast",
+   "meaning": "早餐；早饭",
+   "unit": "5A Module 3",
+   "mnemonic": "早餐：break（打破）+ fast（斋）→ 开吃第一餐"
+  },
+  {
+   "word": "lunch",
+   "meaning": "午餐；午饭",
+   "unit": "5A Module 3",
+   "mnemonic": "午餐：中午吃饱下午有劲"
+  },
+  {
+   "word": "sandwich",
+   "meaning": "三明治",
+   "unit": "5A Module 3",
+   "mnemonic": "三明治：两片面包夹火腿"
+  },
+  {
+   "word": "fish and chips",
+   "meaning": "炸鱼加炸薯条",
+   "unit": "5A Module 3",
+   "mnemonic": "炸鱼加炸薯条：英国名菜一盘"
+  },
+  {
+   "word": "traditional",
+   "meaning": "传统的；惯例的",
+   "unit": "5A Module 3",
+   "mnemonic": "传统的：tradition（传统）+ al"
+  },
+  {
+   "word": "dish",
+   "meaning": "食品，菜肴",
+   "unit": "5A Module 3",
+   "mnemonic": "碟；菜肴：一盘菜端上桌"
+  },
+  {
+   "word": "very much",
+   "meaning": "非常；很；确实",
+   "unit": "5A Module 3",
+   "mnemonic": "非常：程度再加一档"
+  },
+  {
+   "word": "gave",
+   "meaning": "（give的过去式）提供；交给",
+   "unit": "5A Module 3",
+   "mnemonic": "给（give 过去式）：把书递给他了"
+  },
+  {
+   "word": "tonight",
+   "meaning": "在今晚；在今夜",
+   "unit": "5A Module 3",
+   "mnemonic": "今晚：今天的夜里"
+  },
+  {
+   "word": "library",
+   "meaning": "图书馆",
+   "unit": "5A Module 4",
+   "mnemonic": "图书馆：安静看书借书的地方"
+  },
+  {
+   "word": "student",
+   "meaning": "学生",
+   "unit": "5A Module 4",
+   "mnemonic": "学生：坐在教室里学习的"
+  },
+  {
+   "word": "sent",
+   "meaning": "（send的过去式）寄，发送",
+   "unit": "5A Module 4",
+   "mnemonic": "寄出（send 过去式）：信已经寄走了"
+  },
+  {
+   "word": "CD",
+   "meaning": "光盘，激光唱片",
+   "unit": "5A Module 4",
+   "mnemonic": "光盘：放进机器就能放音乐"
+  },
+  {
+   "word": "idea",
+   "meaning": "想法；主意",
+   "unit": "5A Module 4",
+   "mnemonic": "主意：脑袋里冒出的好点子"
+  },
+  {
+   "word": "put",
+   "meaning": "放，安放；写上",
+   "unit": "5A Module 4",
+   "mnemonic": "放：把书放进书包"
+  },
+  {
+   "word": "shelf",
+   "meaning": "架子，搁板",
+   "unit": "5A Module 4",
+   "mnemonic": "架子：书架上一层一层的板"
+  },
+  {
+   "word": "heavy",
+   "meaning": "重的；繁重的；沉的",
+   "unit": "5A Module 4",
+   "mnemonic": "重的：搬不动的大箱子"
+  },
+  {
+   "word": "dictionary",
+   "meaning": "词典，字典",
+   "unit": "5A Module 4",
+   "mnemonic": "词典：查单词翻词典"
+  },
+  {
+   "word": "card",
+   "meaning": "贺卡；明信片；卡",
+   "unit": "5A Module 4",
+   "mnemonic": "卡片：生日贺卡递到手"
+  },
+  {
+   "word": "library card",
+   "meaning": "图书证;借书证;借书卡",
+   "unit": "5A Module 4",
+   "mnemonic": "借书证：library（图书馆）+ card（卡）"
+  },
+  {
+   "word": "ask",
+   "meaning": "问，询问；要求；请求；邀请",
+   "unit": "5A Module 4",
+   "mnemonic": "问：举手向老师提一个问题"
+  },
+  {
+   "word": "wrong",
+   "meaning": "错的，不正确的，不对",
+   "unit": "5A Module 4",
+   "mnemonic": "错误的：答错题要订正"
+  },
+  {
+   "word": "Dear",
+   "meaning": "珍视的；(用于信函抬头名字或头衔前)亲爱的；昂贵的",
+   "unit": "5A Module 4",
+   "mnemonic": "亲爱的：信开头写 dear 朋友"
+  },
+  {
+   "word": "information",
+   "meaning": "信息;消息;情报;资料",
+   "unit": "5A Module 4",
+   "mnemonic": "信息：打听到的情况"
+  },
+  {
+   "word": "e-book",
+   "meaning": "电子书",
+   "unit": "5A Module 4",
+   "mnemonic": "电子书：e（电子）+ book（书）→ 屏幕上看书"
+  },
+  {
+   "word": "project",
+   "meaning": "课题；项目;方案;工程",
+   "unit": "5A Module 4",
+   "mnemonic": "课题；项目：小组合作完成调查"
+  },
+  {
+   "word": "guide",
+   "meaning": "介绍，指南；手册；向导，导游",
+   "unit": "5A Module 4",
+   "mnemonic": "导游：带队讲解景点的领路人"
+  },
+  {
+   "word": "film",
+   "meaning": "电影，影片",
+   "unit": "5A Module 4",
+   "mnemonic": "电影：影院里放映的大片"
+  },
+  {
+   "word": "as well",
+   "meaning": "除......之外；也；还；又",
+   "unit": "5A Module 4",
+   "mnemonic": "也：顺带把这件事也一起办了"
+  },
+  {
+   "word": "way",
+   "meaning": "方式，方法",
+   "unit": "5A Module 4",
+   "mnemonic": "路；方式：这条路一直通到家"
+  },
+  {
+   "word": "on",
+   "meaning": "关于（事或人）",
+   "unit": "5A Module 4",
+   "mnemonic": "在……上：书放在桌面上"
+  },
+  {
+   "word": "topic",
+   "meaning": "话题;题目;标题",
+   "unit": "5A Module 4",
+   "mnemonic": "话题：大家正聊的那件事"
+  },
+  {
+   "word": "light",
+   "meaning": "轻的；轻松的；少量的",
+   "unit": "5A Module 5",
+   "mnemonic": "灯；轻的：一按开关屋里亮了"
+  },
+  {
+   "word": "broken",
+   "meaning": "破损的；伤残的；残缺的",
+   "unit": "5A Module 5",
+   "mnemonic": "坏掉的：花瓶摔成几瓣没法还原"
+  },
+  {
+   "word": "department store",
+   "meaning": "百货公司；大百货商店",
+   "unit": "5A Module 5",
+   "mnemonic": "百货商店：一层一层啥都卖"
+  },
+  {
+   "word": "pocket",
+   "meaning": "衣袋;口袋;兜",
+   "unit": "5A Module 5",
+   "mnemonic": "口袋：裤兜里装着糖"
+  },
+  {
+   "word": "umbrella",
+   "meaning": "伞；雨伞",
+   "unit": "5A Module 5",
+   "mnemonic": "雨伞：下雨撑开一朵花"
+  },
+  {
+   "word": "sales assistant",
+   "meaning": "售货员，营业员",
+   "unit": "5A Module 5",
+   "mnemonic": "售货员：sales（销售）+ assistant（助手）"
+  },
+  {
+   "word": "wheel",
+   "meaning": "轮子；车轮",
+   "unit": "5A Module 5",
+   "mnemonic": "轮子：圆的会转滚得快"
+  },
+  {
+   "word": "easy",
+   "meaning": "容易的；简单的",
+   "unit": "5A Module 5",
+   "mnemonic": "容易的：举手就能答出的题"
+  },
+  {
+   "word": "take",
+   "meaning": "带，拿；拿到；乘坐；花费",
+   "unit": "5A Module 5",
+   "mnemonic": "拿；带走：伸手把杯子拿走"
+  },
+  {
+   "word": "too",
+   "meaning": "太；过于",
+   "unit": "5A Module 5",
+   "mnemonic": "也；太：他去了我也去"
+  },
+  {
+   "word": "try",
+   "meaning": "试；尝试；努力",
+   "unit": "5A Module 5",
+   "mnemonic": "尝试：试一试才知道行不行"
+  },
+  {
+   "word": "lovely",
+   "meaning": "可爱的；美好的；美丽的；极好的",
+   "unit": "5A Module 5",
+   "mnemonic": "可爱的：love 加 ly 惹人爱"
+  },
+  {
+   "word": "moon",
+   "meaning": "月亮；月球",
+   "unit": "5A Module 6",
+   "mnemonic": "月亮：晚上挂天上的银盘"
+  },
+  {
+   "word": "get",
+   "meaning": "到达；得到",
+   "unit": "5A Module 6",
+   "mnemonic": "得到：拿到手里才算 get"
+  },
+  {
+   "word": "west",
+   "meaning": "西，西方；西方的；向西的",
+   "unit": "5A Module 6",
+   "mnemonic": "西：太阳落下的方向"
+  },
+  {
+   "word": "parent",
+   "meaning": "父亲；母亲；家长",
+   "unit": "5A Module 6",
+   "mnemonic": "父亲或母亲：parent 是爸妈的统称"
+  },
+  {
+   "word": "stay",
+   "meaning": "暂住；逗留，停留",
+   "unit": "5A Module 6",
+   "mnemonic": "停留：待在原地别动"
+  },
+  {
+   "word": "July",
+   "meaning": "七月",
+   "unit": "5A Module 6",
+   "mnemonic": "七月：一年的第七个月"
+  },
+  {
+   "word": "south",
+   "meaning": "南部；南方",
+   "unit": "5A Module 6",
+   "mnemonic": "南：地图下方是南"
+  },
+  {
+   "word": "remember",
+   "meaning": "回想起，记得；记起，忆起",
+   "unit": "5A Module 6",
+   "mnemonic": "记得：re（再）+ member → 心里再想起"
+  },
+  {
+   "word": "June",
+   "meaning": "六月",
+   "unit": "5A Module 6",
+   "mnemonic": "六月：一年的第六个月"
+  },
+  {
+   "word": "east",
+   "meaning": "东，东方；东部",
+   "unit": "5A Module 6",
+   "mnemonic": "东：太阳从东边升起"
+  },
+  {
+   "word": "best",
+   "meaning": "最，最高程度地；最出色地，最高标准地",
+   "unit": "5A Module 6",
+   "mnemonic": "最好的：成绩单上最好的那个成绩"
+  },
+  {
+   "word": "north",
+   "meaning": "北，北方",
+   "unit": "5A Module 6",
+   "mnemonic": "北：地图上方是北"
+  },
+  {
+   "word": "rest",
+   "meaning": "休息，歇息；其余",
+   "unit": "5A Module 6",
+   "mnemonic": "休息：累了就歇一歇"
+  },
+  {
+   "word": "have a rest",
+   "meaning": "休息一下",
+   "unit": "5A Module 6",
+   "mnemonic": "休息一下：坐下歇一歇"
+  },
+  {
+   "word": "rode",
+   "meaning": "（ride的过去式）骑（马；自行车）",
+   "unit": "5A Module 6",
+   "mnemonic": "骑（ride 过去式）：骑过马了"
+  },
+  {
+   "word": "evening",
+   "meaning": "晚上；傍晚",
+   "unit": "5A Module 7",
+   "mnemonic": "傍晚：太阳落山天渐黑"
+  },
+  {
+   "word": "late",
+   "meaning": "晚；迟",
+   "unit": "5A Module 7",
+   "mnemonic": "晚的：迟到进门红着脸"
+  },
+  {
+   "word": "worker",
+   "meaning": "工人；劳动者",
+   "unit": "5A Module 7",
+   "mnemonic": "工人：work（工作）+ er（人）→ 干活的人"
+  },
+  {
+   "word": "factory",
+   "meaning": "工厂",
+   "unit": "5A Module 7",
+   "mnemonic": "工厂：机器轰隆隆造产品"
+  },
+  {
+   "word": "early",
+   "meaning": "早到的；早的；提早的",
+   "unit": "5A Module 7",
+   "mnemonic": "早的：天刚亮就起床了"
+  },
+  {
+   "word": "taxi",
+   "meaning": "出租汽车",
+   "unit": "5A Module 7",
+   "mnemonic": "出租车：招手即停的车"
+  },
+  {
+   "word": "quarter",
+   "meaning": "一刻钟；四分之一",
+   "unit": "5A Module 7",
+   "mnemonic": "一刻钟；四分之一：15 分钟为一刻"
+  },
+  {
+   "word": "to",
+   "meaning": "到，对；向，朝；位于……；在……之前",
+   "unit": "5A Module 7",
+   "mnemonic": "到；向：从这里到学校"
+  },
+  {
+   "word": "worry",
+   "meaning": "担心；担忧",
+   "unit": "5A Module 7",
+   "mnemonic": "担心：心里放不下的事"
+  },
+  {
+   "word": "paper",
+   "meaning": "纸，纸张",
+   "unit": "5A Module 8",
+   "mnemonic": "纸：折纸鹤的白纸"
+  },
+  {
+   "word": "Chinese",
+   "meaning": "中国的",
+   "unit": "5A Module 8",
+   "mnemonic": "语文；中国的：写汉字说中文"
+  },
+  {
+   "word": "so",
+   "meaning": "如此，这么；那么；非常",
+   "unit": "5A Module 8",
+   "mnemonic": "所以；如此：因此结果是这样"
+  },
+  {
+   "word": "word",
+   "meaning": "单词；词；话语",
+   "unit": "5A Module 8",
+   "mnemonic": "单词：一个词就是一条"
+  },
+  {
+   "word": "drew",
+   "meaning": "（draw的过去式）绘画，画",
+   "unit": "5A Module 8",
+   "mnemonic": "画（draw 过去式）：昨天画的画"
+  },
+  {
+   "word": "cut",
+   "meaning": "切，割，剪下",
+   "unit": "5A Module 8",
+   "mnemonic": "切：用剪刀咔嚓剪开纸"
+  },
+  {
+   "word": "piece",
+   "meaning": "张，片，块",
+   "unit": "5A Module 8",
+   "mnemonic": "片；块：a piece of cake 一小块蛋糕"
+  },
+  {
+   "word": "stick",
+   "meaning": "棍，棒；树枝，枝条",
+   "unit": "5A Module 8",
+   "mnemonic": "小棍；粘贴：用胶水粘起来"
+  },
+  {
+   "word": "tied",
+   "meaning": "（tie的过去式）扎上，系上",
+   "unit": "5A Module 8",
+   "mnemonic": "系（tie 过去式）：鞋带系好了"
+  },
+  {
+   "word": "string",
+   "meaning": "线，细绳",
+   "unit": "5A Module 8",
+   "mnemonic": "细绳：风筝拴在绳上"
+  },
+  {
+   "word": "paint",
+   "meaning": "用颜料绘画；画画",
+   "unit": "5A Module 8",
+   "mnemonic": "颜料；粉刷：刷子蘸漆涂墙壁"
+  },
+  {
+   "word": "laugh",
+   "meaning": "笑，大笑 ;发笑；笑声",
+   "unit": "5A Module 9",
+   "mnemonic": "笑：哈哈哈笑出声"
+  },
+  {
+   "word": "wore",
+   "meaning": "（wear的过去式）穿，戴",
+   "unit": "5A Module 9",
+   "mnemonic": "穿（wear 过去式）：穿过了那件红衣"
+  },
+  {
+   "word": "letter",
+   "meaning": "信；字母",
+   "unit": "5A Module 9",
+   "mnemonic": "信：装进信封寄出去"
+  },
+  {
+   "word": "theatre",
+   "meaning": "剧场，戏院",
+   "unit": "5A Module 9",
+   "mnemonic": "剧院：theater 的英式拼法，看戏的地方"
+  },
+  {
+   "word": "women",
+   "meaning": "（woman的复数形式）女人",
+   "unit": "5A Module 9",
+   "mnemonic": "女人们：woman 的复数 a 变 e"
+  },
+  {
+   "word": "actor",
+   "meaning": "演员",
+   "unit": "5A Module 9",
+   "mnemonic": "演员：act（表演）+ or（人）→ 做表演的人"
+  },
+  {
+   "word": "told",
+   "meaning": "tell的过去式）口述，讲",
+   "unit": "5A Module 9",
+   "mnemonic": "告诉（tell 过去式）：已经说给他了"
+  },
+  {
+   "word": "joke",
+   "meaning": "玩笑；笑话",
+   "unit": "5A Module 9",
+   "mnemonic": "笑话：讲完大家都笑了"
+  },
+  {
+   "word": "after",
+   "meaning": "在（时间）后;在......之后",
+   "unit": "5A Module 9",
+   "mnemonic": "在之后：放学 after school，先上课后放学"
+  },
+  {
+   "word": "show",
+   "meaning": "演出，秀",
+   "unit": "5A Module 9",
+   "mnemonic": "展示：把画展示给大家看"
+  },
+  {
+   "word": "restaurant",
+   "meaning": "餐馆",
+   "unit": "5A Module 9",
+   "mnemonic": "餐馆：点菜吃饭的店"
+  },
+  {
+   "word": "ready",
+   "meaning": "准备好，准备完毕",
+   "unit": "5A Module 9",
+   "mnemonic": "准备好的：read 加 y → 功课读完了就 ready"
+  },
+  {
+   "word": "borrow",
+   "meaning": "借入，借来，借用",
+   "unit": "5A Module 9",
+   "mnemonic": "借入：找同学借块橡皮（借进来）"
+  },
+  {
+   "word": "read",
+   "meaning": "（read的过去式）读",
+   "unit": "5A Module 9",
+   "mnemonic": "读：捧起书本念一念"
+  },
+  {
+   "word": "at all",
+   "meaning": "全然；一点；根本",
+   "unit": "5A Module 9",
+   "mnemonic": "根本：not at all 一点也不"
+  },
+  {
+   "word": "in",
+   "meaning": "在（某段时间）之后",
+   "unit": "5A Module 9",
+   "mnemonic": "在……里：鱼在水里游"
+  },
+  {
+   "word": "another",
+   "meaning": "别的；不同的；又一，再一，另一(事物或人）",
+   "unit": "5A Module 9",
+   "mnemonic": "另一个：an（一个）+ other（别的）→ 再来一个"
+  },
+  {
+   "word": "history",
+   "meaning": "历史；历史学",
+   "unit": "5A Module 9",
+   "mnemonic": "历史：hist（过去的事）→ 古人的故事"
+  },
+  {
+   "word": "question",
+   "meaning": "问题",
+   "unit": "5A Module 9",
+   "mnemonic": "问题：举手提问求解答"
+  },
+  {
+   "word": "forget",
+   "meaning": "忘记",
+   "unit": "5A Module 9",
+   "mnemonic": "忘记：for + get，抓不住就忘"
+  },
+  {
+   "word": "bring",
+   "meaning": "带来",
+   "unit": "5A Module 9",
+   "mnemonic": "带来：把书从家里带到学校"
+  },
+  {
+   "word": "soon",
+   "meaning": "不久，很快，马上",
+   "unit": "5A Module 9",
+   "mnemonic": "很快：一会儿就到"
+  },
+  {
+   "word": "when",
+   "meaning": "在……时；当……时",
+   "unit": "5A Module 10",
+   "mnemonic": "什么时候：问时间的疑问词"
+  },
+  {
+   "word": "end",
+   "meaning": "结束；尽头；结尾",
+   "unit": "5A Module 10",
+   "mnemonic": "结束：电影放完字幕升起"
+  },
+  {
+   "word": "nervous",
+   "meaning": "紧张的；焦虑的，惶恐的",
+   "unit": "5A Module 10",
+   "mnemonic": "紧张的：上台前手心冒汗"
+  },
+  {
+   "word": "all right",
+   "meaning": "好，行",
+   "unit": "5A Module 10",
+   "mnemonic": "好的：行，没问题，就这么办"
+  },
+  {
+   "word": "airport",
+   "meaning": "机场",
+   "unit": "5A Module 10",
+   "mnemonic": "机场：air（空中）+ port（港口）→ 飞机的港口"
+  },
+  {
+   "word": "ticket",
+   "meaning": "票，入场券",
+   "unit": "5A Module 10",
+   "mnemonic": "票：检票进站乘车"
+  },
+  {
+   "word": "passport",
+   "meaning": "护照",
+   "unit": "5A Module 10",
+   "mnemonic": "护照：passport 出国必带"
+  },
+  {
+   "word": "safe",
+   "meaning": "安全的",
+   "unit": "5A Module 10",
+   "mnemonic": "安全的：过马路左右看"
+  },
+  {
+   "word": "pet",
+   "meaning": "宠物；宠儿，宝贝",
+   "unit": "5A Module 10",
+   "mnemonic": "宠物：养只小猫小狗陪伴"
+  },
+  {
+   "word": "speak",
+   "meaning": "会说；会讲（某种语言）；用（某种语言）说话",
+   "unit": "5A Module 10",
+   "mnemonic": "说话：speak 大声讲出来"
+  },
+  {
+   "word": "building",
+   "meaning": "建筑物；房子；楼房",
+   "unit": "5A Module 10",
+   "mnemonic": "建筑物：城市里一座座高楼大厦"
+  },
+  {
+   "word": "American",
+   "meaning": "adj. 美国的；n. 美国人",
+   "unit": "5A Module 10",
+   "mnemonic": "美国的；美国人：America 美国 + n 后缀"
+  },
+  {
+   "word": "find out",
+   "meaning": "了解（到）；弄清；发现，找出，查明;查出",
+   "unit": "5A Module 10",
+   "mnemonic": "查明：打破砂锅问到底"
+  },
+  {
+   "word": "more",
+   "meaning": "更多的",
+   "unit": "5A Module 10",
+   "mnemonic": "更多的：还想再来一份"
+  }
+ ]
+}

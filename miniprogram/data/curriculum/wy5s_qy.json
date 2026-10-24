@@ -1,0 +1,483 @@
+{
+ "book": "外研版小学英语五年级上册（一年级起点）",
+ "grade": "g5",
+ "count": 79,
+ "_source": "https://yyld.51jiaoxi.com/wushang/wybyq_danci.html（51教习网英语朗读宝·外研版小学英语一起点同步词表，按 Module 分组）；koolearn 词书页已改 JS 渲染暂无第二来源，单源 medium",
+ "_confidence": "medium",
+ "words": [
+  {
+   "word": "for",
+   "meaning": "达，计",
+   "unit": "5A Module 1",
+   "mnemonic": "为了：这份礼物是给你的"
+  },
+  {
+   "word": "different",
+   "meaning": "不同的",
+   "unit": "5A Module 1",
+   "mnemonic": "不同的：differ（不同）+ ent → 各不一样"
+  },
+  {
+   "word": "bench",
+   "meaning": "长凳，长椅",
+   "unit": "5A Module 1",
+   "mnemonic": "bench：公园里的长椅"
+  },
+  {
+   "word": "then",
+   "meaning": "那么，就",
+   "unit": "5A Module 1",
+   "mnemonic": "然后：先洗手再吃饭"
+  },
+  {
+   "word": "playground",
+   "meaning": "操场",
+   "unit": "5A Module 1",
+   "mnemonic": "操场：play（玩）+ ground（场地）→ 玩耍的场"
+  },
+  {
+   "word": "heavy",
+   "meaning": "重的；繁重的；沉的",
+   "unit": "5A Module 2",
+   "mnemonic": "重的：搬不动的大箱子"
+  },
+  {
+   "word": "let",
+   "meaning": "允许，让；使",
+   "unit": "5A Module 2",
+   "mnemonic": "let：放手让你做 = 让"
+  },
+  {
+   "word": "sell",
+   "meaning": "出售；售卖；销售",
+   "unit": "5A Module 2",
+   "mnemonic": "sell：摆摊吆喝着卖"
+  },
+  {
+   "word": "sometimes",
+   "meaning": "有时；间或",
+   "unit": "5A Module 2",
+   "mnemonic": "有时：偶尔那么几次"
+  },
+  {
+   "word": "festival",
+   "meaning": "节日",
+   "unit": "5A Module 3",
+   "mnemonic": "节日：挂灯笼放鞭炮的日子"
+  },
+  {
+   "word": "celebrate",
+   "meaning": "庆祝；庆贺",
+   "unit": "5A Module 3",
+   "mnemonic": "celebrate：张灯结彩来庆祝"
+  },
+  {
+   "word": "October",
+   "meaning": "十月",
+   "unit": "5A Module 3",
+   "mnemonic": "十月：一年的第十个月"
+  },
+  {
+   "word": "The Mid-Autumn Festival",
+   "meaning": "中秋节",
+   "unit": "5A Module 3",
+   "mnemonic": "中秋节：mid（中）+ autumn（秋），月圆团圆"
+  },
+  {
+   "word": "the Double Ninth Festival",
+   "meaning": "重阳节",
+   "unit": "5A Module 3",
+   "mnemonic": "double（双）ninth（九）→ 重阳节"
+  },
+  {
+   "word": "think",
+   "meaning": "思考；想，觉得；认为",
+   "unit": "5A Module 3",
+   "mnemonic": "想：动脑思考想答案"
+  },
+  {
+   "word": "flag-raising ceremony",
+   "meaning": "升旗仪式",
+   "unit": "5A Module 3",
+   "mnemonic": "flag（旗）raising（升）→ 升旗仪式"
+  },
+  {
+   "word": "Tian'anmen Square",
+   "meaning": "天安门广场",
+   "unit": "5A Module 3",
+   "mnemonic": "Tian'anmen（天安门）+ square（广场）"
+  },
+  {
+   "word": "spend",
+   "meaning": "度过",
+   "unit": "5A Module 3",
+   "mnemonic": "spend：把时间花掉 = 度过"
+  },
+  {
+   "word": "moon cake",
+   "meaning": "月饼",
+   "unit": "5A Module 3",
+   "mnemonic": "月饼：中秋团圆分着吃"
+  },
+  {
+   "word": "outdoor",
+   "meaning": "（在）户外的",
+   "unit": "5A Module 3",
+   "mnemonic": "out（外）+ door（门）→ 门外 = 户外"
+  },
+  {
+   "word": "activity",
+   "meaning": "活动",
+   "unit": "5A Module 3",
+   "mnemonic": "活动：act（做）+ ivity → 大家做的事"
+  },
+  {
+   "word": "made",
+   "meaning": "（make的过去式）做，制作，制造",
+   "unit": "5A Module 3",
+   "mnemonic": "制作（make 过去式）：手工做好了"
+  },
+  {
+   "word": "stories",
+   "meaning": "（story的复数形式）故事",
+   "unit": "5A Module 4",
+   "mnemonic": "story 的复数：一个个故事"
+  },
+  {
+   "word": "invitation",
+   "meaning": "邀请；请帖",
+   "unit": "5A Module 4",
+   "mnemonic": "invite（邀请）的名词：请帖"
+  },
+  {
+   "word": "tidy up",
+   "meaning": "整理；把......整理好；使整洁",
+   "unit": "5A Module 4",
+   "mnemonic": "tidy（整齐）+ up → 收拾利索"
+  },
+  {
+   "word": "November",
+   "meaning": "十一月",
+   "unit": "5A Module 4",
+   "mnemonic": "November：一年第 11 个月"
+  },
+  {
+   "word": "from",
+   "meaning": "（表示时间）从……起",
+   "unit": "5A Module 4",
+   "mnemonic": "从：他来自北京"
+  },
+  {
+   "word": "to",
+   "meaning": "直到",
+   "unit": "5A Module 4",
+   "mnemonic": "到；向：从这里到学校"
+  },
+  {
+   "word": "reply",
+   "meaning": "回答，答复",
+   "unit": "5A Module 4",
+   "mnemonic": "re（回）+ ply → 折回来答复"
+  },
+  {
+   "word": "mine",
+   "meaning": "我的",
+   "unit": "5A Module 5",
+   "mnemonic": "mine：这东西是我的"
+  },
+  {
+   "word": "whose",
+   "meaning": "谁的",
+   "unit": "5A Module 5",
+   "mnemonic": "谁的：问所有者"
+  },
+  {
+   "word": "yours",
+   "meaning": "你的；你们的",
+   "unit": "5A Module 5",
+   "mnemonic": "your + s：你的（东西）"
+  },
+  {
+   "word": "hers",
+   "meaning": "她的",
+   "unit": "5A Module 5",
+   "mnemonic": "her + s：她的（东西）"
+  },
+  {
+   "word": "both",
+   "meaning": "两个都；都",
+   "unit": "5A Module 5",
+   "mnemonic": "both：两个都要 = 两个都"
+  },
+  {
+   "word": "wet",
+   "meaning": "湿的；潮湿的",
+   "unit": "5A Module 5",
+   "mnemonic": "wet：一摸一手水 = 湿的"
+  },
+  {
+   "word": "That's OK",
+   "meaning": "没关系。",
+   "unit": "5A Module 5",
+   "mnemonic": "没关系：that is ok 安慰人"
+  },
+  {
+   "word": "take away",
+   "meaning": "拿走，移走",
+   "unit": "5A Module 5",
+   "mnemonic": "take（拿）+ away（走）→ 拿走"
+  },
+  {
+   "word": "worker",
+   "meaning": "工人；劳动者",
+   "unit": "5A Module 5",
+   "mnemonic": "工人：work（工作）+ er（人）→ 干活的人"
+  },
+  {
+   "word": "still",
+   "meaning": "仍然；依旧；还是",
+   "unit": "5A Module 5",
+   "mnemonic": "仍然：到现在还是这样"
+  },
+  {
+   "word": "well",
+   "meaning": "好；熟练地；令人满意的",
+   "unit": "5A Module 6",
+   "mnemonic": "好；健康地：身体棒心情好"
+  },
+  {
+   "word": "high",
+   "meaning": "高的；在高处，向高处",
+   "unit": "5A Module 6",
+   "mnemonic": "高的：踮脚也够不着"
+  },
+  {
+   "word": "true",
+   "meaning": "真的，真实的，确实的",
+   "unit": "5A Module 6",
+   "mnemonic": "true：一句不假 = 真实"
+  },
+  {
+   "word": "got",
+   "meaning": "（get的过去式）得到",
+   "unit": "5A Module 6",
+   "mnemonic": "得到（get 过去式）：已经拿到了"
+  },
+  {
+   "word": "eighty",
+   "meaning": "八十",
+   "unit": "5A Module 6",
+   "mnemonic": "八十：eight（八）+ ty（十）→ 八十"
+  },
+  {
+   "word": "point",
+   "meaning": "分数；比分；观点，要点",
+   "unit": "5A Module 6",
+   "mnemonic": "指；点：伸手指向目标"
+  },
+  {
+   "word": "fan",
+   "meaning": "迷；爱好者",
+   "unit": "5A Module 6",
+   "mnemonic": "扇子；粉丝：摇一摇凉快"
+  },
+  {
+   "word": "seventy",
+   "meaning": "七十",
+   "unit": "5A Module 6",
+   "mnemonic": "七十：seven（七）+ ty（十）→ 七十"
+  },
+  {
+   "word": "sixty",
+   "meaning": "六十",
+   "unit": "5A Module 6",
+   "mnemonic": "六十：six（六）+ ty（十）→ 六十"
+  },
+  {
+   "word": "useful",
+   "meaning": "有用的，有益的",
+   "unit": "5A Module 7",
+   "mnemonic": "有用的：use + ful → 用得上"
+  },
+  {
+   "word": "show",
+   "meaning": "（电视或广播）节目",
+   "unit": "5A Module 7",
+   "mnemonic": "展示：把画展示给大家看"
+  },
+  {
+   "word": "presenter",
+   "meaning": "（电视或广播节目的）主持人",
+   "unit": "5A Module 7",
+   "mnemonic": "主持人：presenter 站在台中央"
+  },
+  {
+   "word": "blind",
+   "meaning": "瞎的；失明的",
+   "unit": "5A Module 7",
+   "mnemonic": "失明的：盲人叔叔用棍子探路"
+  },
+  {
+   "word": "could",
+   "meaning": "可以；（can的过去式）能",
+   "unit": "5A Module 7",
+   "mnemonic": "can 的过去式：那时候能"
+  },
+  {
+   "word": "speak",
+   "meaning": "会说；会讲（某种语言）；用（某种语言）说话",
+   "unit": "5A Module 7",
+   "mnemonic": "说话：speak 大声讲出来"
+  },
+  {
+   "word": "fire",
+   "meaning": "火；火灾，失火",
+   "unit": "5A Module 7",
+   "mnemonic": "火：跳动的火苗要远离"
+  },
+  {
+   "word": "inside",
+   "meaning": "向里面；在……里面",
+   "unit": "5A Module 7",
+   "mnemonic": "在里面：打开盒子看里面"
+  },
+  {
+   "word": "firefighter",
+   "meaning": "消防队员",
+   "unit": "5A Module 7",
+   "mnemonic": "消防员：fire（火）+ fighter（战士）"
+  },
+  {
+   "word": "couldn't",
+   "meaning": "不能",
+   "unit": "5A Module 7",
+   "mnemonic": "不能（can't 过去式）：昨天没能去成"
+  },
+  {
+   "word": "often",
+   "meaning": "时常；常常；经常",
+   "unit": "5A Module 8",
+   "mnemonic": "经常：一星期里好几次"
+  },
+  {
+   "word": "around",
+   "meaning": "遍及；围绕；在...周围",
+   "unit": "5A Module 8",
+   "mnemonic": "围绕：绕着操场跑一圈"
+  },
+  {
+   "word": "start",
+   "meaning": "开始，着手；出发；开头",
+   "unit": "5A Module 8",
+   "mnemonic": "开始：比赛从发令开始"
+  },
+  {
+   "word": "line",
+   "meaning": "行，排，列；线；线条",
+   "unit": "5A Module 8",
+   "mnemonic": "线；排：排队站成一列"
+  },
+  {
+   "word": "half",
+   "meaning": "一半；半小时",
+   "unit": "5A Module 8",
+   "mnemonic": "一半：苹果切成两半"
+  },
+  {
+   "word": "past",
+   "meaning": "晚于，过（几点）",
+   "unit": "5A Module 8",
+   "mnemonic": "过去；经过：时间一天天过去"
+  },
+  {
+   "word": "miss",
+   "meaning": "惦念；怀念；想念；错过",
+   "unit": "5A Module 8",
+   "mnemonic": "想念；小姐：分开后总想着对方"
+  },
+  {
+   "word": "study",
+   "meaning": "书房",
+   "unit": "5A Module 8",
+   "mnemonic": "学习：翻开课本用功"
+  },
+  {
+   "word": "open",
+   "meaning": "开着的",
+   "unit": "5A Module 8",
+   "mnemonic": "打开：推开窗户透透气"
+  },
+  {
+   "word": "wall",
+   "meaning": "墙壁",
+   "unit": "5A Module 8",
+   "mnemonic": "墙：四面围合的墙面"
+  },
+  {
+   "word": "have fun",
+   "meaning": "玩得开心",
+   "unit": "5A Module 8",
+   "mnemonic": "have（有）+ fun（乐子）→ 玩得开心"
+  },
+  {
+   "word": "break",
+   "meaning": "休息；课间休息",
+   "unit": "5A Module 8",
+   "mnemonic": "break：课间打断了课 = 休息"
+  },
+  {
+   "word": "nothing",
+   "meaning": "没有什么；无关紧要的东西；没有一件东西",
+   "unit": "5A Module 9",
+   "mnemonic": "没有什么：口袋里空空的"
+  },
+  {
+   "word": "drank",
+   "meaning": "（drink的过去式）喝",
+   "unit": "5A Module 9",
+   "mnemonic": "喝（drink 过去式）：把水喝光了"
+  },
+  {
+   "word": "should",
+   "meaning": "应该，应当",
+   "unit": "5A Module 10",
+   "mnemonic": "应该：本该这样做"
+  },
+  {
+   "word": "shouldn't",
+   "meaning": "不应该",
+   "unit": "5A Module 10",
+   "mnemonic": "should not 缩写：不应该"
+  },
+  {
+   "word": "take down",
+   "meaning": "取下，拿下",
+   "unit": "5A Module 10",
+   "mnemonic": "take（拿）+ down（下）→ 取下来"
+  },
+  {
+   "word": "clean",
+   "meaning": "干净的；清洁的",
+   "unit": "5A Module 10",
+   "mnemonic": "干净的：窗户擦得一尘不染"
+  },
+  {
+   "word": "rule",
+   "meaning": "规则，规章；建议",
+   "unit": "5A Module 10",
+   "mnemonic": "规则：游戏要按规则玩"
+  },
+  {
+   "word": "kind",
+   "meaning": "体贴的；慈祥的；宽容的",
+   "unit": "5A Module 10",
+   "mnemonic": "善良的；种类：心肠好爱帮忙"
+  },
+  {
+   "word": "go to bed",
+   "meaning": "去睡觉；上床睡觉",
+   "unit": "5A Module 10",
+   "mnemonic": "上床睡觉：躺进被窝关灯"
+  }
+ ]
+}

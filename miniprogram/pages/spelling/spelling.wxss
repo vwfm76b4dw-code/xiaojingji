@@ -1,0 +1,166 @@
+/* 拼写页 —— 复用全局 token（card/chip/btn/bar/tag/kv），本文件只写页面专属结构 */
+
+.filter-bar { margin-bottom: 8rpx; }
+.unit-scroll { margin-top: 12rpx; white-space: nowrap; width: 100%; }
+
+.topbar { margin-top: 20rpx; }
+.topbar-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+/* 拼写卡 */
+.spell-card { margin-top: 20rpx; }
+.spell-meaning {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-top: 8rpx;
+}
+.spell-sub { margin-top: 8rpx; }
+.play-line { margin-top: 16rpx; }
+
+/* 拼写：槽位 + 字母卡片池（2026-09-24 由输入框改为逐一点击） */
+.spell-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10rpx;
+  margin-top: 28rpx;
+}
+.slot {
+  min-width: 62rpx;
+  height: 84rpx;
+  padding: 0 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--ink);
+  border-bottom: 4rpx solid var(--line-2);
+  transition: background var(--dur-tap) var(--ease-out);
+}
+.slot.on {
+  background: var(--green-wash); /* 2026-09-25 收编：原 0,130,92,0.10 裸值，轻底归 wash */
+  border-bottom-color: var(--green);
+}
+/* 连字符/空格：预填且不可点，不画下划线，免得看起来像个待填的空位 */
+.slot.fixed {
+  color: var(--ink-3);
+  border-bottom-color: transparent;
+  min-width: 32rpx;
+}
+
+.letter-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14rpx;
+  margin-top: 34rpx;
+}
+.letter {
+  width: 78rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38rpx;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--ink);
+  background: var(--card-2);
+  border: 2rpx solid var(--line-2);
+  border-radius: var(--r-xs);
+  transition: transform var(--dur-tap) var(--ease-out), opacity var(--dur-tap) var(--ease-out);
+}
+.letter:active { transform: scale(0.92); }
+.letter.used { opacity: 0.22; }
+.spell-tip { margin-top: 26rpx; text-align: center; }
+
+/* 结果：逐字高亮 */
+.sp-result {
+  margin-top: 28rpx;
+  padding: 24rpx;
+  border-radius: var(--r-md);
+  background: var(--red-wash);
+  border-left: 6rpx solid var(--red);
+}
+.sp-result.ok {
+  background: var(--green-wash); /* 2026-09-25 收编：原 0,130,92,0.08 裸值 */
+  border-left-color: var(--green);
+}
+.sp-verdict { font-size: 30rpx; font-weight: 700; color: var(--ink); }
+.sp-nodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6rpx;
+  margin: 16rpx 0;
+}
+.sp-ch {
+  font-size: 36rpx;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1.4;
+  min-width: 40rpx;
+  text-align: center;
+  padding: 2rpx 4rpx;
+  border-radius: var(--r-xs);
+}
+.sp-ch.ok { color: var(--ink); }
+.sp-ch.wrong { color: var(--red); background: var(--red-tint); }
+.sp-ch.missing { color: var(--red); background: var(--red-tint); }
+
+/* 本轮记录 */
+.spell-log { margin-top: 24rpx; }
+.log-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  padding: 10rpx 0;
+  border-bottom: 2rpx dashed var(--line);
+}
+.log-row:last-of-type { border-bottom: none; }
+.log-mark { font-weight: 800; flex-shrink: 0; }
+.log-mark.ok { color: var(--green-d); }
+.log-mark.bad { color: var(--red); }
+.log-word { font-weight: 600; color: var(--ink); }
+.log-typed { flex-shrink: 0; }
+.log-type { margin-left: auto; flex-shrink: 0; }
+
+/* 完成态 */
+.done-card { margin-top: 24rpx; }
+.spell-stat-row { display: flex; gap: 16rpx; margin-top: 20rpx; }
+
+/* ==== 从 study.wxss / app.wxss 复制的跨页类（WXSS 页面作用域，必须本页自备） ==== */
+.fp-chips { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.face-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.play-chip {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  line-height: 1;
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--card-2);
+  color: var(--green-d);
+  transition: transform var(--dur-tap) var(--ease-out), background var(--dur-tap) var(--ease-out);
+}
+/* 2026-09-25 主题化收编：原 0,130,92 系裸值换 token（0.12/0.16 两档都归 --green-tint） */
+.play-chip:active { transform: scale(0.94); background: var(--green-tint); }
+.play-chip.on { background: var(--green-tint); }
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12rpx 0;
+}
+.done-title { font-size: 34rpx; color: var(--ink-2); }
+.done-num { font-size: 120rpx; font-weight: 600; color: var(--green-d); line-height: 1.2; }

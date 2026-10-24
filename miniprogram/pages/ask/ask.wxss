@@ -10,7 +10,8 @@
   background: transparent;
   padding: 12rpx 0;
 }
-.ph { color: var(--ink-3); }
+/* 占位符是"示例问法"，学生要照着它学会怎么问 —— 属承载文字，用 --ink-hint */
+.ph { color: var(--ink-hint); }
 
 .ask-foot {
   display: flex;
@@ -30,7 +31,7 @@
   position: absolute;
   top: 0; left: 0; bottom: 0;
   width: 180rpx;
-  background: rgba(0, 130, 92, 0.14);
+  background: var(--green-tint); /* 2026-09-25 收编：原 0,130,92,0.14 裸值，主题化后跟随主色 */
   animation: sweep-move 1100ms linear infinite;
 }
 @keyframes sweep-move {
@@ -41,7 +42,8 @@
   from { opacity: 0; transform: translateY(-10rpx); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.ans-card.rise { animation: ans-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+/* 220ms 归到 --dur-state：回答卡出现是"状态切换"，不是点击反馈也不是整页入场 */
+.ans-card.rise { animation: ans-in var(--dur-state) var(--ease-enter) both; }
 
 .ans-card { margin-top: 24rpx; }
 .ans-head { margin-bottom: 12rpx; }
@@ -78,15 +80,22 @@
   font-size: 24rpx;
   color: var(--green);
   border: 2rpx solid var(--green);
-  border-radius: 6rpx;
+  /* 原来是 6rpx 裸值 —— 全站没有比 --r-xs 更小的 token，而它只是"比 .tag 的 r-sm 更收一点"
+     的小按钮，归到 r-xs 保持了这个关系（6→8 的 2rpx 差别肉眼不可辨） */
+  border-radius: var(--r-xs);
   padding: 6rpx 16rpx;
 }
 
+/**
+ * 示例问题是**一份清单**（每条 = 类型标签 + 问法），不是一排标签云。
+ *
+ * 2026-09-19 改左对齐：原来是 flex-wrap + justify-content: center + 宽度由内容决定，
+ * 每条长度不同 → 右边界参差，居中排列还让整份"列表"左右都不齐，扫读时找不到行首。
+ * 改成竖排整行、左对齐，与页面其它列表（依据的词、来源行）同一口径。
+ */
 .samples {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  justify-content: center;
+  flex-direction: column;
   margin-top: 40rpx;
 }
 
@@ -106,6 +115,9 @@
   border: 2rpx solid var(--line);
   border-radius: var(--r-md);
   background: var(--card);
+  /* 空态容器 .empty 是 text-align: center，会一路继承到行内文字上 ——
+     整行左对齐必须在这里显式收回，否则"问法"这半截仍是居中的 */
+  text-align: left;
   transition: transform var(--dur-tap) var(--ease-out);
 }
 .sample-row:active { transform: scale(0.98); }
@@ -114,7 +126,7 @@
   font-size: 22rpx;
   padding: 4rpx 12rpx;
   border-radius: var(--r-sm);
-  background: rgba(0, 130, 92, 0.10);
+  background: var(--green-wash); /* 2026-09-25 收编：原 0,130,92,0.10 裸值，轻底归 wash */
   color: var(--green-d);
 }
 .sample-q {
@@ -122,3 +134,6 @@
   font-size: 27rpx;
   color: var(--ink);
 }
+
+/* AI 增强生成中的可见状态（2026-09-19） */
+.ai-enhancing { margin-top: 20rpx; }

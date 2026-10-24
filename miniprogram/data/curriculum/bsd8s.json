@@ -217,7 +217,8 @@
   },
   {
    "word": "monster",
-   "meaning": "巨大的；庞大的"
+   "meaning": "n. 怪物；怪兽",
+   "_cleaned": "释义串到了 huge（巨大的）；同项目 wy1s_qy 为「怪物」"
   },
   {
    "word": "unexplained",
@@ -557,7 +558,8 @@
   },
   {
    "word": "wonder",
-   "meaning": "奇妙的"
+   "meaning": "v. 想知道；n. 奇迹",
+   "_cleaned": "释义串到了 wonderful（奇妙的）"
   },
   {
    "word": "care",
@@ -1559,5 +1561,7 @@
    "word": "programme",
    "meaning": "（演出或活动的）程序"
   }
- ]
+ ],
+ "cleaned_at": "2026-09-17",
+ "cleaned_note": "已清洗 koolearn 缩写词错义（见 tools/clean-curriculum.js）"
 }

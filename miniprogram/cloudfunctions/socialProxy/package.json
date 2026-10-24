@@ -1,0 +1,10 @@
+{
+  "name": "socialProxy",
+  "version": "1.0.0",
+  "description": "社交域代理 —— 好友/PK/积分同步/电子宠物/好友码（openid 不外传，friendId 对外）",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

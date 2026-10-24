@@ -1,0 +1,669 @@
+{
+ "book": "外研版小学英语二年级下册（一年级起点）",
+ "grade": "g2",
+ "count": 110,
+ "_source": "https://yyld.51jiaoxi.com/erxia/wybyq_danci.html（51教习网英语朗读宝·外研版小学英语一起点同步词表，按 Module 分组）；koolearn 词书页已改 JS 渲染暂无第二来源，单源 medium",
+ "_confidence": "medium",
+ "words": [
+  {
+   "word": "weather",
+   "meaning": "天气",
+   "unit": "2A Module 1",
+   "mnemonic": "天气：晴天雨天看天"
+  },
+  {
+   "word": "like",
+   "meaning": "像,如同",
+   "unit": "2A Module 1",
+   "mnemonic": "喜欢：最爱吃的就是它"
+  },
+  {
+   "word": "What's the weather like",
+   "meaning": "天气怎么样？",
+   "unit": "2A Module 1",
+   "mnemonic": "天气像什么样？= 天气怎么样"
+  },
+  {
+   "word": "sunny",
+   "meaning": "阳光充足的；晴朗的",
+   "unit": "2A Module 1",
+   "mnemonic": "sun（太阳）+ ny → 阳光满满 = 晴朗"
+  },
+  {
+   "word": "windy",
+   "meaning": "多风的；风大的",
+   "unit": "2A Module 1",
+   "mnemonic": "wind（风）+ y → 风呼呼的"
+  },
+  {
+   "word": "take",
+   "meaning": "带，拿；拿到；乘坐；花费",
+   "unit": "2A Module 1",
+   "mnemonic": "拿；带走：伸手把杯子拿走"
+  },
+  {
+   "word": "cap",
+   "meaning": "（有帽檐的）帽子",
+   "unit": "2A Module 1",
+   "mnemonic": "帽子（鸭舌）：戴在头顶有帽檐"
+  },
+  {
+   "word": "sofa",
+   "meaning": "沙发",
+   "unit": "2A Module 1",
+   "mnemonic": "沙发：客厅里的软椅子"
+  },
+  {
+   "word": "street",
+   "meaning": "大街；街道",
+   "unit": "2A Module 1",
+   "mnemonic": "街道：街两旁是店铺"
+  },
+  {
+   "word": "rain",
+   "meaning": "下雨；雨",
+   "unit": "2A Module 1",
+   "mnemonic": "rain：天上落下的雨"
+  },
+  {
+   "word": "snow",
+   "meaning": "下雪",
+   "unit": "2A Module 1",
+   "mnemonic": "snow：天上飘的雪"
+  },
+  {
+   "word": "ski",
+   "meaning": "滑雪",
+   "unit": "2A Module 1",
+   "mnemonic": "滑雪：脚踩雪板冲下坡"
+  },
+  {
+   "word": "radio",
+   "meaning": "无线电广播；收音机；电台节目",
+   "unit": "2A Module 2",
+   "mnemonic": "收音机：拧开开关听广播"
+  },
+  {
+   "word": "photo",
+   "meaning": "照片：相片",
+   "unit": "2A Module 2",
+   "mnemonic": "照片：相册里贴满回忆"
+  },
+  {
+   "word": "newspaper",
+   "meaning": "报纸",
+   "unit": "2A Module 2",
+   "mnemonic": "news（新闻）+ paper（纸）→ 报纸"
+  },
+  {
+   "word": "little",
+   "meaning": "单幼的,幼小的",
+   "unit": "2A Module 2",
+   "mnemonic": "小的：小小的手印"
+  },
+  {
+   "word": "camera",
+   "meaning": "照相机",
+   "unit": "2A Module 2",
+   "mnemonic": "相机：咔嚓一声拍下照片"
+  },
+  {
+   "word": "smile",
+   "meaning": "微笑",
+   "unit": "2A Module 2",
+   "mnemonic": "微笑：嘴角轻轻上扬"
+  },
+  {
+   "word": "draw",
+   "meaning": "画画；抽签",
+   "unit": "2A Module 2",
+   "mnemonic": "画：拿铅笔在纸上画小猫"
+  },
+  {
+   "word": "picture",
+   "meaning": "图画；照片",
+   "unit": "2A Module 2",
+   "mnemonic": "图画：墙上挂着一幅画"
+  },
+  {
+   "word": "write",
+   "meaning": "写；写作",
+   "unit": "2A Module 2",
+   "mnemonic": "写：拿笔在本上写字"
+  },
+  {
+   "word": "letter",
+   "meaning": "信；字母",
+   "unit": "2A Module 2",
+   "mnemonic": "信：装进信封寄出去"
+  },
+  {
+   "word": "colour",
+   "meaning": "给……着色",
+   "unit": "2A Module 2",
+   "mnemonic": "颜色：红黄蓝绿涂满画纸"
+  },
+  {
+   "word": "tidy",
+   "meaning": "整理,收拾",
+   "unit": "2A Module 3",
+   "mnemonic": "tidy：把东西收拾整齐"
+  },
+  {
+   "word": "room",
+   "meaning": "房间；空间",
+   "unit": "2A Module 3",
+   "mnemonic": "房间：开门走进的屋子"
+  },
+  {
+   "word": "do",
+   "meaning": "做；干",
+   "unit": "2A Module 3",
+   "mnemonic": "做：动手把事情做好"
+  },
+  {
+   "word": "homework",
+   "meaning": "作业，家庭作业",
+   "unit": "2A Module 3",
+   "mnemonic": "作业：home（家）+ work（功课）→ 在家做的"
+  },
+  {
+   "word": "sleep",
+   "meaning": "睡觉",
+   "unit": "2A Module 3",
+   "mnemonic": "sleep：闭眼睡觉"
+  },
+  {
+   "word": "secret",
+   "meaning": "秘密",
+   "unit": "2A Module 3",
+   "mnemonic": "secret：只告诉一个人的秘密"
+  },
+  {
+   "word": "card",
+   "meaning": "贺卡；明信片；卡",
+   "unit": "2A Module 3",
+   "mnemonic": "卡片：生日贺卡递到手"
+  },
+  {
+   "word": "flower",
+   "meaning": "花；花朵",
+   "unit": "2A Module 3",
+   "mnemonic": "花：花瓣张开朝太阳"
+  },
+  {
+   "word": "science",
+   "meaning": "科学",
+   "unit": "2A Module 3",
+   "mnemonic": "科学：做实验观察世界"
+  },
+  {
+   "word": "today",
+   "meaning": "今天；在今天",
+   "unit": "2A Module 3",
+   "mnemonic": "今天：正在过的这一天"
+  },
+  {
+   "word": "call",
+   "meaning": "打电话,通话",
+   "unit": "2A Module 4",
+   "mnemonic": "打电话；称呼：拿起电话喊一声"
+  },
+  {
+   "word": "noise",
+   "meaning": "声音；响声；噪音",
+   "unit": "2A Module 4",
+   "mnemonic": "noise：吵人的响声"
+  },
+  {
+   "word": "drink",
+   "meaning": "喝；饮料",
+   "unit": "2A Module 4",
+   "mnemonic": "喝：举起杯子咕咚咕咚"
+  },
+  {
+   "word": "talk",
+   "meaning": "说话；讨论",
+   "unit": "2A Module 4",
+   "mnemonic": "谈话：两人面对面聊天"
+  },
+  {
+   "word": "stone",
+   "meaning": "石头，石料，岩石",
+   "unit": "2A Module 4",
+   "mnemonic": "石头：河边硬硬的石块"
+  },
+  {
+   "word": "five-stones",
+   "meaning": "（抛接五块小石的）五石游戏",
+   "unit": "2A Module 4",
+   "mnemonic": "抛接五块小石子的游戏"
+  },
+  {
+   "word": "behind",
+   "meaning": "在（或向）……后面",
+   "unit": "2A Module 4",
+   "mnemonic": "be + hind：藏在你后面"
+  },
+  {
+   "word": "hide",
+   "meaning": "躲藏；隐蔽；遮挡",
+   "unit": "2A Module 4",
+   "mnemonic": "藏：躲进衣柜不出声"
+  },
+  {
+   "word": "seek",
+   "meaning": "寻找",
+   "unit": "2A Module 4",
+   "mnemonic": "seek：躲猫猫里去寻找"
+  },
+  {
+   "word": "hide-and-seek",
+   "meaning": "捉迷藏",
+   "unit": "2A Module 4",
+   "mnemonic": "捉迷藏：hide（藏）+ seek（找）→ 你藏我找"
+  },
+  {
+   "word": "skip",
+   "meaning": "跳绳",
+   "unit": "2A Module 5",
+   "mnemonic": "skip：绳子甩起来跳绳"
+  },
+  {
+   "word": "hurry up",
+   "meaning": "快点儿",
+   "unit": "2A Module 5",
+   "mnemonic": "快点：催促再快一些"
+  },
+  {
+   "word": "sad",
+   "meaning": "悲伤的，难过的",
+   "unit": "2A Module 5",
+   "mnemonic": "悲伤的：眼泪挂在脸上"
+  },
+  {
+   "word": "no",
+   "meaning": "没有",
+   "unit": "2A Module 5",
+   "mnemonic": "不：摇头拒绝说 no"
+  },
+  {
+   "word": "those",
+   "meaning": "（that的复数形式）那些",
+   "unit": "2A Module 5",
+   "mnemonic": "那些：远处的多个"
+  },
+  {
+   "word": "clap",
+   "meaning": "拍手",
+   "unit": "2A Module 5",
+   "mnemonic": "clap：两只手拍拍拍"
+  },
+  {
+   "word": "game",
+   "meaning": "游戏；比赛；运动",
+   "unit": "2A Module 5",
+   "mnemonic": "游戏：下课一起做游戏"
+  },
+  {
+   "word": "clapping games",
+   "meaning": "拍手游戏",
+   "unit": "2A Module 5",
+   "mnemonic": "clap（拍手）的玩法 = 拍手游戏"
+  },
+  {
+   "word": "well",
+   "meaning": "好；好吧，那么；健康",
+   "unit": "2A Module 5",
+   "mnemonic": "好；健康地：身体棒心情好"
+  },
+  {
+   "word": "kid",
+   "meaning": "小孩",
+   "unit": "2A Module 5",
+   "mnemonic": "小孩：kid 是小孩子"
+  },
+  {
+   "word": "catch",
+   "meaning": "抓住；捕捉；接住；染疾",
+   "unit": "2A Module 5",
+   "mnemonic": "接住：球飞过来一把抓住"
+  },
+  {
+   "word": "of course",
+   "meaning": "当然",
+   "unit": "2A Module 5",
+   "mnemonic": "当然：那还用说"
+  },
+  {
+   "word": "late",
+   "meaning": "晚；迟",
+   "unit": "2A Module 5",
+   "mnemonic": "晚的：迟到进门红着脸"
+  },
+  {
+   "word": "usually",
+   "meaning": "通常地；惯常地；通常；常常",
+   "unit": "2A Module 6",
+   "mnemonic": "usual（平常）+ ly → 通常"
+  },
+  {
+   "word": "us",
+   "meaning": "我们",
+   "unit": "2A Module 6",
+   "mnemonic": "我们（宾格）：老师带着我们读"
+  },
+  {
+   "word": "ride",
+   "meaning": "骑（乘车或骑车）；驾驶",
+   "unit": "2A Module 6",
+   "mnemonic": "骑：跨上自行车蹬起来"
+  },
+  {
+   "word": "thing",
+   "meaning": "事情；东西，物品",
+   "unit": "2A Module 6",
+   "mnemonic": "东西：桌上的任何物件"
+  },
+  {
+   "word": "ill",
+   "meaning": "有病；不舒服",
+   "unit": "2A Module 6",
+   "mnemonic": "生病的：发烧卧床休息"
+  },
+  {
+   "word": "cook",
+   "meaning": "做（饭）,烧（菜）",
+   "unit": "2A Module 6",
+   "mnemonic": "厨师；烹饪：系上围裙炒菜"
+  },
+  {
+   "word": "her",
+   "meaning": "（宾格）她",
+   "unit": "2A Module 6",
+   "mnemonic": "她的：属于女孩的那样东西"
+  },
+  {
+   "word": "go shopping",
+   "meaning": "去买东西；购物",
+   "unit": "2A Module 6",
+   "mnemonic": "挎上篮子去买东西"
+  },
+  {
+   "word": "kitchen",
+   "meaning": "厨房",
+   "unit": "2A Module 6",
+   "mnemonic": "厨房：妈妈做饭的屋子"
+  },
+  {
+   "word": "Children's Day",
+   "meaning": "儿童节",
+   "unit": "2A Module 7",
+   "mnemonic": "children（孩子们）的节日 = 儿童节"
+  },
+  {
+   "word": "TV",
+   "meaning": "电视台",
+   "unit": "2A Module 7",
+   "mnemonic": "TV：客厅里播动画的电视"
+  },
+  {
+   "word": "play",
+   "meaning": "戏剧；剧本",
+   "unit": "2A Module 7",
+   "mnemonic": "玩；踢（球）：下课一起玩游戏"
+  },
+  {
+   "word": "say",
+   "meaning": "念,朗诵",
+   "unit": "2A Module 7",
+   "mnemonic": "说：开口说一句话"
+  },
+  {
+   "word": "poem",
+   "meaning": "诗；诗歌",
+   "unit": "2A Module 7",
+   "mnemonic": "poem：念起来押韵的诗"
+  },
+  {
+   "word": "dragon",
+   "meaning": "龙",
+   "unit": "2A Module 7",
+   "mnemonic": "龙：中国龙腾云驾雾"
+  },
+  {
+   "word": "dragon dance",
+   "meaning": "舞龙",
+   "unit": "2A Module 7",
+   "mnemonic": "dragon（龙）+ dance（舞）→ 舞龙"
+  },
+  {
+   "word": "picnic",
+   "meaning": "野餐",
+   "unit": "2A Module 7",
+   "mnemonic": "野餐：铺块布在草地上吃"
+  },
+  {
+   "word": "family",
+   "meaning": "家；家庭；家族",
+   "unit": "2A Module 7",
+   "mnemonic": "家庭：把爸妈和我连在一起的那个词"
+  },
+  {
+   "word": "beach",
+   "meaning": "海滩；沙滩",
+   "unit": "2A Module 7",
+   "mnemonic": "beach：踩着沙的海滩"
+  },
+  {
+   "word": "hill",
+   "meaning": "山丘：小山",
+   "unit": "2A Module 8",
+   "mnemonic": "小山：爬上缓坡看风景"
+  },
+  {
+   "word": "past",
+   "meaning": "经过；路过（某物或某地），越过",
+   "unit": "2A Module 8",
+   "mnemonic": "过去；经过：时间一天天过去"
+  },
+  {
+   "word": "station",
+   "meaning": "（车）站；站，所，局",
+   "unit": "2A Module 8",
+   "mnemonic": "车站：火车站里等车来"
+  },
+  {
+   "word": "hospital",
+   "meaning": "医院",
+   "unit": "2A Module 8",
+   "mnemonic": "医院：生病了去这里看病"
+  },
+  {
+   "word": "stop",
+   "meaning": "停止，结束，停下",
+   "unit": "2A Module 8",
+   "mnemonic": "停止：红灯亮了停下来"
+  },
+  {
+   "word": "turn",
+   "meaning": "转弯；（使）变成；轮流",
+   "unit": "2A Module 8",
+   "mnemonic": "turn：路口拐弯，轮流来"
+  },
+  {
+   "word": "around",
+   "meaning": "到另一面,转向",
+   "unit": "2A Module 8",
+   "mnemonic": "围绕：绕着操场跑一圈"
+  },
+  {
+   "word": "turn around",
+   "meaning": "转身，回转；（使）翻转",
+   "unit": "2A Module 8",
+   "mnemonic": "turn（转）+ around（一圈）→ 转身"
+  },
+  {
+   "word": "ground",
+   "meaning": "地；土地；地面",
+   "unit": "2A Module 8",
+   "mnemonic": "地面：弯腰摸摸脚下的地"
+  },
+  {
+   "word": "again",
+   "meaning": "又一次,再一次",
+   "unit": "2A Module 8",
+   "mnemonic": "again：再来一次"
+  },
+  {
+   "word": "jump",
+   "meaning": "跳跃；蹦",
+   "unit": "2A Module 8",
+   "mnemonic": "跳：双脚一蹦离了地"
+  },
+  {
+   "word": "back",
+   "meaning": "回到，返回；背；后部",
+   "unit": "2A Module 8",
+   "mnemonic": "回来；背部：拍拍后背，回来吧"
+  },
+  {
+   "word": "come back",
+   "meaning": "回来",
+   "unit": "2A Module 8",
+   "mnemonic": "回来：出门玩完再回来"
+  },
+  {
+   "word": "left",
+   "meaning": "左，左边；左边的",
+   "unit": "2A Module 9",
+   "mnemonic": "左边：举左手那边"
+  },
+  {
+   "word": "turn left",
+   "meaning": "向左转",
+   "unit": "2A Module 9",
+   "mnemonic": "左转：路口往左拐"
+  },
+  {
+   "word": "right",
+   "meaning": "右；右边；右边的",
+   "unit": "2A Module 9",
+   "mnemonic": "右边；正确的：答案完全正确"
+  },
+  {
+   "word": "turn right",
+   "meaning": "向右转",
+   "unit": "2A Module 9",
+   "mnemonic": "右转：路口往右拐"
+  },
+  {
+   "word": "road",
+   "meaning": "公路,道路",
+   "unit": "2A Module 9",
+   "mnemonic": "路：马路两旁种着树"
+  },
+  {
+   "word": "Excuse me",
+   "meaning": "对不起，打扰一下。",
+   "unit": "2A Module 9",
+   "mnemonic": "打扰一下：借过时先说这句"
+  },
+  {
+   "word": "straight",
+   "meaning": "直的；笔直的",
+   "unit": "2A Module 9",
+   "mnemonic": "直的：笔直的一条线"
+  },
+  {
+   "word": "go straight on",
+   "meaning": "直着走",
+   "unit": "2A Module 9",
+   "mnemonic": "直走：沿着这条路一直向前"
+  },
+  {
+   "word": "lost",
+   "meaning": "迷路的，迷失的",
+   "unit": "2A Module 9",
+   "mnemonic": "迷路的：找不到回家的路"
+  },
+  {
+   "word": "out",
+   "meaning": "出来，向外，外出；外面的",
+   "unit": "2A Module 9",
+   "mnemonic": "在外面：小鸟飞出笼子"
+  },
+  {
+   "word": "factory",
+   "meaning": "工厂",
+   "unit": "2A Module 9",
+   "mnemonic": "工厂：机器轰隆隆造产品"
+  },
+  {
+   "word": "next to",
+   "meaning": "接近,靠近",
+   "unit": "2A Module 10",
+   "mnemonic": "紧挨着：他就坐我旁边"
+  },
+  {
+   "word": "cousin",
+   "meaning": "同辈表亲（或堂亲）",
+   "unit": "2A Module 10",
+   "mnemonic": "堂（表）兄弟姐妹：姑舅家的同龄人"
+  },
+  {
+   "word": "supermarket",
+   "meaning": "超市",
+   "unit": "2A Module 10",
+   "mnemonic": "超市：推着购物车买东西"
+  },
+  {
+   "word": "wrong",
+   "meaning": "错的，不正确的，不对",
+   "unit": "2A Module 10",
+   "mnemonic": "错误的：答错题要订正"
+  },
+  {
+   "word": "way",
+   "meaning": "道路,路线",
+   "unit": "2A Module 10",
+   "mnemonic": "路；方式：这条路一直通到家"
+  },
+  {
+   "word": "turn back",
+   "meaning": "往回走",
+   "unit": "2A Module 10",
+   "mnemonic": "turn（转）+ back（回）→ 往回走"
+  },
+  {
+   "word": "front",
+   "meaning": "前面的",
+   "unit": "2A Module 10",
+   "mnemonic": "front：队伍最前面"
+  },
+  {
+   "word": "in front of",
+   "meaning": "在……前面",
+   "unit": "2A Module 10",
+   "mnemonic": "在你前面的那一个"
+  },
+  {
+   "word": "taxi",
+   "meaning": "出租汽车",
+   "unit": "2A Module 10",
+   "mnemonic": "出租车：招手即停的车"
+  },
+  {
+   "word": "Mrs",
+   "meaning": "夫人，太太",
+   "unit": "2A Module 10",
+   "mnemonic": "夫人：已婚女士的称呼"
+  },
+  {
+   "word": "cinema",
+   "meaning": "电影院",
+   "unit": "2A Module 10",
+   "mnemonic": "电影院：大银幕上放电影"
+  }
+ ]
+}

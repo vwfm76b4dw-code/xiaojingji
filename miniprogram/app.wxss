@@ -23,10 +23,153 @@ page {
   --ink: #2E4A62;
   --ink-2: #6B7A88;
   --ink-3: #9AA5AF;
+  /**
+   * 承载文字的辅助色（提示语 / 占位符 / 小标题 / 空态副文案）。
+   *
+   * 为什么要有这一档，而不是继续用 --ink-3：
+   * --ink-3 在纸底 --paper 上只有 2.3:1，远低于 WCAG AA 对正文的 4.5:1。
+   * 而它原来被 .t-hint 全局使用 —— 等于**全站的提示文字都偏浅**，
+   * 朗读页甚至自己打了一块局部补丁把 .t-hint 提深（已随本次改动删除）。
+   * 这条在 --paper 上实测 5.1:1、在 --card 上 5.4:1：
+   * "读得清，但视觉上不上前"，正是提示文字该有的层级。
+   *
+   * ⚠️ --ink-3 不删：它另有**装饰**用途（进度条灰段、折角箭头、
+   *    开关禁用态文字），那些地方本来就该淡，跟着变深反而会抢主体。
+   *    判断口径：这一处是在"让人读字"还是"在画形状/表示不可用"。
+   */
+  --ink-hint: #5C6B78;
+  /**
+   * 主色块上的文字色。
+   *
+   * 取值是**按对比度选的，不是按观感挑的** —— 别为了"暖一点"改回 #FAF6EC。
+   * 实测（--green #00825C 上的 WCAG 对比度，脚本 out/_diag/contrast.js）：
+   *   #FAF6EC → 4.48:1   ← 低于 AA 正文阈值 4.5，差 0.02
+   *   #FFFFFF → 4.83:1   ← 达标
+   * 两者在 --green 上的观感差异肉眼几乎不可辨，但对比度是硬指标。
+   *
+   * 为什么必须按"正文"口径而不是"大字号"口径（AA 大字号只要求 3:1）：
+   * 这支 token 承载的不只是 34-36rpx 的按钮文字，还有 24rpx 的 .mic-sub
+   * （录音按钮里的"读这个单词"）—— 它正是"文字"，不是装饰，
+   * 不能因为它小就降标准。
+   *
+   * 历史：原来同一个按钮上混用了两种白（.mic-btn #FAF6EC / .mic-sub #FFFFFF）。
+   * "统一成一种白"的方向没错，但当时选错了那一种 —— 统一应当收敛到**达标**的值。
+   * 顺带说明：--red / 禁用底（--disabled-bg）上的对比度另见报告（本 token 只负责"主色块"）。
+   */
+  --on-accent: #FFFFFF;
   --line: rgba(46, 74, 98, 0.16);
   --line-2: rgba(46, 74, 98, 0.28);
+  /**
+   * 禁用态底色（.btn[disabled]）。
+   *
+   * 它不是纸面层级里的一档，也不是主色 —— 是"这个按钮现在按不动"的信号色：
+   * 比 --card-2 深、比 --line-2 实，压得住底又不至于像可点的主色。
+   *
+   * 为什么必须给 token：它原是**全站样式表里唯一一处裸色值**，
+   * 其余颜色都走 token，只有禁用态例外 —— 改主题时这一处必然被漏掉。
+   * 归位后禁用态与其他颜色同一条改色路径。
+   */
+  --disabled-bg: #CFC9B8;
 
-  /* ---- 圆角族：内嵌 8 / 常规 12 / 大模态 20（rpx 为 2 倍）---- */
+  /**
+   * 主强调色的淡底两档（2026-09-25 主题化收编）。
+   *
+   * 为什么要有 token：.tag.green / .chip.on / .note.info 等处原来裸写
+   * rgba(0,130,92,0.12/0.08) —— 它们是 --green 的 alpha 版本，却没跟着 token 走。
+   * 主题上线后主强调色可换成蓝/珊瑚，裸 rgba 会停在旧绿上：字色（var(--green-d)）
+   * 跟着主题变、底色不跟，出现"珊瑚字配绿底"的拼色事故。
+   * 两档沿用既有用法：wash=0.08（选中态/信息底），tint=0.12（标签底/按压底）。
+   * 各主题类里用同色相的 rgba 覆盖（CSS 没有可靠的"取 var 再调 alpha"原语，
+   * 小程序环境尤其如此 —— 逐主题写值是唯一稳的做法，门禁会比对色相一致性）。
+   */
+  --green-wash: rgba(0, 130, 92, 0.08);
+  --green-tint: rgba(0, 130, 92, 0.12);
+
+  /**
+   * 危险红 / 校徽黄的淡底四档（2026-09-30 收编，绿的第二次同题）。
+   *
+   * ## 为什么又来一次（这是同一类问题的第三次）
+   * ① 2026-09-25：--green-wash / --green-tint —— 主强调绿的裸 rgba 收编。
+   * ② 本轮：--red / --yellow 的裸 rgba 收编（下面这段）。
+   * ③ 下一个人若再加主色，**照抄这两段的写法**，别再裸写 rgba。
+   * 裸 rgba 会被门禁当场拦下（见 tools/verify-theme.js 第 9 节，三色同规则）。
+   *
+   * ## 为什么必须收编
+   * 这些底色是**给 var(--red) / var(--yellow-ink) 的文字当背景**的。
+   * 而 .theme-sakura **重声明了 --red**（#D95F3B → #B23A24，"危险红加深，
+   * 与珊瑚主色拉开"）—— 于是文字色跟着主题换了，底色还停在旧红上，
+   * 出现"深红字配浅旧红底"的脱钩。实测两者对比度 4.641:1 vs 4.422:1，
+   * **都达标、肉眼几乎看不出**，所以它一直没被发现 ——
+   * 这正是最危险的一类：视觉上没问题，语义上已经错了。
+   * 将来若为对比度再调 --red，这 15 处会**集体静默失配**。
+   *
+   * ## 为什么是四档而不是两档（alpha 档位是统计出来的，不是拍的）
+   * 实际用到的 alpha 有 4 个值，红黄各 4 个（见下表）。收编**不做合并**：
+   * 把 0.10 归到 0.08 会让 settings 的 .svc.bad 底色深一档，
+   * 0.14 归到 0.12 会让 .tag.red / .q-slot.bad 变浅 —— 那是**改变视觉**，
+   * 违背"token 化只改耦合、不改外观"的本轮纪律。宁可多两个 token。
+   *   红   0.08(7 处) / 0.10(1) / 0.12(5) / 0.14(2)
+   *   黄   0.18(5) / 0.22(3) / 0.24(1) / 0.28(1)
+   * 命名的 "-2" 后缀表示"同族第二档"，与绿的 wash/tint 命名法一致可读。
+   *
+   * ## 各主题必须逐个写值（含 --red 没换色的主题）
+   * CSS 没有可靠的"取 var() 再调 alpha"原语，小程序环境尤其如此。
+   * 不换色的主题也显式写一遍，等于声明"这一档不随主题变"——
+   * 后来人改 --red 时，本主题的这四行就在眼前，不会漏。
+   */
+  --red-wash:   rgba(217, 95, 59, 0.08);
+  --red-wash-2: rgba(217, 95, 59, 0.10);
+  --red-tint:   rgba(217, 95, 59, 0.12);
+  --red-tint-2: rgba(217, 95, 59, 0.14);
+
+  /* 黄同理。--yellow 全站不换色（四套主题都保留校徽黄，见第 ⑥ 节注释），
+     但仍逐主题写出：将来若有主题要换黄，这四行就是必须同步改的地方。 */
+  --yellow-wash:   rgba(246, 196, 69, 0.18);
+  --yellow-wash-2: rgba(246, 196, 69, 0.22);
+  --yellow-tint:   rgba(246, 196, 69, 0.24);
+  --yellow-tint-2: rgba(246, 196, 69, 0.28);
+
+  /* ---- 音节分色三色（契约 §2.6，B 提供，全项目可用）----
+     取值直接引用既有 token 派生（--ink / --green-d / --yellow-ink），
+     不引入新色相：三档就是"墨、绿、黄"三个纸感体系内的既有色。
+     为什么用 var() 引用而不是抄色值：改主题时这三个跟随主 token 一起变，
+     不会出现"主题改了音节色没跟上"的两套真相。
+     消费方：study / card 的 .syl-0/1/2（页内已有），以及任何新渲染点用
+     .syl-seg.syl-0/1/2（见下面基础组件区的 .syl-seg 基类）。 */
+  --syl-a: var(--ink);
+  --syl-b: var(--green-d);
+  --syl-c: var(--yellow-ink);
+
+  /* ---- 字体族 token（2026-09-25 补）----
+     现象：deck 积分印章数字、study 拼写槽/字母库/逐格判定、spelling 槽位/字母/判定格
+     共 8 处写了 var(--font-mono)，而全站从未定义过这个变量 —— font-family 解析失败
+     静默回退到继承的中文字体，字母与数字的字宽/字形比例不对（交接文档 §6.3
+     "不存在的 CSS 变量"病：card 页 .phon 当年就栽过一次）。
+     为什么在 app.wxss 加 token 而不是逐页改写字面量：8 个消费点的字体栈必须同源，
+     散写字面量就是下一轮"改一处漏七处"的种子；study.wxss 的 .phon 修复注释里
+     早已写明"将来若提取成 token 应两处一起改"，本轮兑现它。
+     为什么是这个栈：与 study/card 两页 .phon 修好后已在用的栈逐值一致
+     （ui-monospace → Menlo → Consolas → "Courier New" → monospace），
+     已验证的字形表现不换。 */
+  --font-mono: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+
+  /* ---- 圆角族：内嵌标记 8 / 常规控件 12 / 容器与按钮 16 / 大模态 20（rpx 为 2 倍）----
+     实测分布（2026-09-19）：--r-xs 16 处、--r-sm 5 处、--r-md 9 处、--r-lg 0 处。
+     --r-xs 是**补上的**：8rpx 原本是全站用得最多的圆角（15 处裸值）却没有名字，
+     写的人只能随手敲数字 —— 一个最常用的值没有 token，token 族就是装饰品。
+     --r-lg 目前无人使用，保留（模态/抽屉类容器迟早要用，删掉只会再冒出新的裸值）。
+
+     ⚠️ 下面这几处圆角**刻意不归入族里**，别为了统一把它们改掉：
+       · 7rpx（app .bar）/ 24rpx（settings .switch）—— 是"元素高度 ÷ 2"的胶囊，
+         与元素尺寸绑定，尺寸一改半径就该跟着改，属于几何量而不是风格量。
+       · 14rpx（add .seg-item）—— 嵌在 16rpx 外框里，外框有 2rpx 边框，
+         16 - 2 = 14 才能与外框同心，写 r-md 会让内块顶出外框。
+       · 4rpx（.hook 色块 / .unit-dot 勾选点 / .ico-stop 停止方块 / .pip 格子）——
+         用在 16-32rpx 的小方块上：改成 8rpx 会让 16rpx 的点变成正圆、
+         让 24rpx 的格子失去"方格"语义，是另一套形状语言。
+       · 2rpx（deck .seg-bar）—— 14rpx 高的三段进度条，只留一点点圆，
+         与 .bar 的 7rpx 胶囊刻意不同：这条是"分段量尺"，不是"进度胶囊"。 */
+  --r-xs: 8rpx;
   --r-sm: 12rpx;
   --r-md: 16rpx;
   --r-lg: 20rpx;
@@ -50,22 +193,53 @@ page {
 /**
  * 页面容器：每个页面的最外层。
  *
- * 底部 padding 的 128rpx 是给 tabBar 留的位置 —— tabBar 是**固定浮层**，
- * 不占文档流，页面内容按普通文档流排会被它压住最后一屏
- * （表现为底部按钮/说明"被裁掉一半"，且只在 tabBar 页出现，容易被当成页面没做完）。
+ * 底部就是**普通的呼吸值 32rpx**（与上面的基础 padding 同值），不额外给 tabBar 留位
+ * —— 因为 **tabBar 并不覆盖 webview 视口**，它不在页面文档流里占位这件事，
+ * 恰恰意味着 webview 的底边已经被让到了 tabBar 的顶边。
  *
- * 为什么是 128rpx：tabBar 高 100rpx，再加 28rpx 呼吸空间。
- * 另叠加 env(safe-area-inset-bottom) 兜住 iPhone 的 home indicator。
+ * 这条以前是错的（原值 128rpx，注释写的是"tabBar 高 100rpx + 28rpx 呼吸"，
+ * 依据是"tabBar 是固定浮层、不占文档流，会压住最后一屏"）。
+ * 2026-09-19 真机实测推翻了这个依据：
+ *   · windowHeight=678 / screenHeight=800，差 122 —— 这 122 就是状态栏 20 + 导航 48 + tabBar 54
+ *     （拆法：非 tabBar 页的 100vh 实测是 732 = 800-20-48，tabBar 页的 100vh 是 678 = 732-54
+ *     —— 也就是说 **tabBar 的 54px 已经从 webview 视口里扣掉了**，视口高度随有没有 tabBar 变）；
+ *   · 统计页滚到底后 .page 的底边 = 678 = windowHeight，
+ *     说明 webview 的底边就是 tabBar 的顶边，tabBar 没有压在任何内容上。
+ * 所以那 128rpx 是**纯死空间**：可滚动页面（deck / stats）末尾都白留约 61px
+ * （实测滚到底后末元素底边到视口底都是 61px = 128rpx；改后是 15px = 32rpx）；
+ * 复习页为了把卡片组居中，还得在 study.wxss 里局部覆盖它
+ * —— 一个错误的全局值逼出一个局部补丁，是"没对齐"的典型症状。
+ *
+ * ⚠️ 别再按"给 tabBar 让位"把这 128rpx 加回去。真正需要预留底部空间的只有
+ *    **自己写死了固定底栏**的页面：朗读页 pronounce.wxss 的 380rpx 属于这种情况
+ *    （那里 .bottom-bar 是真的 position: fixed 浮在内容上）。
+ *
+ * env(safe-area-inset-bottom) 保留：对**没有 tabBar** 的页面（card / settings，
+ * 以及 add / curriculum —— 后两页原先各自重抄了一遍 .page 把这一项冲掉了，已删除），
+ * webview 一直延伸到屏幕底，刘海屏的 home indicator 会盖住最后一行；
+ * 有 tabBar 的页面这一项算出来是 0，不影响。
  *
  * ⚠️ 不要在这里写两条 .page 规则（一条简写 padding、一条单项 padding-bottom）：
  * 简写会重置四个方向，谁在后面谁生效，调的时候极难看出为什么改不动。
  */
 .page {
   padding: 32rpx;
-  /* 单写 padding-bottom 覆盖上面简写的底部值 —— 这是刻意的用法 */
-  padding-bottom: calc(128rpx + env(safe-area-inset-bottom));
+  /* 单写 padding-bottom 覆盖上面简写的底部值 —— 这是刻意的用法：
+     只为把 env(safe-area-inset-bottom) 叠加到底部，左右/上仍是 32rpx。 */
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   min-height: 100vh;
+  /**
+   * 页面底色必须由 .page 自己承担（2026-09-25 主题化）。
+   * 为什么不能只靠 page { background: var(--paper) }：主题类挂在每页**根 view**
+   * 上（page 元素的 class 无法从 WXML 控制），CSS 变量按继承链取值 ——
+   * page 元素在根 view **外面**，永远拿不到 .theme-* 覆盖的 --paper，
+   * 换主题后 page 背景仍是纸白，页面拉高时底部露出一截旧色。
+   * .page 自身声明 background 后，它同时是主题类宿主，取到的是覆盖后的值。
+   * page 元素上的 background 保留作兜底（下拉 overscroll 区域仍会露它，
+   * 属可接受边角：那块面积只在下拉时可见一瞬）。
+   */
+  background: var(--paper);
 }
 
 .card {
@@ -73,6 +247,9 @@ page {
   border: 2rpx solid var(--line);
   border-radius: var(--r-md);
   padding: 32rpx;
+  /* 纸感平面投影（2026-09-19 加，用户点名"垫在 UI 下方的阴影"——像积分印章那种）：
+     无 blur 的实心偏移，是"纸叠在纸上"的层叠感，不是发光（发光是禁区）。 */
+  box-shadow: 8rpx 8rpx 0 rgba(46, 74, 98, 0.06);
 }
 
 /* 左侧色条：全站统一的结构线，比整块底色克制 */
@@ -81,6 +258,13 @@ page {
 .stripe.red { border-left-color: var(--red); }
 .stripe.gray { border-left-color: var(--line-2); }
 
+/* 音节分段基类（契约 §2.6）：任何页面用 .syl-seg.syl-0/1/2 就能拿到全站统一的
+   三色分档，不必每页重抄一遍颜色 —— 与 study/card 页内的 .syl-0/1/2 同源
+   （那两处页内规则先于此基类存在，保持原样不动，避免为了统一而扩散改动面）。 */
+.syl-seg.syl-0 { color: var(--syl-a); }
+.syl-seg.syl-1 { color: var(--syl-b); }
+.syl-seg.syl-2 { color: var(--syl-c); }
+
 .btn {
   border-radius: var(--r-md);
   font-size: 34rpx;
@@ -88,22 +272,94 @@ page {
   padding: 24rpx 0;
   margin: 0;
   transition: transform var(--dur-tap) var(--ease-out);
+  /**
+   * box-sizing 上提到基类（2026-09-30 按钮错位根因）。
+   *
+   * ghost/danger-line 带 2rpx 边框、primary 不带 —— 若只在带边框的类上补 box-sizing，
+   * 同一行的按钮盒模型基准就不一致，视觉上表现为「有的鼓一圈、有的矮一截」。
+   *
+   * ⚠️ 必须写进**这一条**，不能另起一条 `.btn {}`：
+   * verify-package 的「全局类名不重复定义」会判 FAIL（同一选择器两条同优先级规则
+   * 会互相覆盖，且简写会重置单项属性）。那条门禁正是为了防这种坑，这里服从它。
+   */
+  box-sizing: border-box;
 }
 .btn::after { border: none; }
-.btn:active { transform: scale(0.96); }
+.btn:active { transform: scale(0.97); }
 .btn.big { width: 100%; padding: 30rpx 0; font-size: 36rpx; }
 .btn.small { font-size: 28rpx; padding: 18rpx 0; }
-.btn.primary { background: var(--green); color: #FAF6EC; }
+.btn.primary { background: var(--green); color: var(--on-accent); }
 .btn.primary:active { background: var(--green-d); }
-.btn.ghost { background: transparent; border: 2rpx solid var(--green); color: var(--green); box-sizing: border-box; }
-.btn.danger { background: var(--red); color: #FAF6EC; }
-.btn.danger-line { background: transparent; border: 2rpx solid var(--red); color: var(--red); box-sizing: border-box; }
-.btn[disabled] { background: #CFC9B8; color: #FAF6EC; }
+.btn.ghost { background: transparent; border: 2rpx solid var(--green); color: var(--green); }
+.btn.danger { background: var(--red); color: var(--on-accent); }
+.btn.danger-line { background: transparent; border: 2rpx solid var(--red); color: var(--red); }
+.btn[disabled] { background: var(--disabled-bg); color: var(--on-accent); }
+/* 按钮副文案（原型 .btn-sub）：把"点下去会发生什么"写在小字上，如"约 8 分钟" */
+.btn .btn-sub {
+  display: block;
+  font-size: 20rpx;
+  font-weight: 400;
+  line-height: 1.4;
+  opacity: 0.75;
+  margin-top: 4rpx;
+}
 
-.btn-row { display: flex; gap: 24rpx; margin-top: 40rpx; }
-.btn-row .btn { flex: 1; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 20rpx; margin-top: 40rpx; }
 
-/* 标签：三色语义 */
+/*
+ * 同行按钮的对齐与等高（2026-09-27 两列自适应 + 2026-09-30 等高修复）。
+ *
+ * ## 错位根因（2026-09-30，用户反馈"家长设置页按钮错位"）
+ *
+ * 不是 flex 拉伸（等宽本来就成立），也不是文字换行 —— 那四个按钮都是 6 个字，
+ * 一行放得下。错位来自两条**互相打架**的规则：
+ *   ① `.btn` 是微信原生 button，**默认 `display:block` 且自带默认边框与内边距**；
+ *      项目用 `.btn::after { border: none }` 只清了边框，**没清默认 padding**。
+ *   ② `.btn.ghost / .btn.danger-line` 各自补了 `box-sizing: border-box`
+ *      来把这 2rpx 边框算进盒子里，而 `.btn.primary` 没有边框、不需要补。
+ * 于是：同一个 `.btn-row` 里，带边框的两个（ghost/danger-line）与
+ * 不带边框的两个（primary）**盒模型基准不同**；再叠加文字行数不同，
+ * 视觉上就是「有的鼓一圈、有的矮一截」。
+ *
+ * ## 修法（不用 !important）
+ *
+ * box-sizing **上提到 `.btn` 基类**（见上方 .btn 块），让**所有**按钮同一套盒模型；
+ * 这里只留 `.btn-row` 场景**特有**的东西：等宽、等高、居中、可断行。
+ *
+ * ## ⚠️ 为什么必须合并成这一条（2026-09-30 修正）
+ *
+ * 修这个 bug 时我先写了一条独立的 `.btn-row .btn { min-height... }`，
+ * 而上面已有一条 `.btn-row .btn { flex: 1 1 ... }` —— **同一优先级两条规则，
+ * 后写的赢，且 flex 简写会被后一条重置**。也就是说当时那批声明
+ * 有一部分是被"看起来生效、实际被覆盖"地写下去的。
+ * 与 `.btn` 那次同一种病，所以这里合并成**一条**，不再拆。
+ *
+ * `min-height` 而不是固定 height：按钮文字若真换行（更长的文案），
+ * 仍能自然撑高，不会把字裁掉 —— 固定 height 才是溢出。
+ */
+.btn-row .btn {
+  /* 两列自适应（2026-09-27）：≤2 个按钮时等宽占满（视觉与旧版一致）；
+     3-4 个长文字按钮（如家长卡的清空/重置组）自动换行成 2×2，
+     否则每钮被压到 ~160rpx、文字换行截断、高低不齐。 */
+  flex: 1 1 calc(50% - 10rpx);
+  /* 与 .btn.small 的 18rpx 上下内边距 + 28rpx 字高对齐；
+     min-height 保证「有边框的」与「无边框的」渲染出同样的行高 */
+  min-height: 64rpx;
+  /* 同排按钮的文字基线一致：居中对齐，避免一个贴上、一个贴下 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 长文案（如「恢复默认设置」）换行时仍不撑破卡片 */
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+/* 行里只有一个按钮时占满整行（战报/再练一组这类单钮行），不吃 50% 亏。
+   :only-child 是**不同选择器**（多一个伪类），不算重复定义。 */
+.btn-row .btn:only-child { flex: 1 1 100%; }
+
+
+/* 标签：三色语义（绿底走 --green-tint：主题化后底色必须跟随主色，见 token 注释） */
 .tag {
   display: inline-block;
   font-size: 22rpx;
@@ -113,9 +369,9 @@ page {
   background: var(--card-2);
   color: var(--ink-2);
 }
-.tag.green { background: rgba(0, 130, 92, 0.12); color: var(--green-d); }
-.tag.yellow { background: rgba(246, 196, 69, 0.28); color: var(--yellow-ink); }
-.tag.red { background: rgba(217, 95, 59, 0.14); color: var(--red); }
+.tag.green { background: var(--green-tint); color: var(--green-d); }
+.tag.yellow { background: var(--yellow-tint-2); color: var(--yellow-ink); }
+.tag.red { background: var(--red-tint-2); color: var(--red); }
 
 /* 筛选 chip */
 .chip {
@@ -128,12 +384,18 @@ page {
   background: transparent;
   transition: transform var(--dur-tap) var(--ease-out);
 }
-.chip:active { transform: scale(0.96); }
-.chip.on { border-color: var(--green); color: var(--green-d); background: rgba(0, 130, 92, 0.08); }
+/* 按压统一 0.97（2026-09-25）：原 0.96 与 deck 页 0.98、学习页 0.94 三种幅度并存，
+   同一动作在不同页缩放不同 = 触感不一致。取 0.97：幅度居中，肉眼可感又不夸张。 */
+.chip:active { transform: scale(0.97); }
+.chip.on { border-color: var(--green); color: var(--green-d); background: var(--green-wash); }
+/* 小号 chip：行内动作（如问词页来源行的「练一下」），不与标签抢视觉 */
+.chip.sm { font-size: 22rpx; padding: 6rpx 16rpx; }
 
 /* 进度条：只动 scaleX，避免每帧触发 layout */
 .bar {
   height: 14rpx;
+  /* 7rpx = 高度 14rpx ÷ 2 的胶囊端：半径由元素高度算出，尺寸一改就该跟着改，
+     属于几何量而非风格量 —— 刻意不归入圆角族（写成 --r-xs(8) 会变成半圆头）。 */
   border-radius: 7rpx;
   background: var(--card-2);
   overflow: hidden;
@@ -145,6 +407,8 @@ page {
   transition: transform var(--dur-state) var(--ease-enter);
 }
 .bar-fill.yellow { background: var(--yellow); }
+/* 灰段是**装饰**（表示"还剩这么多"的色块），不是文字 —— 刻意保留 --ink-3：
+   它该淡，跟 --ink-hint 一起变深会让进度条抢主体。 */
 .bar-fill.gray { background: var(--ink-3); }
 
 .empty { text-align: center; padding: 80rpx 32rpx; color: var(--ink-2); font-size: 28rpx; }
@@ -154,24 +418,27 @@ page {
 
 .t-title { font-size: 40rpx; font-weight: 600; color: var(--green-d); }
 .t-sub { font-size: 26rpx; color: var(--ink-2); }
-.t-hint { font-size: 24rpx; color: var(--ink-3); }
+.t-hint { font-size: 24rpx; color: var(--ink-hint); }
 .t-num { font-variant-numeric: tabular-nums; }
-.t-mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+.t-mono { font-family: var(--font-mono); }   /* 走 token：与 8 处消费方同源（上面 --font-mono 注释） */
 .dot { color: var(--ink-2); margin: 0 12rpx; }
 .foot-note { text-align: center; font-size: 24rpx; color: var(--ink-2); padding: 48rpx 0 32rpx; }
 
 
-/* 区块小标题：字距略开 + 弱色，用于分组而不抢主标题层级 */
+/* 区块小标题：字距略开 + 弱色，用于分组而不抢主标题层级。
+   弱色用 --ink-hint 而不是 --ink-3：它是一行**要读的字**（"范围""单元""按学科"），
+   不是装饰线 —— 2.3:1 的小标题等于没写。 */
 .section-label {
   font-size: 24rpx;
-  color: var(--ink-3);
+  color: var(--ink-hint);
   letter-spacing: 0.08em;
   margin-bottom: 16rpx;
 }
 
-/* 空态两级文案：标题说"没什么"，副文案说"怎么办" */
+/* 空态两级文案：标题说"没什么"，副文案说"怎么办"。
+   副文案是给用户看的**指令**（"点下面哪个按钮"），必须可读 —— 用 --ink-hint。 */
 .empty-title { font-size: 32rpx; color: var(--ink-2); margin-bottom: 12rpx; }
-.empty-sub { font-size: 26rpx; color: var(--ink-3); line-height: 1.7; }
+.empty-sub { font-size: 26rpx; color: var(--ink-hint); line-height: 1.7; }
 
 .note {
   font-size: 26rpx;
@@ -180,8 +447,8 @@ page {
   border-radius: var(--r-md);
   padding: 20rpx 24rpx;
 }
-.note.warn { background: rgba(246, 196, 69, 0.22); color: var(--yellow-ink); }
-.note.info { background: rgba(0, 130, 92, 0.08); color: var(--green-d); }
+.note.warn { background: var(--yellow-wash-2); color: var(--yellow-ink); }
+.note.info { background: var(--green-wash); color: var(--green-d); }
 
 /* ============================ ④ 专用组件 ============================ */
 
@@ -236,7 +503,21 @@ page {
   60% { transform: translateX(-8rpx); }
   80% { transform: translateX(8rpx); }
 }
-.shake { animation: shake 360ms var(--ease-out); }
+/**
+ * 答错抖动（挂 study.wxml 的 .grade，不是卡片 —— 理由见 study.wxss 的 .flip-wrap 注释）。
+ *
+ * ⚠️ 340ms 与 study.js onGrade 里 `setTimeout(() => setData({shaking:false}), 340)`
+ *   **必须相等**（且定时器不得早于动画）。改这里就要同步改那里。
+ *   原先是 360ms 动画 + 340ms 摘类 —— 抖动被截断在 94%，最后一小段位移没播完。
+ *   选择把**动画**收到 340ms 而不是把定时器放到 360ms：那个 340ms 定时器是换卡
+ *   编排的一部分（卡片 190ms 就换掉了，抖动会延续到新卡的按钮上），
+ *   放长只会让"上一张卡的错误"多抖新卡 20ms；收短动画是更省的那一侧。
+ *   5.6% 的时长差对抖动这种瞬时反馈不可感知，位移包络的形状一行没动。
+ *
+ * 不写成 var(--dur-enter)：那个 token 的语义是"元素入场"，抖动不是入场；
+ * 复用同名 token 会让人以为"改 token 没关系"，而一改就悄悄重新错位。
+ */
+.shake { animation: shake 340ms var(--ease-out); }
 
 @keyframes pop {
   0% { transform: scale(0.86); opacity: 0; }
@@ -250,6 +531,38 @@ page {
   to { transform: translateY(0); opacity: 1; }
 }
 .rise { animation: rise var(--dur-enter) var(--ease-enter); }
+
+/**
+ * 轻入场（2026-09-25 现代化微打磨）：一次性 stagger 专用，比 .rise 轻——
+ * 位移 12rpx（原 24）、时长 280ms（--dur-enter 340ms 对"内容已就绪的页面"
+ * 偏隆重）、同屏同时运动元素 ≤3。
+ *
+ * 为什么带 --rise-delay 变量而不是 nth-child：卡片中间夹着 section-label 等节点，
+ * nth-child 序号在每页结构下都不同，谁改 wxml 谁就踩坑；调用方在自己页面的
+ * wxml 里写 style="--rise-delay: 60ms" 一眼可见、不依赖 DOM 顺序。
+ * `both` 让带延迟的元素在等待期间保持 from 态（不可见），否则会先闪现再突然跳；
+ * 无延迟时 both 与无值无差异，不影响既有 .rise。
+ */
+@keyframes rise-soft {
+  from { transform: translateY(12rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.rise-soft {
+  animation: rise-soft 280ms var(--ease-out) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/* 页面级轻微淡入（2026-09-27 用户点名「小一点、简简单单」）：
+   页面入场只走 opacity，不走位移——translate 会让固定定位元素（家长卡展开区）
+   先挪再复位，视觉上一跳；opacity 0→1 是全站最朴素的「出来了」信号。
+   只给主要页面挂（tabBar 页 + 打开率高的二级页），不是所有页面都来一遍。 */
+@keyframes page-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.page-fade {
+  animation: page-fade 200ms var(--ease-out) both;
+}
 
 @keyframes slide-in-right {
   from { transform: translateX(60rpx); opacity: 0; }
@@ -271,5 +584,153 @@ page {
 /* 前庭障碍用户占 3-5%：眩晕是真实伤害，全局开关是底线 */
 @media (prefers-reduced-motion: reduce) {
   .btn, .chip, .bar-fill, .flip-inner { transition: none; }
-  .shake, .pop, .rise, .slide-in-right, .slide-out-left { animation: none; }
+  /**
+   * ⚠️ 这里必须列**真正会被挂到元素上的类名**。
+   *
+   * 原来写的是 `.slide-in-right, .slide-out-left` —— 它们确实是类名（见本文件上面
+   * 两个同名规则），但**全项目零引用**：复习页换卡实际挂的是 `.slide-in` / `.slide-out`。
+   * 于是这条"前庭障碍降级"覆盖的是两个永远不出现的类，真正会动的两个反而漏了 ——
+   * 承诺了无障碍降级、实际从未生效。
+   *
+   * 两个死类保留在列表里：留着无害，且能让"本文件所有带动画的类都在这里被关掉"
+   * 这件事保持完整（死类要么将来被用上，要么该整条删掉，不该半途漏在降级之外）。
+   */
+  .shake, .pop, .rise, .rise-soft, .slide-in, .slide-out,
+  .slide-in-right, .slide-out-left,
+  .result-strip, .group-body { animation: none; }
+}
+
+/* ============================================================
+ * ⑥ 主题（2026-09-25）
+ * ------------------------------------------------------------
+ * 4 套可选配色；默认「纸白」不设类 —— 上面 token 的默认值就是纸白，
+ * 建 .theme-paper 空规则只会让人误以为默认也要维护。
+ * 每套只覆盖 token 子集（页面底 / 卡面 / 次级面 / 主强调 --green 系 /
+ * 淡底两档 / 必要时的辅助色），其余全部继承：
+ *   · --ink 族不换：统一墨色是全站可读性的锚，换墨色每套都要重算一遍
+ *     正文对比度，收益为零；
+ *   · --line / --line-2 / .card 阴影由 ink 派生（rgba(46,74,98,…)），
+ *     ink 不动它们就不动 —— 阴影保持"由背景派生"的既有公式；
+ *   · --yellow / --yellow-ink 不换：点缀色的职责是"不同"，四套主题里
+ *     保留同一抹校徽黄，积分印章/连胜标签在任何主题下都认得出；
+ *   · --syl-b 必须重声明：自定义属性的 var() 引用在**声明处**（page 元素）
+ *     解析，.theme-* 覆盖 --green-d 后 page 上的 --syl-b 仍是旧值 ——
+ *     不重声明会出现"主题换了、音节分色第二档没换"。
+ *
+ * tabBar 说明：app.json 的 tabBar 是原生组件，**不吃 CSS 变量**，
+ * selectedColor 等仍是纸白主题的写死值 —— 换主题后底栏保持纸白配色。
+ * 这是刻意取舍：custom tabBar 可以跟随主题，但那是一次结构性改造
+ * （四个 tabBar 页的跳转逻辑全要动），收益只是底栏四个字换色，不值。
+ * ============================================================ */
+
+/* 青瓷：龙泉青釉的灰调青 —— 适合长时间盯着不累
+   2026-10-07 去同质化：主色由 #1D7A66（hue167 青绿）改为 #266A73（hue187 真青）。
+   为什么必须离开绿：纸白主色 #00825C 已在 hue162，旧青瓷 hue167 与它只差 5°，
+   实测两套主色 dE 仅 12.5（薄荷更差，与纸白仅 7.9，肉眼基本分不出）——
+   三套"绿"挤在 145°~167° 的22° 弧内，这是用户说"主题同质化"的主因之一。
+   hue187 后与纸白 dE 33.0，与雾蓝(210°) 拉开 33.5，五套主色最小两两 dE 从 7.9 升到 29.8。 */
+.theme-celadon {
+  --paper: #E4F0F1;   /* 页面底：极浅青白（对 ink 7.94 / hint 4.71） */
+  --card: #F7FAFA;    /* 卡面：几乎纯白，只留一点青 */
+  --card-2: #CDE0E2;  /* 次级面：比 paper 深一档的青灰 */
+  --green: #266A73;   /* 主强调：青瓷釉色（对 paper 5.32:1） */
+  --green-d: #14474E; /* 深强调 / 正文级青字（对 paper 8.84:1） */
+  --green-wash: rgba(38, 106, 115, 0.08);
+  --green-tint: rgba(38, 106, 115, 0.12);
+  /* 红/黄淡底四档：本主题不换 --red / --yellow，显式写出等于声明"不随主题变"。
+     逐档 alpha 与纸白默认值严格一致（视觉零变化，只解耦）。 */
+  --red-wash:   rgba(217, 95, 59, 0.08);
+  --red-wash-2: rgba(217, 95, 59, 0.10);
+  --red-tint:   rgba(217, 95, 59, 0.12);
+  --red-tint-2: rgba(217, 95, 59, 0.14);
+  --yellow-wash:   rgba(246, 196, 69, 0.18);
+  --yellow-wash-2: rgba(246, 196, 69, 0.22);
+  --yellow-tint:   rgba(246, 196, 69, 0.24);
+  --yellow-tint-2: rgba(246, 196, 69, 0.28);
+  --syl-b: var(--green-d);
+}
+
+/* 雾蓝：阴天远景的灰蓝，比常见的"婴儿蓝"沉 —— 适合想安静专注的时候 */
+.theme-mist {
+  --paper: #EDF2F8;   /* 2026-10-07 去同质化：#F1F6FA → #EDF2F8 提一档彩度 */
+  --card: #F8FAFD;
+  --card-2: #D5E1ED;
+  --green: #2E6BA8;   /* 名字沿用 --green（历史契约），此处承载的是"主强调蓝"（对 paper 4.93:1） */
+  --green-d: #1E4E80; /* 对 paper 7.59:1 */
+  --green-wash: rgba(46, 107, 168, 0.08);
+  --green-tint: rgba(46, 107, 168, 0.12);
+  /* ⚠️ 接缝贴边：纸底与 app.json 三处写死的 #FAF6EC 导航栏/tabBar 色差 dE=8.9（阈值 9）。
+     再压深一档就会出现顶部/底部可见色带 —— 别动这一行。 */
+  /* 不换色主题：见 .theme-celadon 同处注释 */
+  --red-wash:   rgba(217, 95, 59, 0.08);
+  --red-wash-2: rgba(217, 95, 59, 0.10);
+  --red-tint:   rgba(217, 95, 59, 0.12);
+  --red-tint-2: rgba(217, 95, 59, 0.14);
+  --yellow-wash:   rgba(246, 196, 69, 0.18);
+  --yellow-wash-2: rgba(246, 196, 69, 0.22);
+  --yellow-tint:   rgba(246, 196, 69, 0.24);
+  --yellow-tint-2: rgba(246, 196, 69, 0.28);
+  --syl-b: var(--green-d);
+}
+
+/* 樱贝：贝壳内侧的暖粉调陶色，低饱和不甜腻 —— 唯一换了 --red 的主题：
+   主强调珊瑚与默认危险红 #D95F3B 色相太近会互相混淆，换更深的陶红拉开层级 */
+.theme-sakura {
+  /* ⚠️⚠️ 全站余量最小的一套，改这个值前先读这段：
+     hint/paper = 4.621，门禁阈值 4.5，余量只有 0.121。
+     根因：--ink-hint(#5C6B78) 是 page 级常量、四个主题都没覆盖，
+     而门禁要求 hint/paper ≥ 4.5 → 纸底灰通道均值不能低于 233。
+     本套 235.7，距下限只剩 2.7 级 —— **将来若为夜间模式压深纸底，sakura 会第一个红**。
+     2026-10-07 去同质化时曾考虑把它提到 4.7 以上（更安全），但那样纸底更浅、
+     接缝更小，去同质化收益下降；余量偏小这件事有明确触发条件（夜间模式），
+     到那时会有人从那个方向撞上来 —— 把雷标出来比现在多留余量更划算。 */
+  --paper: #FAE8E1;   /* 2026-10-07：#FAF3F0 → #FAE8E1，原版几乎看不出粉 */
+  --card: #FFF8F5;
+  --card-2: #EED5C9;
+  --green: #A8503C;   /* 主强调：陶土珊瑚（对 paper 4.56:1） */
+  --green-d: #7C3A2C; /* 对 paper 7.08:1 */
+  --red: #B23A24;     /* 危险红加深，与珊瑚主色拉开（对 paper 5.43:1，白字在其上 5.96:1） */
+  --green-wash: rgba(168, 80, 60, 0.08);
+  --green-tint: rgba(168, 80, 60, 0.12);
+  /* 本主题**换了 --red**，所以这四档必须跟着换成同一色相（#B23A24 = 178,58,36）。
+     这正是本轮收编要消灭的那类失配：改前这四处仍是旧红 217,95,59，
+     底色与已换色的 --red 文字脱钩（实测对比度 4.641:1 vs 正确的 4.422:1，
+     两者都达标、肉眼几乎看不出 —— 靠肉眼是发现不了的）。
+     ⚠️ 改 --red 时这四行必须一起改，门禁第 9 节会比对色相一致性。 */
+  --red-wash:   rgba(178, 58, 36, 0.08);
+  --red-wash-2: rgba(178, 58, 36, 0.10);
+  --red-tint:   rgba(178, 58, 36, 0.12);
+  --red-tint-2: rgba(178, 58, 36, 0.14);
+  /* --yellow 本主题不换，值与默认一致 */
+  --yellow-wash:   rgba(246, 196, 69, 0.18);
+  --yellow-wash-2: rgba(246, 196, 69, 0.22);
+  --yellow-tint:   rgba(246, 196, 69, 0.24);
+  --yellow-tint-2: rgba(246, 196, 69, 0.28);
+  --syl-b: var(--green-d);
+}
+
+/* 紫檀：暮色的深紫，五套里唯一从「绿/蓝/红」跳到「紫」的（2026-10-07 取代薄荷）
+   为什么换掉薄荷而不是新增：薄荷 #2F7D4F(hue145) 与纸白 #00825C(hue162) 实测 dE 仅 7.9
+   —— 肉眼基本分不出，是五套里最冗余的一套；且 145° 被纸白162° 与青瓷 187° 夹住，
+   想调彩度也拉不开。换成紫(hue264)后与纸白 dE 85.5，是六套里差距最大的一套。 */
+.theme-plum {
+  --paper: #F3F0F7;   /* 极浅紫白（对 ink 8.19 / hint 4.86 / green 7.51） */
+  --card: #FBFAFC;
+  --card-2: #E1DBEE;
+  --green: #5B3E86;   /* 主强调：紫檀（对 paper 7.51:1，白字在其上 8.47:1） */
+  --green-d: #412C63; /* 对 paper 10.55:1 */
+  --green-wash: rgba(91, 62, 134, 0.08);
+  --green-tint: rgba(91, 62, 134, 0.12);
+  /* ⚠️ 接缝贴边：纸底与 app.json 三处写死的 #FAF6EC 导航栏/tabBar 色差 dE=8.9（阈值 9）。
+     #F1EDF6 接缝是 10.1（会出可见色带），故取更浅的 #F3F0F7 —— 别为了多提彩度压深它。 */
+  /* 不换色主题：见 .theme-celadon 同处注释 */
+  --red-wash:   rgba(217, 95, 59, 0.08);
+  --red-wash-2: rgba(217, 95, 59, 0.10);
+  --red-tint:   rgba(217, 95, 59, 0.12);
+  --red-tint-2: rgba(217, 95, 59, 0.14);
+  --yellow-wash:   rgba(246, 196, 69, 0.18);
+  --yellow-wash-2: rgba(246, 196, 69, 0.22);
+  --yellow-tint:   rgba(246, 196, 69, 0.24);
+  --yellow-tint-2: rgba(246, 196, 69, 0.28);
+  --syl-b: var(--green-d);
 }

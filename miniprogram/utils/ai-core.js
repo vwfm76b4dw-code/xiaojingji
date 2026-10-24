@@ -10,7 +10,8 @@
  * 单词合法性：纯英文，允许连字符与撇号，最多三个词（如 look after / a bit）。
  * 上限三词是为了挡住模型把整句英文当"单词"返回——我们只要词条，不要句子。
  */
-const WORD_RE = /^[A-Za-z][A-Za-z'\-]*(?: [A-Za-z][A-Za-z'\-]*){0,2}$/;
+// 2026-09-19 放宽到 8 词（与 aiProxy 同口径）：支持多词短语，如 "Ethics and the rule of law"。
+const WORD_RE = /^[A-Za-z][A-Za-z'\-]*(?: [A-Za-z][A-Za-z'\-]*){0,7}$/;
 const MAX_ITEMS = 50;
 const MAX_WORD = 60;
 const MAX_MEANING = 200;
@@ -72,6 +73,17 @@ function degradeHint(action, code) {
   }
   if (action === 'genExample') return '例句没生成出来，可以自己写一句更贴生活的';
   if (action === 'genMnemonic') return '记忆法没生成出来，可以自己拆一下词根';
+
+  // 配额类（2026-09-30 加，云函数侧限流）：这两种是"等一会儿/明天"就能解决，
+  // 与"服务不可用"要分开说 —— 学生连点等到明天和"明天再来"是两回事。
+  if (code === 'RATE_LIMITED') return '刚问得有点密，等一会儿再问吧';
+  if (code === 'QUOTA_EXCEEDED') return '今天的 AI 次数用完了，明天再来吧';
+
+  // 问词页：端上检索已经给出可用答案，这里必须说清"答案仍然有效"，
+  // 否则学生会以为整个回答失败了（2026-09-30：原来只有一句"AI 暂时不可用"）。
+  if (action === 'askWord') return '这是本机词库给出的答案，AI 讲解暂时没接上';
+  if (action === 'analysis') return 'AI 分析暂时没接上，下面这些数字本身也值得看看';
+
   return 'AI 暂时不可用';
 }
 

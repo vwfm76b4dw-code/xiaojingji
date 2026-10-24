@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{themeClass}} page-fade">
   <view class="seg">
     <view class="seg-item {{mode === 'single' ? 'on' : ''}}" data-mode="single" bindtap="switchMode">单个添加</view>
     <view class="seg-item {{mode === 'batch' ? 'on' : ''}}" data-mode="batch" bindtap="switchMode">批量粘贴</view>
@@ -8,7 +8,16 @@
   <view wx:if="{{mode === 'single'}}" class="card form">
     <view class="field">
       <view class="label">单词 *</view>
-      <input class="input" placeholder="例如：review" value="{{word}}" data-k="word" bindinput="onInput" />
+      <!-- 唯一换掉系统键盘的英文输入点（接线决策：本页其余字段是中文，保留系统输入法）。
+           为什么不是 <input disabled>：部分机型点击仍会拉起系统键盘，"自带键盘"就落空了，
+           且 disabled 灰态对学生是"这里不可用"的错误信号 —— 用 view 承载显示，
+           输入全部走底部 xj-keyboard（组件头注释里有完整取舍）。 -->
+      <view class="input kb-field {{kbOpen ? 'kb-field-on' : ''}}" bindtap="openWordKb"
+            aria-role="button" aria-label="点此用小鲸键盘输入单词">
+        <text wx:if="{{word}}" class="kb-val">{{word}}</text>
+        <text wx:else class="kb-ph">例如：review</text>
+        <text wx:if="{{recognizing}}" class="kb-voice-hint">聆听中…</text>
+      </view>
     </view>
     <view class="field">
       <view class="label">释义 *</view>
@@ -115,5 +124,15 @@
   <view class="card book-entry" bindtap="goCurriculum">
     <view class="be-title">从教材词库导入</view>
     <view class="be-sub">外研版 2024 新版七年级上册 · 295 个词 · 按单元选</view>
+  </view>
+
+  <!-- 小鲸键盘停靠层：遮罩吃掉其余区域的点击（点空白即收起，与系统键盘直觉一致）；
+       面板贴底并避开 home indicator。放页面层而不是字段层 —— 单词字段滚出视口时键盘仍可用 -->
+  <view wx:if="{{kbOpen}}" class="kb-mask" bindtap="closeWordKb"></view>
+  <view wx:if="{{kbOpen}}" class="kb-dock">
+    <xj-keyboard mode="word" value="{{word}}"
+                 suggestions="{{kbSuggestions}}" voice-enabled="{{voiceEnabled}}"
+                 bindinput="onWordInput" bindsuggestion="onWordSuggestion"
+                 bindsubmit="onWordSubmit" bindvoice="onVoice" />
   </view>
 </view>

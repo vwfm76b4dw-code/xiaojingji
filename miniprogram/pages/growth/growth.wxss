@@ -1,0 +1,352 @@
+/* ============================================================
+ * 增长看板页
+ *
+ * 视觉沿用全局纸感体系（主题绿 / 米白纸底 / 校徽黄），只用 token：
+ * 不引新色、不用渐变、不用发光阴影（项目红线）。
+ * 数字用 .t-num（全局等宽数字，避免位数变化时左右跳动）。
+ * ============================================================ */
+
+/* ---------------- 顶部：连胜三件套 ---------------- */
+
+.hero { padding: 40rpx 28rpx 32rpx; }
+
+.hero-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.hero-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 三格之间的分隔线：1px 竖线比"留白"更能说明这是三个并列的数 */
+.hero-div {
+  width: 1rpx;
+  height: 56rpx;
+  background: var(--line);
+  margin: 0 8rpx;
+}
+
+.hero-n {
+  font-size: 64rpx;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.hero-l {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--ink-hint);
+}
+
+.hero-say {
+  margin-top: 28rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.hero-note {
+  margin-top: 14rpx;
+  text-align: center;
+}
+
+/* ---------------- 今日目标 ---------------- */
+
+.goal-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 18rpx;
+}
+
+.goal-num { font-size: 52rpx; font-weight: 600; color: var(--ink); }
+.goal-of { font-size: 26rpx; color: var(--ink-hint); }
+.goal-tag { margin-left: auto; background: var(--green-tint); color: var(--green-d); } /* 2026-09-25 收编：原 0,130,92,0.12 裸值 */
+
+/* ---------------- 护身符 ---------------- */
+
+/* ---------------- 顶部说明（"这三个数是怎么算的"） ---------------- */
+
+.hero-explain-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  margin-top: 22rpx;
+  padding: 6rpx 0;
+}
+
+.hero-caret {
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform var(--dur-state) var(--ease-out);
+}
+.hero-caret.open { transform: rotate(-90deg); }
+
+.hero-explain-body {
+  margin-top: 12rpx;
+  padding: 16rpx 18rpx;
+  background: var(--green-wash);
+  border-radius: var(--r-sm);
+}
+
+.explain-line { line-height: 1.8; }
+.explain-key { color: var(--green-d); font-weight: 600; }
+
+/* ---------------- 学习建议（本地推荐） ---------------- */
+
+/* learning advice 卡（growth 页新「学习建议」区）：
+   面板结构直接复用 .advice-card 内置默认卡片样式 —— 不开新面板色调（app.wxss 红线：不引新色）。 */
+
+.advice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.advice-caret {
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform var(--dur-state) var(--ease-out);
+  font-size: 32rpx;
+  line-height: 1;
+}
+.advice-caret.open { transform: rotate(-90deg); }
+
+.advice-num { color: var(--green-d); font-weight: 600; }
+
+.advice-summary {
+  margin-top: 14rpx;
+  line-height: 1.7;
+}
+
+/* 三个事实格：与 hero-row 同族的柔性分布，列宽被事实数字撑开 */
+.advice-facts {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  padding: 12rpx 16rpx;
+  background: var(--card-2);
+  border-radius: var(--r-sm);
+}
+.fact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.fact-n { font-size: 34rpx; color: var(--ink); font-weight: 600; }
+.fact-l { font-size: 22rpx; color: var(--ink-hint); margin-top: 4rpx; }
+
+.advice-reason {
+  margin-top: 14rpx;
+  line-height: 1.7;
+  padding: 12rpx 16rpx;
+  background: var(--green-wash);
+  border-radius: var(--r-sm);
+  color: var(--green-d);
+}
+
+.advice-target {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6rpx;
+  margin-top: 16rpx;
+}
+.advice-target-num {
+  font-size: 32rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------------- 护身符 ---------------- */
+.charm-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 16rpx;
+}
+
+/* 菱形而非圆形：圆形太像"按钮"，菱形像"护符"；也避免和进度条端点撞形 */
+.charm {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: var(--r-xs);
+  background: var(--card-2);
+  border: 2rpx solid var(--line-2);
+  transform: rotate(45deg);
+}
+
+.charm.on {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.charm-txt { margin-left: 8rpx; font-size: 28rpx; color: var(--ink-2); }
+
+.charm-desc { margin-top: 6rpx; }
+
+/* ---------------- 检查点 ---------------- */
+
+.cp-next { margin-bottom: 20rpx; }
+
+.cp-next-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.cp-next-name { font-size: 28rpx; color: var(--ink); }
+.cp-reward { background: var(--yellow-wash-2); color: var(--yellow-ink); }
+
+.cp-list { margin-top: 8rpx; }
+
+.cp-item {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+/* 最后一行不要分隔线 —— 列表末尾多一条线看着像没加载完 */
+.cp-item:last-child { border-bottom: none; }
+
+.cp-mark { width: 32rpx; font-size: 26rpx; color: var(--ink-3); text-align: center; }
+.cp-item.on .cp-mark { color: var(--green); }
+.cp-name { flex: 1; font-size: 27rpx; color: var(--ink-2); }
+.cp-item.on .cp-name { color: var(--ink); }
+.cp-pt { font-size: 24rpx; color: var(--ink-hint); }
+
+/* ---------------- 积分 ---------------- */
+
+.pt-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.pt-num { font-size: 56rpx; font-weight: 600; color: var(--ink); }
+.pt-bal { font-size: 25rpx; color: var(--ink-hint); }
+
+.title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.title-name { font-size: 30rpx; color: var(--green-d); font-weight: 600; }
+.title-next { font-size: 24rpx; }
+
+.spend-row {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.spend-row .btn { flex: 1; }
+
+/* ---------------- 进步榜 ---------------- */
+
+.rank-intro { margin-bottom: 14rpx; line-height: 1.7; }
+.rank-privacy { margin-bottom: 8rpx; line-height: 1.7; }
+
+.rank-me {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.rank-me-nick { font-size: 30rpx; color: var(--ink); font-weight: 600; }
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.rank-no {
+  width: 44rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--ink-hint);
+}
+
+/* 榜单只展示前 3 名，所以整组都按"前三"强调。
+   不用 rank-no-1/2/3 这种动态类名 —— 静态门禁解析不了，且拼错也查不出来。 */
+.rank-list .rank-no { color: var(--green); font-weight: 600; }
+.rank-self .rank-no { color: var(--ink-hint); font-weight: 400; }
+
+.rank-nick { flex: 1; font-size: 28rpx; color: var(--ink); }
+.rank-prog { font-size: 30rpx; color: var(--ink-hint); font-weight: 600; }
+.rank-prog.up { color: var(--green); }
+
+/* 自己那一行加底色：一眼能找到"我在哪" */
+.rank-self {
+  background: var(--green-wash); /* 2026-09-25 收编：原 0,130,92,0.06 裸值，轻底归 wash */
+  border-radius: var(--r-sm);
+  padding-left: 12rpx;
+  padding-right: 12rpx;
+  border-bottom: none;
+}
+
+.rank-empty { padding: 24rpx 0; }
+.rank-err { color: var(--red); padding: 16rpx 0; }
+.rank-foot { margin-top: 18rpx; text-align: center; }
+
+.foot-row { margin-top: 32rpx; }
+
+/* ---------------- 单元测验入口 ----------------
+ * 它是"去另一个页面答题"的入口，视觉上比检查点列表轻 ——
+ * 但它不是普通链接：用主色 + 右箭头明示"这里可以点进去做点什么"。
+ */
+.qz-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+}
+
+.qz-num { font-size: 52rpx; font-weight: 600; color: var(--green); }
+.qz-of { font-size: 26rpx; color: var(--ink-hint); }
+
+/* 右箭头推到最右：与首页连胜条的「看板 ›」同一套语言 */
+.qz-go {
+  margin-left: auto;
+  font-size: 26rpx;
+  color: var(--green-d);
+}
+
+.qz-desc { margin-top: 14rpx; line-height: 1.7; }
+
+/* ---------------- 好友 & 宠物入口（D 域新增） ----------------
+ * 与单元测验入口同一套语言：两行、右箭头、主色提示"可以点进去"。 */
+.social-row {
+  display: flex;
+  align-items: center;
+  padding: 14rpx 0;
+}
+
+.social-name { font-size: 30rpx; color: var(--ink); }
+
+.social-go {
+  margin-left: auto;
+  font-size: 26rpx;
+  color: var(--green-d);
+}
+
+.social-desc { margin-top: 12rpx; line-height: 1.7; }

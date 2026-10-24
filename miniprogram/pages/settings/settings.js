@@ -1,235 +1,181 @@
 const settings = require('../../utils/settings.js');
-const asr = require('../../utils/asr.js');
-const store = require('../../utils/store.js');
+const theme = require('../../utils/theme.js');
+const semantic = require('../../utils/semantic.js');
 
-Page({
+Page(theme.withTheme({
   data: {
+    // 主题类（根 view 挂 class）：显式声明过「wxml 引用字段必须在 data 初始化」门禁
+    themeClass: 'theme-paper',
+
+    // 主题（utils/theme.js 的 id）：色卡选中态渲染用；
+    // themeClass 由 withTheme 维护（根 view 挂 class）
+    themeId: 'paper',
+    themeDesc: '',
+    // 色卡数据（onLoad 从 theme.THEMES 拍平 —— wxml 不直接引 utils 模块）
+    themes: [],
+
     cfg: {},
+    // 「本地模型」卡片状态（体积/进度/是否配置过）
+    mp: { configured: false, complete: false, downloading: false, percent: 0, doneText: '0 MB', totalText: '47.0 MB', error: '' },
+    // 「端上发音判定」卡片状态。ap 前缀避免与上面的 mp 混。
+    ap: { configured: false, complete: false, downloading: false, percent: 0, doneText: '0 MB', totalText: '0.8 MB', error: '' },
     // 服务状态
     asrOk: false,
     asrMsg: '正在检查…',
-    asrBase: '',
     editingBase: false,
     draftBase: '',
+    // 「开发者选项」折叠态开关，默认收起 —— 学生不该看到本机识别服务的地址
     // 统计
     vocabSize: 0,
     audioCached: 0
   },
 
   onLoad() {
+    // 色卡元数据拍平进 data：THEMES 的键顺序即展示顺序（JS 对象序稳定）
+    const themes = theme.IDS.map(function (id) {
+      return { id: id, label: theme.THEMES[id].label, swatch: theme.THEMES[id].swatch };
+    });
     this.setData({
       cfg: settings.load(),
-      asrBase: asr.base(),
-      draftBase: asr.base()
+      themes: themes
     });
-    this.checkService();
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   onShow() {
-    this.setData({ cfg: settings.load() });
-  },
-
-  /**
-   * 显示**真实**的语音能力状态。
-   *
-   * 原来这里只探本机服务（127.0.0.1:8766），而那在手机上必然失败，
-   * 界面把原因说成「网络不太好」—— 与真实原因（根本没有本地服务）不符，
-   * 属于误导。现在按代码里实际的优先级逐层报告。
-   */
-  checkService() {
-    const voice = require('../../utils/voice.js');
-    const cap = voice.capability();
-
-    // ① 插件（免费、端上）
-    if (cap.plugin) {
-      this.setData({ asrOk: true, asrMsg: '朗读就绪 · 使用微信语音插件', voiceMode: 'plugin' });
-      return;
-    }
-    // ② 云函数（任何手机可用，需部署）
-    if (asr.cloudReady && asr.cloudReady()) {
-      asr.cloudStatus().then(r => {
-        if (r && r.ok) {
-          this.setData({ asrOk: true, asrMsg: '朗读就绪 · 云端识别（' + (r.provider || '') + '）', voiceMode: 'cloud' });
-          return;
-        }
-        // 云函数在但没配服务
-        this.setData({
-          asrOk: false,
-          voiceMode: 'offline',
-          asrMsg: r && r.code === 'NOT_CONFIGURED'
-            ? '云端识别未配置（需在云开发控制台配语音服务密钥）'
-            : '云端识别未就绪：' + ((r && r.msg) || '未知原因')
-        });
-      });
-      return;
-    }
-    // ③ 都没有
     this.setData({
-      asrOk: false,
-      voiceMode: 'offline',
-      asrMsg: '识别功能未开通 —— 但听发音、背单词、按排期复习都正常'
+      cfg: settings.load(),
+      // 色卡选中态与副文案每次进入都校准（onLoad 只跑一次，防以后有别的改主题入口）
+      themeId: theme.current(),
+      themeDesc: theme.THEMES[theme.current()].desc
     });
+    this.refreshModelPack();
+    this.refreshAsrPack();
   },
 
-  /** 打开开发指引（教怎么配置识别通道，而不是让学生改 IP） */
-  showSetupGuide() {
-    wx.showModal({
-      title: '怎么开通朗读识别',
-      content: '需要在「微信开发者工具 → 云开发」里开通环境，'
-        + '然后部署 asrProxy 云函数并配置语音服务密钥。'
-        + '这一步由开发者完成，配置后本页会自动显示"朗读就绪"。',
-      showCancel: false,
-      confirmText: '知道了'
-    });
-  },
+
+
+
+
+
+
 
   /*------------------------- 参数调节 -------------------------*/
 
   /** 数值型参数：+/- 步进（比滑块更精确，也更好点） */
   step(e) {
-    const key = e.currentTarget.dataset.k;
-    const delta = Number(e.currentTarget.dataset.d);
-    const min = Number(e.currentTarget.dataset.min);
-    const max = Number(e.currentTarget.dataset.max);
-    const cur = Number(this.data.cfg[key]) || 0;
-    let next = cur + delta;
-    if (next < min) next = min;
-    if (next > max) next = max;
-    if (next === cur) return;
-    const cfg = settings.save({ [key]: next });
-    this.setData({ cfg: cfg });
+    
+
+  const key = e.currentTarget.dataset.k;
+  const delta = Number(e.currentTarget.dataset.d);
+  const min = Number(e.currentTarget.dataset.min);
+  const max = Number(e.currentTarget.dataset.max);
+  const cur = Number(this.data.cfg[key]) || 0;
+  let next = cur + delta;
+  if (next < min) next = min;
+  if (next > max) next = max;
+  if (next === cur) return;
+  const cfg = settings.save({ [key]: next });
+  this.setData({ cfg: cfg });
+ 
+  
   },
 
   /** 开关型参数 */
   toggle(e) {
     const key = e.currentTarget.dataset.k;
-    const cfg = settings.save({ [key]: !this.data.cfg[key] });
-    this.setData({ cfg: cfg });
+    // 本地模型是实验功能开关，不是危险修改：不过家长锁。真机反馈（2026-09-25）：
+    // 点它弹「设置家长密码」两连弹，体感是「本地模型和家长控制串了、两个按钮都没用」。
+    // 家长锁继续拦真正的危险项：清空记录 / 重置学习进度 / 恢复默认 / 每日量步进。
+    const apply = () => {
+      const cfg = settings.save({ [key]: !this.data.cfg[key] });
+      this.setData({ cfg: cfg });
+
+      // 开关语义通道：开 → 后台初始化；关 → 释放（不删资源，只停用）
+      if (key === 'localModel') {
+        if (cfg.localModel) {
+          semantic.init(function (err) {
+            if (err && err.message && err.message.indexOf('资源缺失') >= 0) {
+              // 资源还没下：引导去下载，而不是让人对着一个不工作的开关发呆
+              wx.showToast({ title: '请先下载模型资源', icon: 'none' });
+            }
+          });
+        } else {
+          semantic.release();
+        }
+      }
+    };
+    if (key === 'localModel') { apply(); return; }
+    apply();
   },
 
   /** 阈值这类连续参数：用几个预设档位（比滑块好操作） */
   pickThreshold(e) {
-    const level = e.currentTarget.dataset.level;
-    // 三档：宽松 / 标准 / 严格
-    const PRESET = {
-      loose: { passScore: 0.78, borderlineScore: 0.60 },
-      normal: { passScore: 0.84, borderlineScore: 0.68 },
-      strict: { passScore: 0.90, borderlineScore: 0.75 }
-    };
-    const cfg = settings.save(PRESET[level] || PRESET.normal);
-    this.setData({ cfg: cfg });
-    wx.showToast({ title: '判定尺度：' + ({ loose: '宽松', normal: '标准', strict: '严格' }[level] || '标准'), icon: 'none' });
+    
+
+  const level = e.currentTarget.dataset.level;
+  // 三档：宽松 / 标准 / 严格
+  const PRESET = {
+    loose: { passScore: 0.78, borderlineScore: 0.60 },
+    normal: { passScore: 0.84, borderlineScore: 0.68 },
+    strict: { passScore: 0.90, borderlineScore: 0.75 }
+  };
+  const cfg = settings.save(PRESET[level] || PRESET.normal);
+  this.setData({ cfg: cfg });
+  wx.showToast({ title: '判定尺度：' + ({ loose: '宽松', normal: '标准', strict: '严格' }[level] || '标准'), icon: 'none' });
+ 
+  
   },
 
-  /** 当前尺度名（用于界面高亮） */
-  thresholdLevel() {
-    const p = this.data.cfg.passScore;
-    if (p <= 0.80) return 'loose';
-    if (p >= 0.88) return 'strict';
-    return 'normal';
-  },
+  resetAll(e) {
+    
 
-  resetAll() {
-    wx.showModal({
-      title: '恢复默认设置？',
-      content: '只重置学习量、朗读、反馈等参数，学习进度不受影响。',
-      success: res => {
-        if (!res.confirm) return;
-        const cfg = settings.reset();
-        this.setData({ cfg: cfg });
-        wx.showToast({ title: '已恢复默认', icon: 'none' });
-      }
-    });
+  wx.showModal({
+    title: '恢复默认设置？',
+    content: '只重置学习量、朗读、反馈等参数，学习进度不受影响。',
+    success: res => {
+      if (!res.confirm) return;
+      const cfg = settings.reset();
+      this.setData({ cfg: cfg });
+      wx.showToast({ title: '已恢复默认', icon: 'none' });
+    }
+  });
+ 
+  
   },
 
   /*------------------------- 服务地址 -------------------------*/
 
-  editBase() {
-    this.setData({ editingBase: true, draftBase: asr.base() });
-  },
+  /**
+   * 展开/收起「开发者选项」。
+   *
+   * 为什么不直接删掉这一块：本机识别服务（127.0.0.1:8766）是开发期的调试通道，
+   * voiceBackend='auto' 时线上优先走微信插件，学生永远用不到它 —— 但作者调试 ASR 时
+   * 必须能改地址、跑连通性测试。折叠是同时满足两边的唯一做法。
+   *
+   * 为什么用"明摆着的入口"而不是长按/双击隐藏：后者不可发现，作者过两个月
+   * 自己也找不到；折叠区的存在本身就是文档。
+   */
 
-  onBaseInput(e) {
-    this.setData({ draftBase: e.detail.value });
-  },
 
-  cancelBase() {
-    this.setData({ editingBase: false });
-  },
 
-  saveBase() {
-    const url = String(this.data.draftBase || '').trim();
-    if (!/^https?:\/\/.+/.test(url)) {
-      wx.showToast({ title: '地址要以 http:// 开头', icon: 'none' });
-      return;
-    }
-    asr.setBase(url);
-    this.setData({ asrBase: url, editingBase: false });
-    wx.showToast({ title: '已保存，正在测试', icon: 'none' });
-    this.checkService();
-  },
 
-  testService() {
-    wx.showLoading({ title: '测试中' });
-    asr.health().then(r => {
-      wx.hideLoading();
-      if (r.ok) {
-        wx.showModal({
-          title: '朗读服务正常',
-          content: '词表 ' + (r.vocab || 0) + ' 词\nASR ' + (r.asr ? '已加载' : '待加载'),
-          showCancel: false
-        });
-      } else {
-        wx.showModal({
-          title: '连不上朗读服务',
-          content: '请在电脑上运行：\npython -m server.asr_service\n\n'
-                 + '真机调试时，地址要用电脑的局域网 IP（不是 127.0.0.1）',
-          showCancel: false
-        });
-      }
-      this.checkService();
-    });
-  },
 
-  /** 预生成发音音频（首次部署后跑一次，之后播放零延迟） */
-  prepareAudio() {
-    wx.showLoading({ title: '生成中，可能较慢' });
-    wx.request({
-      url: asr.base() + '/api/audio/prepare',
-      method: 'POST',
-      data: {},
-      timeout: 600000,
-      success: res => {
-        wx.hideLoading();
-        const d = res.data || {};
-        wx.showModal({
-          title: '发音音频',
-          content: '新生成 ' + (d.made || 0) + ' 个\n已存在 ' + (d.skipped || 0) + ' 个'
-                 + (d.failed ? '\n失败 ' + d.failed + ' 个' : ''),
-          showCancel: false
-        });
-      },
-      fail: () => {
-        wx.hideLoading();
-        wx.showToast({ title: '生成失败，检查服务是否启动', icon: 'none' });
-      }
-    });
-  },
 
-  /** 清空朗读记录 */
-  clearPronRecords() {
-    wx.showModal({
-      title: '清空朗读记录？',
-      content: '会清掉所有朗读评测历史（读对/读错的记录），学习进度不受影响。',
-      success: res => {
-        if (!res.confirm) return;
-        if (store.clearPronRecords()) {
-          wx.showToast({ title: '已清空', icon: 'none' });
-        } else {
-          wx.showToast({ title: '清空失败', icon: 'none' });
-        }
-      }
-    });
-  },
+
+
 
   /**
    * 去朗读页。
@@ -242,5 +188,23 @@ Page({
       url: '/pages/pronounce/pronounce',
       fail: () => wx.showToast({ title: '打开失败，请点底部「朗读」', icon: 'none' })
     });
+  },
+
+  /*------------------------- 主题 -------------------------*/
+
+  /**
+   * 换主题（设置页色卡）。点选即时生效：settings 持久化 + 本页 themeClass
+   * 立即刷新；其他页在返回时由 withTheme 的 onShow 前置刷新接管。
+   */
+  pickTheme(e) {
+    const id = e.currentTarget.dataset.theme;
+    const cfg = theme.setColor(id);
+    this.setData({
+      themeId: theme.current(),
+      // 本页根 view 的 class 也要立即跟上 —— withTheme 只在 onShow 刷新，
+      // 而此刻页面就在前台，等下一次 onShow 才变会让人以为点了没反应
+      themeClass: theme.themeClassOf(theme.current())
+    });
+    wx.showToast({ title: '主题：' + theme.THEMES[theme.current()].label, icon: 'none' });
   }
-});
+}));
